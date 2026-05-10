@@ -147,6 +147,7 @@
             <button class="btn-light" onclick="exportBackup()">Backup</button>
             <button class="btn-green" onclick="copyShareLink()">Copy share link with data</button>
             <button class="btn-green" onclick="downloadPortableCopy()">Download copy with data</button>
+            <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
             <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
             <label class="filebtn btn-light">
               Import backup
@@ -171,6 +172,53 @@
                 <label>Import preview</label>
                 <div class="preview-box" id="importPreview">Nothing imported yet.</div>
                 <p class="muted">Shift codes are decoded automatically into working days in the separate tab.</p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="import-panel" id="githubPanel">
+            <div class="import-grid">
+              <div>
+                <label>GitHub owner / org</label>
+                <input id="ghOwner" placeholder="Example: your-username or org-name" />
+                <label>Repository</label>
+                <input id="ghRepo" placeholder="Example: indirect-tracker" />
+                <div class="row">
+                  <div>
+                    <label>Branch</label>
+                    <input id="ghBranch" value="main" />
+                  </div>
+                  <div>
+                    <label>Data file path</label>
+                    <input id="ghPath" value="data.json" />
+                  </div>
+                </div>
+                <label>Fine-grained PAT</label>
+                <input id="ghToken" type="password" placeholder="Saved only in this browser" />
+                <label style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                  <input id="ghAutoSave" type="checkbox" style="width:auto" />
+                  Auto-save changes to GitHub
+                </label>
+                <p class="muted">
+                  Token is stored only in this browser local storage. Do not upload/share a copy of the app that contains a token.
+                  Use a fine-grained PAT scoped to only this repo with Contents: Read and Write.
+                </p>
+              </div>
+              <div>
+                <label>GitHub sync</label>
+                <div class="preview-box" id="githubPreview">Not configured yet.</div>
+                <div class="row" style="margin-top:8px">
+                  <button class="btn-dark" onclick="saveGithubSettings()">Save settings</button>
+                  <button class="btn-light" onclick="loadFromGithub()">Load from GitHub</button>
+                </div>
+                <div class="row" style="margin-top:8px">
+                  <button class="btn-green" onclick="saveToGithub()">Save tracker to GitHub</button>
+                  <button class="btn-light" onclick="copyGithubPagesLink()">Copy app link</button>
+                </div>
+                <p class="muted">
+                  For Slack, post the GitHub Pages app link instead of a huge data link. Data lives in data.json.
+                </p>
               </div>
             </div>
           </div>
@@ -358,6 +406,7 @@ function id(){
 function saveStorage(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people }));
   showAutosaved();
+  queueGithubSave();
 }
 function loadStorage(){
   try{
@@ -1005,6 +1054,7 @@ function downloadPortableCopy(){
 }
 
 
+
 const SLACK_WORKFLOW_SETTINGS_KEY = STORAGE_KEY + "_slack_workflow_settings_v1";
 
 function getSlackWorkflowSettings(){
@@ -1132,11 +1182,10 @@ function maybePostSlackAfterGithubSave(reason){
 
 
 async function autoLoadPublicGithubData(){
-  // GitHub Pages should read data.json automatically, without a PAT.
-  // The PAT is only needed for saving changes back to GitHub.
+  // On GitHub Pages, load data.json automatically.
+  // The PAT is only needed when saving changes back to GitHub.
   try{
-    const url = "./data.json?ts=" + Date.now();
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
     if(!res.ok) return;
 
     const data = await res.json();
@@ -1155,6 +1204,245 @@ async function autoLoadPublicGithubData(){
     toast(`Loaded ${people.length} logins from GitHub data.json`);
   }catch(e){
     console.warn("Auto-load data.json failed", e);
+  }
+}
+
+const GITHUB_SETTINGS_KEY = STORAGE_KEY + "_github_settings_v1";
+let githubSaveTimer = null;
+let githubSaving = false;
+let suppressGithubAutoSave = false;
+
+function b64EncodeUnicode(str){
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function b64DecodeUnicode(b64){
+  const binary = atob(String(b64 || "").replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+function getGithubSettings(){
+  try{
+    return JSON.parse(localStorage.getItem(GITHUB_SETTINGS_KEY) || "{}");
+  }catch(e){
+    return {};
+  }
+}
+
+function loadGithubSettings(){
+  const s = getGithubSettings();
+  const fields = {
+    ghOwner: s.owner || "",
+    ghRepo: s.repo || "",
+    ghBranch: s.branch || "main",
+    ghPath: s.path || "data.json",
+    ghToken: s.token || ""
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if(el) el.value = value;
+  });
+  const auto = document.getElementById("ghAutoSave");
+  if(auto) auto.checked = !!s.autoSave;
+  renderGithubPreview();
+}
+
+function saveGithubSettings(){
+  const settings = {
+    owner: cleanCell(document.getElementById("ghOwner")?.value || ""),
+    repo: cleanCell(document.getElementById("ghRepo")?.value || ""),
+    branch: cleanCell(document.getElementById("ghBranch")?.value || "main"),
+    path: cleanCell(document.getElementById("ghPath")?.value || "data.json"),
+    token: cleanCell(document.getElementById("ghToken")?.value || ""),
+    autoSave: !!document.getElementById("ghAutoSave")?.checked
+  };
+  localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings));
+  renderGithubPreview();
+  toast("GitHub settings saved");
+}
+
+function toggleGithubPanel(){
+  const panel = document.getElementById("githubPanel");
+  if(panel){
+    panel.classList.toggle("show");
+    loadGithubSettings();
+  }
+}
+
+function githubConfigured(){
+  const s = getGithubSettings();
+  return !!(s.owner && s.repo && s.branch && s.path);
+}
+
+function githubHeaders(includeAuth){
+  const s = getGithubSettings();
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+  if(includeAuth && s.token) headers.Authorization = "Bearer " + s.token;
+  return headers;
+}
+
+function githubContentsUrl(){
+  const s = getGithubSettings();
+  return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(s.branch)}`;
+}
+
+function githubPutUrl(){
+  const s = getGithubSettings();
+  return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+function githubPagesUrl(){
+  const s = getGithubSettings();
+  if(!s.owner || !s.repo) return "";
+  return `https://${s.owner}.github.io/${s.repo}/`;
+}
+
+function renderGithubPreview(){
+  const box = document.getElementById("githubPreview");
+  if(!box) return;
+  const s = getGithubSettings();
+  const configured = githubConfigured();
+  box.innerHTML =
+    `<b>Status:</b> ${configured ? "Configured" : "Not configured"}<br>` +
+    `<b>Repo:</b> ${escapeHtml(s.owner || "-")}/${escapeHtml(s.repo || "-")}<br>` +
+    `<b>Branch:</b> ${escapeHtml(s.branch || "main")}<br>` +
+    `<b>Data file:</b> ${escapeHtml(s.path || "data.json")}<br>` +
+    `<b>Auto-save:</b> ${s.autoSave ? "ON" : "OFF"}<br>` +
+    `<b>GitHub Pages:</b> ${s.owner && s.repo ? escapeHtml(githubPagesUrl()) : "-"}`;
+}
+
+async function loadFromGithub(){
+  saveGithubSettings();
+  const s = getGithubSettings();
+  if(!githubConfigured()){
+    toast("Fill GitHub owner/repo/branch/path first");
+    return;
+  }
+
+  try{
+    const res = await fetch(githubContentsUrl(), { headers: githubHeaders(true), cache: "no-store" });
+    if(!res.ok){
+      throw new Error("GitHub load failed: " + res.status);
+    }
+
+    const file = await res.json();
+    const json = b64DecodeUnicode(file.content || "");
+    const data = JSON.parse(json);
+
+    if(Array.isArray(data.roles) && data.roles.length) roles = data.roles;
+    if(Array.isArray(data.people)){
+      people = data.people.map(p => ({
+        ...p,
+        shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
+      }));
+    }
+
+    suppressGithubAutoSave = true;
+    saveStorage();
+    suppressGithubAutoSave = false;
+    render();
+    renderGithubPreview();
+    toast(`Loaded ${people.length} logins from GitHub`);
+  }catch(e){
+    console.error(e);
+    toast(e.message || "GitHub load failed");
+  }
+}
+
+async function getGithubFileSha(){
+  try{
+    const res = await fetch(githubContentsUrl(), { headers: githubHeaders(true), cache: "no-store" });
+    if(res.status === 404) return null;
+    if(!res.ok) throw new Error("Could not check existing data file: " + res.status);
+    const file = await res.json();
+    return file.sha || null;
+  }catch(e){
+    if(String(e.message || "").includes("404")) return null;
+    throw e;
+  }
+}
+
+async function saveToGithub(){
+  saveGithubSettings();
+  const s = getGithubSettings();
+  if(!githubConfigured()){
+    toast("Fill GitHub owner/repo/branch/path first");
+    return;
+  }
+  if(!s.token){
+    toast("PAT required to save to GitHub");
+    return;
+  }
+  if(githubSaving) return;
+
+  githubSaving = true;
+  try{
+    const sha = await getGithubFileSha();
+    const data = {
+      ...getPortableData(),
+      source: "github",
+      updatedAt: new Date().toISOString()
+    };
+
+    const body = {
+      message: `Update indirect tracker data (${people.length} logins)`,
+      content: b64EncodeUnicode(JSON.stringify(data, null, 2)),
+      branch: s.branch
+    };
+    if(sha) body.sha = sha;
+
+    const res = await fetch(githubPutUrl(), {
+      method: "PUT",
+      headers: {
+        ...githubHeaders(true),
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if(!res.ok){
+      let detail = "";
+      try{ detail = (await res.json()).message || ""; }catch(_){}
+      throw new Error("GitHub save failed: " + res.status + (detail ? " - " + detail : ""));
+    }
+
+    toast("Saved tracker data to GitHub");
+    renderGithubPreview();
+    maybePostSlackAfterGithubSave("saved to GitHub");
+  }catch(e){
+    console.error(e);
+    toast(e.message || "GitHub save failed");
+  }finally{
+    githubSaving = false;
+  }
+}
+
+function queueGithubSave(){
+  if(suppressGithubAutoSave) return;
+  const s = getGithubSettings();
+  if(!s.autoSave || !s.token || !githubConfigured()) return;
+  clearTimeout(githubSaveTimer);
+  githubSaveTimer = setTimeout(() => saveToGithub(), 1800);
+}
+
+async function copyGithubPagesLink(){
+  const link = githubPagesUrl();
+  if(!link){
+    toast("Enter GitHub owner/repo first");
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(link);
+    toast("GitHub Pages app link copied");
+  }catch(e){
+    prompt("Copy this app link:", link);
   }
 }
 
