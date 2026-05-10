@@ -1,16 +1,1691 @@
 {
   "version": 4,
-  "exportedAt": null,
-  "updatedAt": null,
+  "exportedAt": "2026-05-10T07:43:01.981Z",
   "roles": [
     "SLAM",
     "PG",
     "PS",
     "WS",
     "PT",
-    "Tote Collector",
-    "Water Spider",
     "Jam Buster"
   ],
-  "people": []
+  "people": [
+    {
+      "id": "cbfac9db-7070-4826-9c02-f67fd45a92ef",
+      "login": "abbabhay",
+      "name": "Abhay,Abhay",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "aca7cf06-1545-4c8f-881a-a964a4d4d92e",
+      "login": "abmamun",
+      "name": "Mamun,Abdullah Al",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "3b248b89-2b8f-4ba4-9597-e7c6f3883cc1",
+      "login": "adeyadem",
+      "name": "Adeyemi,Ademiju",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "a31c1ff1-6eb3-4604-a464-5fa73768853b",
+      "login": "afeeo",
+      "name": "Oyedele,Afeez",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "bbc5decc-95f6-4477-81f4-f013ed5b2a9c",
+      "login": "aghaysha",
+      "name": "Aghayere,Harry Erhunmwunse",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "e042562f-b24c-4377-8c28-72517e9d6b25",
+      "login": "agurleye",
+      "name": "Gurleyen,Andrea",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "59cd4cb8-5cc2-4b3d-b3ea-42d70a015760",
+      "login": "ahwkhade",
+      "name": "Ahmed,Khadeer",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "a6466c78-6f6d-4b75-ae9e-e20bfbc558c3",
+      "login": "alitaner",
+      "name": "Ali,Taner Bakir",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "2e9f02fd-568a-4a9a-871f-db81c8d5bb5d",
+      "name": "Shibu Abraham,Alphin",
+      "login": "alpshibu",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "Jam Buster",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:47:30.589Z"
+    },
+    {
+      "id": "6d32cb0e-33c5-4c64-a4f1-1509c748143f",
+      "login": "andmogos",
+      "name": "Andemariam,Mogos",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "217ab6e7-62c2-4a63-b674-d9808b3894d7",
+      "login": "andrbija",
+      "name": "Bija,Andrei",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "905be426-69d4-43aa-969a-a9e9ea395f49",
+      "login": "andrvgri",
+      "name": "Grigorie,Andreea Cristina",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PS",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "a1b6ff5f-b684-4f73-98ae-56c837e30604",
+      "login": "anifeani",
+      "name": "Anoh,Ifeanyi Franklin",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "7e1c26bb-7525-4548-a7e0-53823109c869",
+      "login": "apstefan",
+      "name": "Apostol,Stefania",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "3a6dc591-fc64-49eb-9732-d075799f75a9",
+      "login": "astepin",
+      "name": "Stepinski,Andrzej Jacek",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "8de1f61b-c146-4bbc-8e04-c75c8e74f297",
+      "login": "ataklb",
+      "name": "Berhane,Atakleti",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "548cea23-9359-4ff2-a953-886175ead036",
+      "login": "azarnesc",
+      "name": "Funie,Andreea",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "d03c053b-3777-4948-b87a-b0878e26a4d6",
+      "login": "baidybip",
+      "name": "baidya,biplob Kumar",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PS",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "a9a9579a-2049-4a73-ad9f-5100ce214858",
+      "login": "batonda",
+      "name": "Batonda,Tresor",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "38c9875f-4ad3-4c91-9768-6388e1fda658",
+      "login": "bmdabsub",
+      "name": "Subhan,Md Abdus",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "PS",
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "d78a34a8-1490-4abd-a703-e3dd567c90e1",
+      "login": "bradtere",
+      "name": "Teresa Brady",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "76b444f7-fdc6-4f74-ba9a-01a10e2c3ad2",
+      "login": "btankush",
+      "name": "Bamba,Ankush",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "b1c52fb6-fecb-44a3-b0a2-1e672f5b1a31",
+      "login": "butramee",
+      "name": "Butt,Rameez",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "6a4cab36-78bf-49b0-ab11-9f181492c96d",
+      "login": "chiric",
+      "name": "Chirila,Cristian",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "537d350c-e6ab-4384-9058-65427d2f3f49",
+      "login": "cioinesa",
+      "name": "Cioineag,Sarah",
+      "shiftCodes": [
+        "NPT8856"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "64f82419-be2f-4104-b171-febfc15c256b",
+      "login": "cojamesc",
+      "name": "Connor,James",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "c2bb3c6e-565f-40b6-b343-5bbdc162cb88",
+      "login": "colyrobe",
+      "name": "Colyer,Robert William Charles",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "0597cb46-1284-4a5c-9611-26359a7d765f",
+      "login": "djohnjoh",
+      "name": "Davis,John-John James",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "4c2114a2-9818-47fe-8957-f3935b77194e",
+      "login": "doropreu",
+      "name": "Preuschoff,Dorota",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "PS",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "2284b8ce-5ed8-4b1c-a783-680d9c98c295",
+      "login": "esstunka",
+      "name": "Tunkara,Essa",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "334379b6-c258-4021-abc2-10cc5e84eef9",
+      "login": "funimari",
+      "name": "Funie,Marian",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "70ec4740-7faf-4ff6-aa32-de84f04d1b96",
+      "login": "gaimadal",
+      "name": "Gaina, Madalina Mariana",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "689b2ad8-0749-40b3-b117-2c7024bcebb6",
+      "login": "gdumitrh",
+      "name": "Dumitrescu,Gheorghe",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "f8d1c8a1-9bfb-48b2-97d6-6338cfa37b90",
+      "login": "genecula",
+      "name": "Neculae, Georgian",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "b88defcf-d7a8-4ebc-b5ee-764e8e3a45c4",
+      "login": "georagac",
+      "name": "Agache,Georgiana",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "817b5a8d-03c7-4ce9-a7fc-bb1d28d47b35",
+      "login": "gkusingh",
+      "name": "Singh,Kuldeep",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "0b54cb06-13b4-4a89-9085-71eee6bed64d",
+      "login": "grecalin",
+      "name": "Grecu,Ramona",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "94413637-507c-4d8f-9b1b-472f6eb82d4b",
+      "login": "gttana",
+      "name": "Tita,Georgiana",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "895006a8-fcf4-4510-bfc0-fa46587ddb1f",
+      "login": "harnwa",
+      "name": "Harnwell,Mandy",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "7b620943-978a-4d79-ab40-204e1f8f70a2",
+      "login": "hedathad",
+      "name": "Swalah Bin Samad",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PG",
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "061ee0fc-1837-4959-bc6f-1a4a02ace2a0",
+      "login": "hsimanin",
+      "name": "SINGH,MANINDER",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "a9df940b-0993-4646-ace7-f0288895bff0",
+      "login": "ikpidabi",
+      "name": "Idabie,IKPONMWOSA EHI",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "f79aeb21-cc1e-4aa9-a545-646fb9528ba4",
+      "login": "ioparalu",
+      "name": "Paraluta,Ionut",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "812a56f8-67b2-4564-b0c2-97df4e059cd1",
+      "login": "isarawra",
+      "name": "Rai,Isaran",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "e2972123-cb77-4130-b2d6-8f2a45128c6f",
+      "login": "jbiodun",
+      "name": "Jogbodo,Biodun",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "45afac86-4eb2-4df1-8e22-504cb399766e",
+      "login": "jibereke",
+      "name": "Jorjo,Bereket",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "5892f78c-1dff-4eaa-a88f-d92d3ad380c5",
+      "login": "joverdon",
+      "name": "Verdon,John",
+      "shiftCodes": [
+        "NH3"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "215ad641-2d49-4a44-b43b-69182502a2c9",
+      "login": "kaasarik",
+      "name": "Sarikaya,Kaan Deklan",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "ee1c1b37-9d9a-449f-8c0e-7015d405116b",
+      "login": "kkljeet",
+      "name": "Kaur,Kuljeet",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "ccb579d1-16e9-40f9-8655-e3e73c05afa6",
+      "login": "kumrakej",
+      "name": "Kumar,Rakesh",
+      "shiftCodes": [
+        "NH3"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "4c3db9c6-2ddc-4e8f-82a3-7383c74e794e",
+      "login": "liamdam",
+      "name": "Adams,Liam",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "4d13d975-cdd8-4fb6-9d40-5638c4f75419",
+      "login": "lilumaya",
+      "name": "Lumaya,Lisa",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "4c8b3815-5d1c-4ae7-befa-56d6137f3946",
+      "login": "lipcea",
+      "name": "Lipcean,Valentina",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "691d676e-2e57-4b4c-937e-c06d1bba81a6",
+      "login": "lkausila",
+      "name": "Limbu,Kausila",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "ce8fb3f4-ec39-4611-8a52-a340127ae1d8",
+      "name": "Silvestre, Kyle",
+      "login": "lkysilve",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "Jam Buster",
+        "PG",
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:23:46.064Z"
+    },
+    {
+      "id": "8705ecc0-3a4c-41fa-9a89-36e148db7047",
+      "login": "mabmoh",
+      "name": "Mohamed,Abdullahi",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "bef8665f-a773-4964-a83c-b5784f38cda6",
+      "login": "macovmar",
+      "name": "Macovei,Marius",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "9a828cd3-5627-4eba-b1e3-0a94a24da720",
+      "login": "mahenrq",
+      "name": "Henrique,Maria",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "749858e5-82ee-4dc4-9d11-30725e0e8dff",
+      "login": "marcraiu",
+      "name": "craiu,marius",
+      "shiftCodes": [
+        "NH3"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "69e999ba-fccf-462a-904f-e89292d090ae",
+      "login": "mareger",
+      "name": "Maregedze,Raymond Lennon",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "ff14794d-cc59-4759-a7dc-9fc38ffc1ebd",
+      "login": "marptra",
+      "name": "Petrache,Maria",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "6405ec0f-9c0b-4a45-9983-d8bb931ecd8f",
+      "login": "marwahpa",
+      "name": "Marwaha,Pankaj",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "de50ca87-8400-496b-9adf-1e0fc6096f3e",
+      "login": "mattzadd",
+      "name": "Addai,Matthew Addai",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "b311b541-6f67-44fe-8cfc-0d007b3865b0",
+      "login": "mayamon",
+      "name": "Mayiza,Mayamono",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "ec5cd998-0d83-4f04-998d-39ae4d2acdf4",
+      "login": "mehrullh",
+      "name": "Hamidi,Mehrullah",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "afe32e48-81d7-4d7a-9ad2-7f865cc43907",
+      "login": "mihaelca",
+      "name": "Capatina,Mihaela Alexandra",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PS",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "51eae138-9a86-4e56-98c6-fc0304d25e1f",
+      "login": "mrlzr",
+      "name": "Lazar,Marian",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "01c91f42-9e38-47a4-aa34-61bf110fa776",
+      "login": "muhrulha",
+      "name": "Ul haq,Muhammad Ahtisham",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "937da7b5-af93-457c-97b4-c282272e10aa",
+      "login": "nattrg",
+      "name": "Nattrass,Graeme",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "efa41d19-cebd-42ee-a567-749bdd57db25",
+      "login": "nhusamzn",
+      "name": "hussain,md Afai",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "c4003603-c86c-49c6-a846-8ee9c843b756",
+      "login": "oroluwaf",
+      "name": "oluwafowoke,omotola",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "2a733213-b421-440d-beac-0941d281f7b4",
+      "login": "patelcro",
+      "name": "Patel,Ronak",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "d7e77edd-bb14-46c6-90b3-1432290dab4d",
+      "login": "paulciuc",
+      "name": "ciuca,paul constantin",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "049b69ab-6c78-4c9e-9d92-df5ad9e62be7",
+      "login": "peczerk",
+      "name": "Peczer,Karoly",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "PS",
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "58964dc8-97a1-4d63-8d55-6b7dd61aae98",
+      "login": "petrosol",
+      "name": "Solomon,Francesca",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "5805da2d-1268-47ab-b8bd-d206122dc678",
+      "login": "ppopcipr",
+      "name": "Popescu,Ciprian",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "686cd2f4-34e4-461b-be29-adfa827a1972",
+      "login": "qnicmoca",
+      "name": "Mocanu,Nicoleta Cornelia",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "4d83a0d6-c847-4128-9119-21c2e86a7d47",
+      "login": "rahrajam",
+      "name": "Rahman,Ar",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "5ce0c55c-11df-4b4d-854a-e47a33d8a420",
+      "login": "rajamey",
+      "name": "Raj,Ameya              (mon-wed)",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "a17f3be9-f16a-4888-8fb0-54961f403d95",
+      "login": "rebbarre",
+      "name": "Barrell,Rebecca Elizabeth",
+      "shiftCodes": [
+        "NPT8856"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "f095f287-160c-4150-ae44-09849b752a0d",
+      "login": "rhasadi",
+      "name": "Hassan,Adil",
+      "shiftCodes": [
+        "NPT8858"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "01fc1d8c-f2ac-4af0-a376-7c1dbaff32a9",
+      "login": "rmalarik",
+      "name": "Malarik,Robin",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PS",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "05e1fe44-fc4e-4b32-8ad8-a47c461bce3e",
+      "login": "rodpetre",
+      "name": "Petre,Rodica",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "6e52945b-a62d-4fe2-bc61-16f6e96e422d",
+      "login": "rosaad",
+      "name": "Ventura Rosa, Adriana",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "e1fc731b-211f-4fe2-ad7c-0f503f54e842",
+      "login": "rosuer",
+      "name": "Rosu,Elena Beatrice",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "34bea812-91d3-4daa-99b1-f6c48cbc6444",
+      "login": "saliquea",
+      "name": "Salique,Abul",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "5d397226-292a-49b8-8673-18f714ba756d",
+      "login": "sarathjc",
+      "name": "Sarath Chandran",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "50e9b3bd-fb6b-45a8-a7d1-f77e33cfe0f5",
+      "login": "sbelinta",
+      "name": "Belintan,Samuel",
+      "shiftCodes": [
+        "NH3"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "1e84e8a2-42ad-4011-b85a-053091fd216f",
+      "login": "schvoick",
+      "name": "Chvoickinaite,Simona",
+      "shiftCodes": [
+        "NF6"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "9cc9e977-4983-4e67-827d-7124dbf14e65",
+      "login": "semtekie",
+      "name": "Tekie,SEM",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "03a0f21c-5035-49af-9bc6-f9908d378624",
+      "login": "seymamad",
+      "name": "Seydi,Mamadou",
+      "shiftCodes": [
+        "FLEXPT"
+      ],
+      "roles": [
+        "PG",
+        "PS",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "43101458-92c8-4c02-8798-a8475efec291",
+      "login": "sfpardee",
+      "name": "singh,pardeep",
+      "shiftCodes": [
+        "NL4"
+      ],
+      "roles": [
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "a01a9194-634b-4d6c-8401-ade3b6c6d042",
+      "login": "shobhbhu",
+      "name": "Bhujel,Shobha",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "c5c1de88-c328-4d9f-ab11-51f167a2bbf1",
+      "login": "shubakuv",
+      "name": "Kumar,Shubam",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PG",
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "bad08959-1b9e-4287-84d8-9000c35c29cf",
+      "login": "smohaami",
+      "name": "Mohammed Amir Abdul",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "7e6fe0f2-1ad5-42af-9131-f008f9017a5d",
+      "login": "sntbar",
+      "name": "Moreira Dos Santos,Barbara",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "0bd33693-8f55-4c3d-8a63-64e215bb955a",
+      "login": "stacsims",
+      "name": "sims,stacy jayne",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PS",
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "ed225ae3-a4d3-4215-8748-2e7b4114488b",
+      "login": "sundmidh",
+      "name": "Sunderasan, MIDHUN",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "139870be-4368-47a6-ac12-5c4227f8fac1",
+      "login": "syyakoob",
+      "name": "Yakoob,Samir",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "ca92c316-2be6-4ea1-9c87-cd0fa63fbd42",
+      "login": "szjashan",
+      "name": "Singh, Jashanpreet",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PG"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "50cdd201-9735-4841-a127-3ce49272cff6",
+      "login": "thomjosc",
+      "name": "Thomas,Josh",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "7cc705ef-3817-462d-b816-e620e85305e5",
+      "login": "tudorec",
+      "name": "Ciuperca,Tudorel",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "3d883fea-ef07-4e7a-9637-b5884a781afa",
+      "login": "ujeeuday",
+      "name": "Udayan,Ujeesh",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "611c513d-ac40-4bdd-a8ec-7488ab7482b8",
+      "login": "umrobert",
+      "name": "Robert,Marica Alexandru",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "448e2c87-d381-4092-a085-48e9873b693b",
+      "login": "vinstace",
+      "name": "Vincent,Stacey",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "b7b7bdc5-fb3e-453e-822f-5a4b8566db26",
+      "login": "vladcric",
+      "name": "Capraru Sr,Vlad",
+      "shiftCodes": [
+        "NK7"
+      ],
+      "roles": [
+        "PG",
+        "PT"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "685bffa9-1543-4e86-81dc-cec9fe8e02bf",
+      "login": "vshajiak",
+      "name": "Shaji,Akhil",
+      "shiftCodes": [
+        "NN2"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "64348ff9-fc4e-449d-a884-cc6ed95dd036",
+      "login": "wandreem",
+      "name": "Manea,Andreea",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "PS",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "ddc7b0cf-9afb-4fd9-abb7-b7a1c1d5d92b",
+      "login": "wcornelc",
+      "name": "Huzum,Corneliu Ciprian",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.979Z"
+    },
+    {
+      "id": "ffa9d9b8-0ba0-4fea-b647-20b9821e561c",
+      "login": "wprasapr",
+      "name": "Kulangara Prasad, Prinu",
+      "shiftCodes": [
+        "NH3"
+      ],
+      "roles": [
+        "PG",
+        "PT",
+        "SLAM",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "0d4fa983-c1b3-4412-a431-32f382e47978",
+      "login": "zaslatl",
+      "name": "Zaslati,Loredana",
+      "shiftCodes": [
+        "NA5"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "23d4f1a5-52e8-4229-9cea-cc710bed1b3e",
+      "login": "zefkozet",
+      "name": "Zefi,Kozeta",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    },
+    {
+      "id": "88778126-3620-4bc2-93bf-a6ad0094e60f",
+      "login": "zksharnp",
+      "name": "Kaur,Sharnpreet",
+      "shiftCodes": [
+        "NB1"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-09T18:21:52.980Z"
+    }
+  ],
+  "source": "github",
+  "updatedAt": "2026-05-10T07:43:01.981Z"
 }
