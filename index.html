@@ -148,6 +148,7 @@
             <button class="btn-green" onclick="copyShareLink()">Copy share link with data</button>
             <button class="btn-green" onclick="downloadPortableCopy()">Download copy with data</button>
             <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
+            <button class="btn-green" onclick="loadSharedDataNow()">Load shared data</button>
             <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
             <label class="filebtn btn-light">
               Import backup
@@ -1181,31 +1182,70 @@ function maybePostSlackAfterGithubSave(reason){
 }
 
 
+
+async function loadSharedDataNow(){
+  // This is what everyone opening the GitHub Pages link uses.
+  // It loads the shared data.json file directly, no PAT needed.
+  const urls = [
+    "./data.json?ts=" + Date.now(),
+    "data.json?ts=" + Date.now(),
+    "https://lkysilve.github.io/indirect-tracker/data.json?ts=" + Date.now()
+  ];
+
+  let lastError = null;
+
+  for(const url of urls){
+    try{
+      const res = await fetch(url, { cache: "no-store" });
+      if(!res.ok){
+        lastError = new Error("Failed " + url + " status " + res.status);
+        continue;
+      }
+
+      const data = await res.json();
+
+      if(!data || !Array.isArray(data.people)){
+        lastError = new Error("data.json found but people array is missing");
+        continue;
+      }
+
+      if(data.people.length === 0){
+        lastError = new Error("data.json loaded but contains 0 logins");
+        continue;
+      }
+
+      roles = Array.isArray(data.roles) && data.roles.length ? data.roles : roles;
+      people = data.people.map(p => ({
+        ...p,
+        shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
+      }));
+
+      // Save a local cache so the page still works after the first successful load.
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people }));
+      render();
+      try{ renderGithubPreview(); }catch(e){}
+      try{ renderSlackWorkflowPreview(); }catch(e){}
+      toast(`Loaded ${people.length} logins from shared data.json`);
+      return true;
+    }catch(e){
+      lastError = e;
+      console.warn("Shared data load attempt failed", url, e);
+    }
+  }
+
+  console.warn(lastError);
+  toast((lastError && lastError.message) ? lastError.message : "Could not load shared data.json");
+  return false;
+}
+
 async function autoLoadPublicGithubData(){
-  // On GitHub Pages, load data.json automatically.
-  // The PAT is only needed when saving changes back to GitHub.
-  try{
-    const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
-    if(!res.ok) return;
-
-    const data = await res.json();
-    if(!data || !Array.isArray(data.people) || data.people.length === 0) return;
-
-    roles = Array.isArray(data.roles) && data.roles.length ? data.roles : roles;
-    people = data.people.map(p => ({
-      ...p,
-      shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
-    }));
-
-    saveStorage();
-    render();
-    try{ renderGithubPreview(); }catch(e){}
-    try{ renderSlackWorkflowPreview(); }catch(e){}
-    toast(`Loaded ${people.length} logins from GitHub data.json`);
-  }catch(e){
-    console.warn("Auto-load data.json failed", e);
+  // Auto-load only when opened from GitHub Pages.
+  // Leave local file testing alone unless the user clicks Load shared data.
+  if(location.hostname.includes("github.io")){
+    await loadSharedDataNow();
   }
 }
+
 
 const GITHUB_SETTINGS_KEY = STORAGE_KEY + "_github_settings_v1";
 let githubSaveTimer = null;
@@ -1233,6 +1273,19 @@ function getGithubSettings(){
   }
 }
 
+
+function prefillGithubDefaultsIfEmpty(){
+  const owner = document.getElementById("ghOwner");
+  const repo = document.getElementById("ghRepo");
+  const branch = document.getElementById("ghBranch");
+  const path = document.getElementById("ghPath");
+
+  if(owner && !owner.value) owner.value = "lkysilve";
+  if(repo && !repo.value) repo.value = "indirect-tracker";
+  if(branch && !branch.value) branch.value = "main";
+  if(path && !path.value) path.value = "data.json";
+}
+
 function loadGithubSettings(){
   const s = getGithubSettings();
   const fields = {
@@ -1248,6 +1301,7 @@ function loadGithubSettings(){
   });
   const auto = document.getElementById("ghAutoSave");
   if(auto) auto.checked = !!s.autoSave;
+  prefillGithubDefaultsIfEmpty();
   renderGithubPreview();
 }
 
