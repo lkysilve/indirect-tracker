@@ -27,7 +27,7 @@
     button,.filebtn{border:0;border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
     .btn-dark{background:#111827;color:#fff}.btn-dark:hover{background:#1f2937}
     .btn-light{background:#f8fafc;border:1px solid #cbd5e1;color:#111827}.btn-light:hover{background:#eef2ff}
-    .btn-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}.btn-small{padding:6px 8px;font-size:12px;border-radius:10px}.btn-blue{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}.btn-green{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+    .btn-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}.btn-small{padding:6px 8px;font-size:12px;border-radius:10px}.btn-blue{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}.btn-green{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}.btn-purple{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
     .role-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.role-btn{background:#fff;border:1px solid #cbd5e1;color:#111827;text-align:left;font-weight:800;position:relative}
     .role-btn.selected{background:#111827;color:#fff;border-color:#111827}.role-btn.selected:after{content:"✓";position:absolute;right:10px;top:9px}
     .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.muted{color:var(--muted);font-size:12px;line-height:1.35}
@@ -147,7 +147,7 @@
             <button class="btn-light" onclick="exportBackup()">Backup</button>
             <button class="btn-green" onclick="copyShareLink()">Copy share link with data</button>
             <button class="btn-green" onclick="downloadPortableCopy()">Download copy with data</button>
-            <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
+            <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
             <label class="filebtn btn-light">
               Import backup
               <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
@@ -176,47 +176,33 @@
           </div>
 
 
-          <div class="import-panel" id="githubPanel">
+          <div class="import-panel" id="slackWorkflowPanel">
             <div class="import-grid">
               <div>
-                <label>GitHub owner / org</label>
-                <input id="ghOwner" placeholder="Example: your-username or org-name" />
-                <label>Repository</label>
-                <input id="ghRepo" placeholder="Example: indirect-tracker" />
-                <div class="row">
-                  <div>
-                    <label>Branch</label>
-                    <input id="ghBranch" value="main" />
-                  </div>
-                  <div>
-                    <label>Data file path</label>
-                    <input id="ghPath" value="data.json" />
-                  </div>
-                </div>
-                <label>Fine-grained PAT</label>
-                <input id="ghToken" type="password" placeholder="Saved only in this browser" />
+                <label>Slack Workflow Web Request URL</label>
+                <input id="swWebhookUrl" type="password" placeholder="https://hooks.slack.com/triggers/..." />
                 <label style="display:flex;gap:8px;align-items:center;margin-top:10px">
-                  <input id="ghAutoSave" type="checkbox" style="width:auto" />
-                  Auto-save changes to GitHub
+                  <input id="swAutoPost" type="checkbox" style="width:auto" />
+                  Auto-post after successful GitHub save
                 </label>
                 <p class="muted">
-                  Token is stored only in this browser local storage. Do not upload/share a copy of the app that contains a token.
-                  Use a fine-grained PAT scoped to only this repo with Contents: Read and Write.
+                  Use your Slack Workflow trigger URL. The workflow should have a variable called <b>Text</b>.
+                  The message step should contain only that Text variable.
                 </p>
               </div>
               <div>
-                <label>GitHub sync</label>
-                <div class="preview-box" id="githubPreview">Not configured yet.</div>
+                <label>Slack workflow preview</label>
+                <div class="preview-box" id="slackWorkflowPreview">Not configured yet.</div>
                 <div class="row" style="margin-top:8px">
-                  <button class="btn-dark" onclick="saveGithubSettings()">Save settings</button>
-                  <button class="btn-light" onclick="loadFromGithub()">Load from GitHub</button>
+                  <button class="btn-dark" onclick="saveSlackWorkflowSettings()">Save Slack workflow settings</button>
+                  <button class="btn-light" onclick="testSlackWorkflow()">Test Slack</button>
                 </div>
                 <div class="row" style="margin-top:8px">
-                  <button class="btn-green" onclick="saveToGithub()">Save tracker to GitHub</button>
+                  <button class="btn-green" onclick="postSlackWorkflowNow()">Post update now</button>
                   <button class="btn-light" onclick="copyGithubPagesLink()">Copy app link</button>
                 </div>
                 <p class="muted">
-                  For Slack, post the GitHub Pages app link instead of a huge data link. Data lives in data.json.
+                  Slack will post the normal GitHub Pages app link, not a huge data link.
                 </p>
               </div>
             </div>
@@ -372,7 +358,6 @@ function id(){
 function saveStorage(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people }));
   showAutosaved();
-  queueGithubSave();
 }
 function loadStorage(){
   try{
@@ -1019,242 +1004,129 @@ function downloadPortableCopy(){
 }
 
 
-const GITHUB_SETTINGS_KEY = STORAGE_KEY + "_github_settings_v1";
-let githubSaveTimer = null;
-let githubSaving = false;
-let suppressGithubAutoSave = false;
+const SLACK_WORKFLOW_SETTINGS_KEY = STORAGE_KEY + "_slack_workflow_settings_v1";
 
-function b64EncodeUnicode(str){
-  const bytes = new TextEncoder().encode(str);
-  let binary = "";
-  bytes.forEach(b => binary += String.fromCharCode(b));
-  return btoa(binary);
-}
-
-function b64DecodeUnicode(b64){
-  const binary = atob(String(b64 || "").replace(/\s/g, ""));
-  const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
-}
-
-function getGithubSettings(){
+function getSlackWorkflowSettings(){
   try{
-    return JSON.parse(localStorage.getItem(GITHUB_SETTINGS_KEY) || "{}");
+    return JSON.parse(localStorage.getItem(SLACK_WORKFLOW_SETTINGS_KEY) || "{}");
   }catch(e){
     return {};
   }
 }
 
-function loadGithubSettings(){
-  const s = getGithubSettings();
-  const fields = {
-    ghOwner: s.owner || "",
-    ghRepo: s.repo || "",
-    ghBranch: s.branch || "main",
-    ghPath: s.path || "data.json",
-    ghToken: s.token || ""
-  };
-  Object.entries(fields).forEach(([id, value]) => {
-    const el = document.getElementById(id);
-    if(el) el.value = value;
-  });
-  const auto = document.getElementById("ghAutoSave");
-  if(auto) auto.checked = !!s.autoSave;
-  renderGithubPreview();
+function loadSlackWorkflowSettings(){
+  const s = getSlackWorkflowSettings();
+  const url = document.getElementById("swWebhookUrl");
+  const auto = document.getElementById("swAutoPost");
+  if(url) url.value = s.webhookUrl || "";
+  if(auto) auto.checked = !!s.autoPost;
+  renderSlackWorkflowPreview();
 }
 
-function saveGithubSettings(){
+function saveSlackWorkflowSettings(){
   const settings = {
-    owner: cleanCell(document.getElementById("ghOwner")?.value || ""),
-    repo: cleanCell(document.getElementById("ghRepo")?.value || ""),
-    branch: cleanCell(document.getElementById("ghBranch")?.value || "main"),
-    path: cleanCell(document.getElementById("ghPath")?.value || "data.json"),
-    token: cleanCell(document.getElementById("ghToken")?.value || ""),
-    autoSave: !!document.getElementById("ghAutoSave")?.checked
+    webhookUrl: cleanCell(document.getElementById("swWebhookUrl")?.value || ""),
+    autoPost: !!document.getElementById("swAutoPost")?.checked
   };
-  localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings));
-  renderGithubPreview();
-  toast("GitHub settings saved");
+  localStorage.setItem(SLACK_WORKFLOW_SETTINGS_KEY, JSON.stringify(settings));
+  renderSlackWorkflowPreview();
+  toast("Slack workflow settings saved");
 }
 
-function toggleGithubPanel(){
-  const panel = document.getElementById("githubPanel");
+function toggleSlackWorkflowPanel(){
+  const panel = document.getElementById("slackWorkflowPanel");
   if(panel){
     panel.classList.toggle("show");
-    loadGithubSettings();
+    loadSlackWorkflowSettings();
   }
 }
 
-function githubConfigured(){
-  const s = getGithubSettings();
-  return !!(s.owner && s.repo && s.branch && s.path);
+function getPublicAppLink(){
+  try{
+    const gh = getGithubSettings();
+    if(gh && gh.owner && gh.repo){
+      return `https://${gh.owner}.github.io/${gh.repo}/`;
+    }
+  }catch(e){}
+  return location.href.split("#")[0];
 }
 
-function githubHeaders(includeAuth){
-  const s = getGithubSettings();
-  const headers = {
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28"
+function buildSlackWorkflowPayload(reason){
+  const now = new Date().toLocaleString();
+  const appLink = getPublicAppLink();
+
+  const roleSummary = roles.map(role => {
+    const count = people.filter(p => Array.isArray(p.roles) && p.roles.includes(role)).length;
+    return count ? `${role}: ${count}` : null;
+  }).filter(Boolean).join(" • ");
+
+  const text =
+    `Indirect Tracker updated${reason ? " — " + reason : ""}\n` +
+    `Updated: ${now}\n` +
+    `Logins: ${people.length}\n` +
+    (roleSummary ? `Roles: ${roleSummary}\n` : "") +
+    `Open tracker: ${appLink}`;
+
+  return {
+    Text: text,
+    text,
+    updated_time: now,
+    login_count: String(people.length),
+    role_summary: roleSummary || "No role summary",
+    app_link: appLink
   };
-  if(includeAuth && s.token) headers.Authorization = "Bearer " + s.token;
-  return headers;
 }
 
-function githubContentsUrl(){
-  const s = getGithubSettings();
-  return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(s.branch)}`;
-}
-
-function githubPutUrl(){
-  const s = getGithubSettings();
-  return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path.split("/").map(encodeURIComponent).join("/")}`;
-}
-
-function githubPagesUrl(){
-  const s = getGithubSettings();
-  if(!s.owner || !s.repo) return "";
-  return `https://${s.owner}.github.io/${s.repo}/`;
-}
-
-function renderGithubPreview(){
-  const box = document.getElementById("githubPreview");
+function renderSlackWorkflowPreview(){
+  const box = document.getElementById("slackWorkflowPreview");
   if(!box) return;
-  const s = getGithubSettings();
-  const configured = githubConfigured();
+  const s = getSlackWorkflowSettings();
+  const appLink = getPublicAppLink();
   box.innerHTML =
-    `<b>Status:</b> ${configured ? "Configured" : "Not configured"}<br>` +
-    `<b>Repo:</b> ${escapeHtml(s.owner || "-")}/${escapeHtml(s.repo || "-")}<br>` +
-    `<b>Branch:</b> ${escapeHtml(s.branch || "main")}<br>` +
-    `<b>Data file:</b> ${escapeHtml(s.path || "data.json")}<br>` +
-    `<b>Auto-save:</b> ${s.autoSave ? "ON" : "OFF"}<br>` +
-    `<b>GitHub Pages:</b> ${s.owner && s.repo ? escapeHtml(githubPagesUrl()) : "-"}`;
+    `<b>Status:</b> ${s.webhookUrl ? "Webhook saved" : "Not configured"}<br>` +
+    `<b>Auto-post:</b> ${s.autoPost ? "ON" : "OFF"}<br>` +
+    `<b>Logins:</b> ${people.length}<br>` +
+    `<b>App link:</b> ${escapeHtml(appLink)}`;
 }
 
-async function loadFromGithub(){
-  saveGithubSettings();
-  const s = getGithubSettings();
-  if(!githubConfigured()){
-    toast("Fill GitHub owner/repo/branch/path first");
-    return;
+async function sendSlackWorkflow(reason){
+  const s = getSlackWorkflowSettings();
+  const webhookUrl = (s.webhookUrl || "").trim();
+
+  if(!webhookUrl){
+    toast("Add Slack workflow URL first");
+    return false;
   }
 
   try{
-    const res = await fetch(githubContentsUrl(), { headers: githubHeaders(true), cache: "no-store" });
-    if(!res.ok){
-      throw new Error("GitHub load failed: " + res.status);
-    }
-
-    const file = await res.json();
-    const json = b64DecodeUnicode(file.content || "");
-    const data = JSON.parse(json);
-
-    if(Array.isArray(data.roles) && data.roles.length) roles = data.roles;
-    if(Array.isArray(data.people)){
-      people = data.people.map(p => ({
-        ...p,
-        shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
-      }));
-    }
-
-    suppressGithubAutoSave = true;
-    saveStorage();
-    suppressGithubAutoSave = false;
-    render();
-    renderGithubPreview();
-    toast(`Loaded ${people.length} logins from GitHub`);
-  }catch(e){
-    console.error(e);
-    toast(e.message || "GitHub load failed");
-  }
-}
-
-async function getGithubFileSha(){
-  try{
-    const res = await fetch(githubContentsUrl(), { headers: githubHeaders(true), cache: "no-store" });
-    if(res.status === 404) return null;
-    if(!res.ok) throw new Error("Could not check existing data file: " + res.status);
-    const file = await res.json();
-    return file.sha || null;
-  }catch(e){
-    if(String(e.message || "").includes("404")) return null;
-    throw e;
-  }
-}
-
-async function saveToGithub(){
-  saveGithubSettings();
-  const s = getGithubSettings();
-  if(!githubConfigured()){
-    toast("Fill GitHub owner/repo/branch/path first");
-    return;
-  }
-  if(!s.token){
-    toast("PAT required to save to GitHub");
-    return;
-  }
-  if(githubSaving) return;
-
-  githubSaving = true;
-  try{
-    const sha = await getGithubFileSha();
-    const data = {
-      ...getPortableData(),
-      source: "github",
-      updatedAt: new Date().toISOString()
-    };
-
-    const body = {
-      message: `Update indirect tracker data (${people.length} logins)`,
-      content: b64EncodeUnicode(JSON.stringify(data, null, 2)),
-      branch: s.branch
-    };
-    if(sha) body.sha = sha;
-
-    const res = await fetch(githubPutUrl(), {
-      method: "PUT",
-      headers: {
-        ...githubHeaders(true),
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
+    await fetch(webhookUrl, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify(buildSlackWorkflowPayload(reason || "updated"))
     });
-
-    if(!res.ok){
-      let detail = "";
-      try{ detail = (await res.json()).message || ""; }catch(_){}
-      throw new Error("GitHub save failed: " + res.status + (detail ? " - " + detail : ""));
-    }
-
-    toast("Saved tracker data to GitHub");
-    renderGithubPreview();
+    toast("Sent update to Slack workflow");
+    return true;
   }catch(e){
     console.error(e);
-    toast(e.message || "GitHub save failed");
-  }finally{
-    githubSaving = false;
+    toast("Slack workflow send failed");
+    return false;
   }
 }
 
-function queueGithubSave(){
-  if(suppressGithubAutoSave) return;
-  const s = getGithubSettings();
-  if(!s.autoSave || !s.token || !githubConfigured()) return;
-  clearTimeout(githubSaveTimer);
-  githubSaveTimer = setTimeout(() => saveToGithub(), 1800);
+async function testSlackWorkflow(){
+  saveSlackWorkflowSettings();
+  await sendSlackWorkflow("test message");
 }
 
-async function copyGithubPagesLink(){
-  const link = githubPagesUrl();
-  if(!link){
-    toast("Enter GitHub owner/repo first");
-    return;
-  }
-  try{
-    await navigator.clipboard.writeText(link);
-    toast("GitHub Pages app link copied");
-  }catch(e){
-    prompt("Copy this app link:", link);
-  }
+async function postSlackWorkflowNow(){
+  saveSlackWorkflowSettings();
+  await sendSlackWorkflow("manual post");
+}
+
+function maybePostSlackAfterGithubSave(reason){
+  const s = getSlackWorkflowSettings();
+  if(!s.autoPost || !s.webhookUrl) return;
+  sendSlackWorkflow(reason || "saved to GitHub");
 }
 
 loadStorage();
