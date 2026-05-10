@@ -400,7 +400,8 @@ function showTab(name){
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   event.target.classList.add("active");
   document.getElementById("tab-" + name).classList.add("active");
-  if(name === "decoder"){ renderDecoder(); renderDaysControls(); renderDaysView(); renderShiftReference(); }
+  if(name === "decoder"){ renderDecoder(); renderDaysControls(); renderDaysView(); renderShiftReference();
+autoLoadPublicGithubData(); }
 }
 
 function decodeShift(codeRaw){
@@ -1127,6 +1128,34 @@ function maybePostSlackAfterGithubSave(reason){
   const s = getSlackWorkflowSettings();
   if(!s.autoPost || !s.webhookUrl) return;
   sendSlackWorkflow(reason || "saved to GitHub");
+}
+
+
+async function autoLoadPublicGithubData(){
+  // GitHub Pages should read data.json automatically, without a PAT.
+  // The PAT is only needed for saving changes back to GitHub.
+  try{
+    const url = "./data.json?ts=" + Date.now();
+    const res = await fetch(url, { cache: "no-store" });
+    if(!res.ok) return;
+
+    const data = await res.json();
+    if(!data || !Array.isArray(data.people) || data.people.length === 0) return;
+
+    roles = Array.isArray(data.roles) && data.roles.length ? data.roles : roles;
+    people = data.people.map(p => ({
+      ...p,
+      shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
+    }));
+
+    saveStorage();
+    render();
+    try{ renderGithubPreview(); }catch(e){}
+    try{ renderSlackWorkflowPreview(); }catch(e){}
+    toast(`Loaded ${people.length} logins from GitHub data.json`);
+  }catch(e){
+    console.warn("Auto-load data.json failed", e);
+  }
 }
 
 loadStorage();
