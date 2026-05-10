@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script id="embedded-data-bootstrap">window.INDIRECT_TRACKER_EMBEDDED_DATA = null;</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indirect Training Tracker + Shift Decoder</title>
+  <style>
+    :root{
+      --bg:#eef2f7; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#dbe3ee;
+      --dark:#111827; --dark2:#1f2937; --chip:#f1f5f9; --blue:#2563eb;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{width:100%;max-width:none;margin:0 auto;padding:12px}
+    .top{background:linear-gradient(135deg,var(--dark),var(--dark2));color:#fff;border-radius:18px;padding:18px;box-shadow:0 12px 28px rgba(15,23,42,.18);display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .top h1{margin:0;font-size:26px}.top p{margin:5px 0 0;color:#cbd5e1;font-size:14px;max-width:900px}
+    .stats{display:flex;gap:10px;flex-wrap:wrap}.stat{min-width:92px;text-align:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px 12px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:#cbd5e1}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.tabbtn{background:#fff;border:1px solid #cbd5e1;color:#111827}.tabbtn.active{background:#111827;color:#fff;border-color:#111827}
+    .tab{display:none}.tab.active{display:block}
+    .grid{display:grid;grid-template-columns:330px minmax(0,1fr);gap:14px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,.08);overflow:hidden;min-width:0}
+    .card h2{margin:0;padding:14px 15px;font-size:18px;border-bottom:1px solid var(--line);background:#fbfdff;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-body{padding:14px}
+    label{display:block;font-size:13px;font-weight:800;margin:10px 0 5px}
+    input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:10px 11px;font-size:14px;outline:none;background:#fff}
+    input:focus,select:focus,textarea:focus{border-color:#111827}textarea{resize:vertical;min-height:82px}
+    button,.filebtn{border:0;border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn-dark{background:#111827;color:#fff}.btn-dark:hover{background:#1f2937}
+    .btn-light{background:#f8fafc;border:1px solid #cbd5e1;color:#111827}.btn-light:hover{background:#eef2ff}
+    .btn-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}.btn-small{padding:6px 8px;font-size:12px;border-radius:10px}.btn-blue{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}.btn-green{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+    .role-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.role-btn{background:#fff;border:1px solid #cbd5e1;color:#111827;text-align:left;font-weight:800;position:relative}
+    .role-btn.selected{background:#111827;color:#fff;border-color:#111827}.role-btn.selected:after{content:"✓";position:absolute;right:10px;top:9px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.muted{color:var(--muted);font-size:12px;line-height:1.35}
+    .filters{display:grid;grid-template-columns:minmax(180px,1fr) 140px 135px 130px;gap:8px;padding:14px;border-bottom:1px solid var(--line);background:#fbfdff}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px;background:#fbfdff;border-bottom:1px solid var(--line)}
+    .role-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-bottom:12px}.role-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:left;color:var(--text)}
+    .role-card.active{background:#111827;color:#fff;border-color:#111827}.role-card b{display:block;font-size:20px;margin-bottom:3px}.role-card span{font-size:13px}
+    .table-wrap{width:100%;max-width:100%;overflow-x:auto}
+    table{width:100%;border-collapse:collapse;min-width:0;table-layout:fixed}
+    th{background:#f8fafc;color:#475569;text-transform:uppercase;letter-spacing:.04em;font-size:12px;text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);position:sticky;top:0}
+    td{padding:8px 9px;border-bottom:1px solid #eef2f7;vertical-align:middle;word-break:break-word}tr:hover td{background:#fbfdff}
+    .tracker-table th:nth-child(1),.tracker-table td:nth-child(1){width:18%}.tracker-table th:nth-child(2),.tracker-table td:nth-child(2){width:8%}.tracker-table th:nth-child(3),.tracker-table td:nth-child(3){width:16%}.tracker-table th:nth-child(4),.tracker-table td:nth-child(4){width:24%}.tracker-table th:nth-child(5),.tracker-table td:nth-child(5){width:15%}.tracker-table th:nth-child(6),.tracker-table td:nth-child(6){width:9%}.tracker-table th:nth-child(7),.tracker-table td:nth-child(7){width:10%;text-align:right}
+    .login{font-weight:900;font-size:14px}.name{font-size:12px;color:var(--muted);margin-top:3px}.chips{display:flex;gap:4px;flex-wrap:wrap}
+    .chip{display:inline-flex;align-items:center;background:var(--chip);border:1px solid #e2e8f0;border-radius:999px;padding:3px 7px;font-size:11px;font-weight:800;white-space:nowrap}
+    .chip.ws{background:#dbeafe;color:#1e40af}.chip.ps{background:#dcfce7;color:#166534}.chip.pg{background:#fee2e2;color:#991b1b}.chip.slam{background:#fef9c3;color:#854d0e}.chip.pt{background:#ede9fe;color:#5b21b6}.chip.tc{background:#fce7f3;color:#9d174d}.chip.jb{background:#ffedd5;color:#9a3412}.chip.unknown{background:#e2e8f0;color:#334155}
+    .status{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;border:1px solid transparent}
+    .s-Available{background:#dcfce7;color:#166534;border-color:#bbf7d0}.s-Busy{background:#fef3c7;color:#92400e;border-color:#fde68a}.s-Absent{background:#fee2e2;color:#991b1b;border-color:#fecaca}.s-Unknown{background:#e2e8f0;color:#334155;border-color:#cbd5e1}
+    .empty{text-align:center;padding:42px 15px;color:var(--muted)}.manage-roles{margin-top:14px}.pill-list{display:flex;gap:8px;flex-wrap:wrap}
+    .role-pill{display:inline-flex;align-items:center;gap:7px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:999px;padding:7px 10px;font-size:13px;font-weight:900}.x{border:0;background:#e2e8f0;width:20px;height:20px;padding:0;border-radius:999px;font-weight:900}
+    .toast{position:fixed;top:18px;right:18px;background:#111827;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none;z-index:20;font-weight:900}.toast.show{display:block}
+    .hidden{display:none}.import-panel{display:none;border-top:1px solid var(--line);background:#fff;padding:14px}.import-panel.show{display:block}
+    .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.badge{font-size:11px;font-weight:900;border-radius:999px;padding:4px 8px;background:#e2e8f0;color:#334155}
+    .preview-box{border:1px dashed #cbd5e1;background:#f8fafc;border-radius:12px;padding:10px;max-height:180px;overflow:auto;font-size:12px;color:#334155}
+    .decoder-grid{display:grid;grid-template-columns:380px minmax(0,1fr);gap:14px}
+    .week-grid{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px}
+    .day-card{border:1px solid var(--line);background:#fff;border-radius:16px;overflow:hidden;min-height:180px}
+    .day-head{background:#111827;color:#fff;padding:10px 12px;font-weight:900;display:flex;justify-content:space-between}.day-body{padding:9px;display:flex;flex-direction:column;gap:7px}
+    .person-mini{border:1px solid #e2e8f0;border-left:5px solid #94a3b8;border-radius:12px;padding:8px;background:#fbfdff}.person-mini b{display:block;font-size:13px}.person-mini span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+    .decode-result{display:flex;flex-direction:column;gap:8px}.decode-card{border:1px solid #e2e8f0;border-radius:14px;padding:11px;background:#fff}.decode-card b{font-size:16px}.decode-card .desc{color:var(--muted);font-size:13px;margin:5px 0}
+    .weekday-line{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}.weekday{border:1px solid #e2e8f0;border-radius:8px;padding:7px 4px;text-align:center;font-size:11px;font-weight:900;background:#f8fafc;color:#94a3b8}.weekday.on{background:#111827;color:#fff;border-color:#111827}
+    .ref-table{min-width:760px}
+    @media(max-width:1050px){.grid,.decoder-grid{grid-template-columns:1fr}.role-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.filters{grid-template-columns:1fr}table{min-width:900px}.week-grid{grid-template-columns:1fr}.import-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <h1>Indirect Training Tracker</h1>
+        <p>Now includes a Shift Code Decoder and a Days of Week tab. Codes like NA5 decode to Night + A pattern + flex group 5.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="statPeople">0</b><span>logins</span></div>
+        <div class="stat"><b id="statRoles">0</b><span>roles</span></div>
+        <div class="stat"><b id="statShown">0</b><span>shown</span></div><div class="stat"><b id="autosaveState">ON</b><span>autosave</span></div>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tabbtn active" onclick="showTab('tracker')">Indirect Tracker</button>
+      <button class="tabbtn" onclick="showTab('decoder')">Shift Decoder + Days</button>
+    </div>
+
+    <section id="tab-tracker" class="tab active">
+      <div class="grid">
+        <section class="card">
+          <h2 id="formTitle">Add trained login</h2>
+          <div class="card-body">
+            <input type="hidden" id="editId" />
+
+            <label>Name</label>
+            <input id="name" placeholder="Optional, e.g. Silvestre, Kyle" autocomplete="off" />
+
+            <label>Login</label>
+            <input id="login" placeholder="Example: lkysilve" autocomplete="off" />
+
+            <label>Shift code</label>
+            <input id="shiftCode" placeholder="Example: NA5 / NB1 / NF6 / PT101" autocomplete="off" />
+
+            <label>Status</label>
+            <select id="status">
+              <option>Available</option>
+              <option>Busy</option>
+              <option>Absent</option>
+              <option>Unknown</option>
+            </select>
+
+            <label>Trained roles</label>
+            <div class="role-buttons" id="roleButtons"></div>
+
+            <label>Notes</label>
+            <textarea id="notes" placeholder="Optional: strong on west side, can cover breaks, still new, etc."></textarea>
+
+            <div class="row" style="margin-top:12px">
+              <button class="btn-dark" onclick="savePerson()">Save</button>
+              <button class="btn-light" onclick="resetForm()">Cancel</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>
+            <span>Find someone trained</span>
+            <span class="badge" id="sourceBadge">Manual list</span>
+          </h2>
+
+          <div class="filters">
+            <input id="search" placeholder="Search login, name, shift, role, or notes" oninput="render()" />
+            <select id="roleFilter" onchange="render()"></select>
+            <select id="statusFilter" onchange="render()">
+              <option>All statuses</option>
+              <option>Available</option>
+              <option>Busy</option>
+              <option>Absent</option>
+              <option>Unknown</option>
+            </select>
+            <button class="btn-light" onclick="toggleAvailableOnly()" id="availableBtn">Available only: OFF</button>
+          </div>
+
+          <div class="actions">
+            <button class="btn-blue" onclick="toggleImport()">Paste sheet import</button>
+            <button class="btn-light" onclick="copyShown()">Copy shown</button>
+            <button class="btn-light" onclick="exportCsv()">Export CSV</button>
+            <button class="btn-light" onclick="exportBackup()">Backup</button>
+            <button class="btn-green" onclick="copyShareLink()">Copy share link with data</button>
+            <button class="btn-green" onclick="downloadPortableCopy()">Download copy with data</button>
+            <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
+            <label class="filebtn btn-light">
+              Import backup
+              <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
+            </label>
+            <button class="btn-light" onclick="loadSample()">Sample</button>
+            <button class="btn-danger" onclick="clearAll()">Clear</button>
+          </div>
+
+          <div class="import-panel" id="importPanel">
+            <div class="import-grid">
+              <div>
+                <label>Paste from Excel / Google Sheets / Quip</label>
+                <textarea id="pasteBox" style="min-height:170px" placeholder="Copy the table, then paste here. Expected columns: SHIFT CODE | SLAM NAME | SLAM LOGIN | PG NAME | PG LOGIN | PS NAME | PS LOGIN | WS NAME | WS LOGIN | PT NAME | PT LOGIN"></textarea>
+                <div class="row" style="margin-top:8px">
+                  <button class="btn-dark" onclick="importPastedSheet(false)">Import / merge</button>
+                  <button class="btn-danger" onclick="importPastedSheet(true)">Replace all</button>
+                </div>
+                <p class="muted">It will merge duplicate logins and combine their roles. PT stays as its own role.</p>
+              </div>
+              <div>
+                <label>Import preview</label>
+                <div class="preview-box" id="importPreview">Nothing imported yet.</div>
+                <p class="muted">Shift codes are decoded automatically into working days in the separate tab.</p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="import-panel" id="githubPanel">
+            <div class="import-grid">
+              <div>
+                <label>GitHub owner / org</label>
+                <input id="ghOwner" placeholder="Example: your-username or org-name" />
+                <label>Repository</label>
+                <input id="ghRepo" placeholder="Example: indirect-tracker" />
+                <div class="row">
+                  <div>
+                    <label>Branch</label>
+                    <input id="ghBranch" value="main" />
+                  </div>
+                  <div>
+                    <label>Data file path</label>
+                    <input id="ghPath" value="data.json" />
+                  </div>
+                </div>
+                <label>Fine-grained PAT</label>
+                <input id="ghToken" type="password" placeholder="Saved only in this browser" />
+                <label style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                  <input id="ghAutoSave" type="checkbox" style="width:auto" />
+                  Auto-save changes to GitHub
+                </label>
+                <p class="muted">
+                  Token is stored only in this browser local storage. Do not upload/share a copy of the app that contains a token.
+                  Use a fine-grained PAT scoped to only this repo with Contents: Read and Write.
+                </p>
+              </div>
+              <div>
+                <label>GitHub sync</label>
+                <div class="preview-box" id="githubPreview">Not configured yet.</div>
+                <div class="row" style="margin-top:8px">
+                  <button class="btn-dark" onclick="saveGithubSettings()">Save settings</button>
+                  <button class="btn-light" onclick="loadFromGithub()">Load from GitHub</button>
+                </div>
+                <div class="row" style="margin-top:8px">
+                  <button class="btn-green" onclick="saveToGithub()">Save tracker to GitHub</button>
+                  <button class="btn-light" onclick="copyGithubPagesLink()">Copy app link</button>
+                </div>
+                <p class="muted">
+                  For Slack, post the GitHub Pages app link instead of a huge data link. Data lives in data.json.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="role-cards" id="roleCards"></div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="tracker-table">
+              <thead>
+                <tr>
+                  <th>Login</th>
+                  <th>Shift</th>
+                  <th>Days</th>
+                  <th>Trained for</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="peopleTable"></tbody>
+            </table>
+            <div class="empty" id="empty">No matching logins yet.</div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card manage-roles">
+        <h2>Manage role buttons</h2>
+        <div class="card-body">
+          <div class="row">
+            <input id="newRole" placeholder="Add another indirect role, e.g. Tote Runner" />
+            <button class="btn-dark" onclick="addRole()">Add role</button>
+          </div>
+          <div class="pill-list" id="rolePills" style="margin-top:12px"></div>
+        </div>
+      </section>
+    </section>
+
+    <section id="tab-decoder" class="tab">
+      <div class="decoder-grid">
+        <section class="card">
+          <h2>Decode shift code</h2>
+          <div class="card-body">
+            <label>Enter shift code</label>
+            <input id="decoderInput" placeholder="Example: NA5, NB1, NF6, PT101" oninput="renderDecoder()" />
+            <p class="muted">For full-time codes: 1st character = shift type, 2nd character = days pattern, 3rd character = flex group. Example: NA5 = Night + A pattern + group 5.</p>
+            <div class="decode-result" id="decodeResult" style="margin-top:12px"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Days of week view</h2>
+          <div class="card-body">
+            <div class="row" style="margin-bottom:12px">
+              <select id="daysRoleFilter" onchange="renderDaysView()"></select>
+              <select id="daysStatusFilter" onchange="renderDaysView()">
+                <option>All statuses</option>
+                <option>Available</option>
+                <option>Busy</option>
+                <option>Absent</option>
+                <option>Unknown</option>
+              </select>
+              <button class="btn-light" onclick="copyDaysView()">Copy day view</button>
+            </div>
+            <div class="week-grid" id="weekGrid"></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card manage-roles">
+        <h2>Shift code reference</h2>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table class="ref-table">
+              <thead><tr><th>Code</th><th>Meaning</th><th>Days / Time</th></tr></thead>
+              <tbody id="shiftReference"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+<script>
+const STORAGE_KEY = "indirectTrainingTrackerStandaloneV3_PT_Import";
+
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const DAY_SHORT = {Sunday:"Su", Monday:"M", Tuesday:"Tu", Wednesday:"W", Thursday:"Th", Friday:"F", Saturday:"Sa"};
+
+const SHIFT_TYPES = {
+  D: { label:"Day", range:"4:00 am – 9:59 am" },
+  S: { label:"Swing", range:"10:00 am – 2:59 pm" },
+  N: { label:"Night", range:"3:00 pm – 3:59 am" }
+};
+
+const SHIFT_PATTERNS = {
+  A: { label:"Su-W", days:["Sunday","Monday","Tuesday","Wednesday"] },
+  B: { label:"W-Sa", days:["Wednesday","Thursday","Friday","Saturday"] },
+  C: { label:"M/Tu/Th/F", days:["Monday","Tuesday","Thursday","Friday"] },
+  E: { label:"M-F", days:["Monday","Tuesday","Wednesday","Thursday","Friday"] },
+  F: { label:"M-Th", days:["Monday","Tuesday","Wednesday","Thursday"] },
+  G: { label:"Su-Th", days:["Sunday","Monday","Tuesday","Wednesday","Thursday"] },
+  H: { label:"F-M", days:["Friday","Saturday","Sunday","Monday"] },
+  I: { label:"Su/M/Th/F", days:["Sunday","Monday","Thursday","Friday"] },
+  J: { label:"Su/M/Tu/Th", days:["Sunday","Monday","Tuesday","Thursday"] },
+  K: { label:"Tu-F", days:["Tuesday","Wednesday","Thursday","Friday"] },
+  L: { label:"Sa-Tu", days:["Saturday","Sunday","Monday","Tuesday"] },
+  M: { label:"Tu-Sa", days:["Tuesday","Wednesday","Thursday","Friday","Saturday"] },
+  N: { label:"Th-Su", days:["Thursday","Friday","Saturday","Sunday"] },
+  O: { label:"Th-M", days:["Thursday","Friday","Saturday","Sunday","Monday"] },
+  P: { label:"Su/M/W/Th", days:["Sunday","Monday","Wednesday","Thursday"] },
+  Q: { label:"M/Tu/F/Sa", days:["Monday","Tuesday","Friday","Saturday"] },
+  R: { label:"Su/M/Tu/F", days:["Sunday","Monday","Tuesday","Friday"] },
+  S: { label:"W-Su", days:["Wednesday","Thursday","Friday","Saturday","Sunday"] },
+  T: { label:"Sa-W", days:["Saturday","Sunday","Monday","Tuesday","Wednesday"] },
+  U: { label:"Su/Tu/Th/F", days:["Sunday","Tuesday","Thursday","Friday"] },
+  V: { label:"Sa/Su/Tu/W", days:["Saturday","Sunday","Tuesday","Wednesday"] },
+  W: { label:"F-Tu", days:["Friday","Saturday","Sunday","Monday","Tuesday"] },
+  X: { label:"M/Th/F/Sa", days:["Monday","Thursday","Friday","Saturday"] },
+  Y: { label:"Tu/W/F/Sa", days:["Tuesday","Wednesday","Friday","Saturday"] },
+  Z: { label:"M/W/F/Sa", days:["Monday","Wednesday","Friday","Saturday"] },
+  "1": { label:"M/W/Th/F", days:["Monday","Wednesday","Thursday","Friday"] },
+  "2": { label:"Su/M/Th/Sa", days:["Sunday","Monday","Thursday","Saturday"] },
+  "3": { label:"M/Tu/W/F 4-9 TBD", days:["Monday","Tuesday","Wednesday","Friday"] }
+};
+
+const SPECIAL_CODES = {
+  PT101: { type:"Part Time", label:"Sa/Su PT - Days", days:["Saturday","Sunday"], note:"From network shift-code reference." },
+  AAAA: { type:"Variable", label:"Variable schedule", days:[], note:"Variable schedule, confirm actual days." },
+  AAAAT: { type:"CA Variable", label:"CA variable schedule", days:[], note:"Variable schedule, confirm actual days." }
+};
+
+let roles = ["SLAM","PG","PS","WS","PT","Tote Collector","Water Spider","Jam Buster"];
+let people = [];
+let selectedRoles = [];
+let availableOnly = false;
+let activeRoleCard = "All roles";
+
+const samplePeople = [
+  { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
+  { id: id(), name:"Peczer,Karoly", login:"peczerk", shiftCodes:["NB1"], roles:["PG","PS","PT"], status:"Available", notes:"" },
+  { id: id(), name:"Rahman, Ar", login:"rahrajam", shiftCodes:["NF6"], roles:["PG","WS","PT"], status:"Busy", notes:"" },
+  { id: id(), name:"Batonda,Tresor", login:"batonda", shiftCodes:["NA5"], roles:["SLAM"], status:"Available", notes:"" }
+];
+
+function id(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+}
+function saveStorage(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people }));
+  showAutosaved();
+  queueGithubSave();
+}
+function loadStorage(){
+  try{
+    const embedded = window.INDIRECT_TRACKER_EMBEDDED_DATA;
+    if(embedded && Array.isArray(embedded.people)){
+      if(Array.isArray(embedded.roles) && embedded.roles.length) roles = embedded.roles;
+      people = embedded.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
+      saveStorage();
+      return;
+    }
+
+    const hashData = readDataFromHash();
+    if(hashData && Array.isArray(hashData.people)){
+      if(Array.isArray(hashData.roles) && hashData.roles.length) roles = hashData.roles;
+      people = hashData.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
+      saveStorage();
+      history.replaceState(null, document.title, location.pathname + location.search);
+      return;
+    }
+
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    if(Array.isArray(saved.roles) && saved.roles.length) roles = saved.roles;
+    if(Array.isArray(saved.people)) {
+      people = saved.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
+    }
+  }catch(e){}
+}
+function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1700); }
+function cleanLogin(v){ return cleanCell(v).toLowerCase().replace(/\s+/g,""); }
+function cleanCell(v){ return String(v ?? "").replace(/\u00a0/g," ").trim(); }
+function normaliseShiftArray(v){
+  if(Array.isArray(v)) return [...new Set(v.map(cleanCell).filter(Boolean))].sort();
+  return cleanCell(v) ? [cleanCell(v)] : [];
+}
+function escapeHtml(v){ return String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+function escapeForJs(v){ return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+
+function showTab(name){
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById("tab-" + name).classList.add("active");
+  if(name === "decoder"){ renderDecoder(); renderDaysControls(); renderDaysView(); renderShiftReference(); }
+}
+
+function decodeShift(codeRaw){
+  const original = cleanCell(codeRaw).toUpperCase();
+  const code = original.replace(/\s+/g,"");
+  if(!code) return { code:"", valid:false, type:"", pattern:"", flex:"", start:"", days:[], label:"", summary:"Enter a shift code." };
+
+  const noDash = code.split("-")[0];
+  const start = (code.match(/-(\d{4})/) || [])[1] || "";
+
+  if(SPECIAL_CODES[noDash]){
+    const s = SPECIAL_CODES[noDash];
+    return { code:original, valid:true, special:true, type:s.type, pattern:original, flex:"", start, days:s.days, label:s.label, summary:`${original}: ${s.type} — ${s.label}`, note:s.note || "" };
+  }
+
+  if(/^PT\d{3}/.test(noDash)) return { code:original, valid:true, special:true, type:"Part Time", pattern:noDash.slice(2), flex:"", start, days:[], label:"Part Time code", summary:`${original}: Part Time code. Days depend on local mapping.`, note:"Known PT example: PT101 = Sa/Su PT - Days." };
+  if(/^RT\d{3}/.test(noDash)) return { code:original, valid:true, special:true, type:"Reduced Time", pattern:noDash.slice(2), flex:"", start, days:[], label:"Reduced Time code", summary:`${original}: Reduced Time code. Days depend on local mapping.` };
+  if(/^FT\d{3}/.test(noDash)) return { code:original, valid:true, special:true, type:"Flex Time", pattern:noDash.slice(2), flex:"", start, days:[], label:"Flex Time code", summary:`${original}: Flex Time code. Days depend on local mapping.` };
+
+  const typeChar = noDash.charAt(0);
+  const patternChar = noDash.charAt(1);
+  const flexChar = noDash.charAt(2) || "";
+
+  const typeInfo = SHIFT_TYPES[typeChar];
+  const patternInfo = SHIFT_PATTERNS[patternChar];
+
+  if(typeInfo && patternInfo){
+    const startText = start ? `, starts ${start.slice(0,2)}:${start.slice(2)}` : "";
+    const flexText = flexChar ? `, flex/group ${flexChar}` : "";
+    return {
+      code:original,
+      valid:true,
+      type:typeInfo.label,
+      typeRange:typeInfo.range,
+      pattern:patternChar,
+      flex:flexChar,
+      start,
+      days:patternInfo.days,
+      label:patternInfo.label,
+      summary:`${original}: ${typeInfo.label} shift, ${patternInfo.label}${flexText}${startText}`,
+      note:`Shift type range: ${typeInfo.range}`
+    };
+  }
+
+  if(typeInfo && !patternInfo){
+    return {
+      code:original,
+      valid:false,
+      type:typeInfo.label,
+      pattern:patternChar || "",
+      flex:flexChar,
+      start,
+      days:[],
+      label:"Unknown pattern",
+      summary:`${original}: ${typeInfo.label} shift but pattern '${patternChar || "?"}' is not in the reference.`,
+      note:"This may be a local/custom code. Confirm actual days manually."
+    };
+  }
+
+  return { code:original, valid:false, type:"Unknown", pattern:"", flex:"", start, days:[], label:"Unknown", summary:`${original}: not recognised.`, note:"Try codes like NA5, NB1, NF6, PT101." };
+}
+
+function daysShort(days){
+  return days && days.length ? days.map(d => DAY_SHORT[d] || d).join("/") : "Unknown";
+}
+
+function roleClass(role){
+  const r = role.toLowerCase();
+  if(r === "ws" || r.includes("water")) return "ws";
+  if(r === "ps" || r.includes("problem")) return "ps";
+  if(r === "pg") return "pg";
+  if(r === "slam") return "slam";
+  if(r === "pt") return "pt";
+  if(r.includes("tote")) return "tc";
+  if(r.includes("jam")) return "jb";
+  return "";
+}
+
+function renderRoles(){
+  const box = document.getElementById("roleButtons");
+  if(box) box.innerHTML = roles.map(role => `
+    <button type="button" class="role-btn ${selectedRoles.includes(role) ? "selected" : ""}" onclick="toggleRole('${escapeForJs(role)}')">${escapeHtml(role)}</button>
+  `).join("");
+
+  const filter = document.getElementById("roleFilter");
+  if(filter){
+    const current = filter.value || "All roles";
+    filter.innerHTML = `<option>All roles</option>` + roles.map(r => `<option>${escapeHtml(r)}</option>`).join("");
+    filter.value = roles.includes(current) ? current : "All roles";
+  }
+
+  const pills = document.getElementById("rolePills");
+  if(pills) pills.innerHTML = roles.map(role => `
+    <span class="role-pill">${escapeHtml(role)} <button class="x" onclick="removeRole('${escapeForJs(role)}')">×</button></span>
+  `).join("");
+}
+
+function toggleRole(role){
+  selectedRoles = selectedRoles.includes(role) ? selectedRoles.filter(r => r !== role) : [...selectedRoles, role];
+  renderRoles();
+  saveDraft();
+}
+
+function resetForm(){
+  document.getElementById("editId").value = "";
+  document.getElementById("name").value = "";
+  document.getElementById("login").value = "";
+  document.getElementById("shiftCode").value = "";
+  document.getElementById("status").value = "Available";
+  document.getElementById("notes").value = "";
+  document.getElementById("formTitle").textContent = "Add trained login";
+  selectedRoles = [];
+  renderRoles();
+  clearDraft();
+}
+
+function savePerson(){
+  const editId = document.getElementById("editId").value;
+  const name = cleanCell(document.getElementById("name").value);
+  const login = cleanLogin(document.getElementById("login").value);
+  const shiftCodes = normaliseShiftArray(document.getElementById("shiftCode").value.split(/[,\s]+/));
+  const status = document.getElementById("status").value;
+  const notes = cleanCell(document.getElementById("notes").value);
+
+  if(!login){ toast("Add a login first"); return; }
+  if(!selectedRoles.length){ toast("Select at least one trained role"); return; }
+
+  const duplicate = people.find(p => p.login.toLowerCase() === login && p.id !== editId);
+  if(duplicate){ toast("That login is already in the list"); return; }
+
+  const person = { id: editId || id(), name, login, shiftCodes, roles:[...selectedRoles].sort(), status, notes, updatedAt:new Date().toISOString() };
+
+  if(editId){ people = people.map(p => p.id === editId ? person : p); toast("Updated"); }
+  else{ people.push(person); toast("Added"); }
+
+  saveStorage(); resetForm(); render();
+}
+
+function editPerson(personId){
+  const p = people.find(x => x.id === personId); if(!p) return;
+  document.getElementById("editId").value = p.id;
+  document.getElementById("name").value = p.name || "";
+  document.getElementById("login").value = p.login;
+  document.getElementById("shiftCode").value = normaliseShiftArray(p.shiftCodes || []).join(", ");
+  document.getElementById("status").value = p.status || "Available";
+  document.getElementById("notes").value = p.notes || "";
+  document.getElementById("formTitle").textContent = "Edit login";
+  selectedRoles = [...p.roles];
+  renderRoles();
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+function deletePerson(personId){ people = people.filter(p => p.id !== personId); saveStorage(); render(); toast("Deleted"); }
+function changeStatus(personId,status){ people = people.map(p => p.id === personId ? {...p,status,updatedAt:new Date().toISOString()} : p); saveStorage(); render(); }
+
+function getPersonDays(p){
+  const set = new Set();
+  for(const code of normaliseShiftArray(p.shiftCodes)){
+    const d = decodeShift(code);
+    for(const day of d.days || []) set.add(day);
+  }
+  return [...set].sort((a,b) => DAYS.indexOf(a) - DAYS.indexOf(b));
+}
+
+function getFiltered(){
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const role = document.getElementById("roleFilter").value || "All roles";
+  const status = document.getElementById("statusFilter").value || "All statuses";
+
+  return people
+    .filter(p => !q || [p.login, p.name, normaliseShiftArray(p.shiftCodes).join(" "), getPersonDays(p).join(" "), p.roles.join(" "), p.notes].join(" ").toLowerCase().includes(q))
+    .filter(p => role === "All roles" || p.roles.includes(role))
+    .filter(p => activeRoleCard === "All roles" || p.roles.includes(activeRoleCard))
+    .filter(p => status === "All statuses" || p.status === status)
+    .filter(p => !availableOnly || p.status === "Available")
+    .sort((a,b) => a.login.localeCompare(b.login));
+}
+
+function render(){
+  renderRoles();
+  const rows = getFiltered();
+  document.getElementById("statPeople").textContent = people.length;
+  document.getElementById("statRoles").textContent = roles.length;
+  document.getElementById("statShown").textContent = rows.length;
+  document.getElementById("sourceBadge").textContent = people.length ? "Saved locally" : "Manual list";
+
+  const counts = {}; roles.forEach(r => counts[r] = people.filter(p => p.roles.includes(r)).length);
+  document.getElementById("roleCards").innerHTML =
+    [`<button class="role-card ${activeRoleCard==="All roles"?"active":""}" onclick="setActiveRole('All roles')"><b>${people.length}</b><span>All roles</span></button>`]
+      .concat(roles.map(role => `
+        <button class="role-card ${activeRoleCard===role?"active":""}" onclick="setActiveRole('${escapeForJs(role)}')">
+          <b>${counts[role] || 0}</b><span>${escapeHtml(role)}</span>
+        </button>`)).join("");
+
+  const tbody = document.getElementById("peopleTable");
+  const empty = document.getElementById("empty");
+  empty.style.display = rows.length ? "none" : "block";
+  tbody.innerHTML = rows.map(p => {
+    const shifts = normaliseShiftArray(p.shiftCodes);
+    const days = getPersonDays(p);
+    const status = p.status || "Unknown";
+    return `
+      <tr>
+        <td><div class="login">${escapeHtml(p.login)}</div><div class="name">${escapeHtml(p.name || "")}</div></td>
+        <td>${shifts.length ? shifts.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join(" ") : "—"}</td>
+        <td>${days.length ? daysShort(days) : `<span class="chip unknown">Unknown</span>`}</td>
+        <td><div class="chips">${p.roles.map(r => `<span class="chip ${roleClass(r)}">${escapeHtml(r)}</span>`).join("")}</div></td>
+        <td>
+          <select onchange="changeStatus('${p.id}', this.value)">
+            ${["Available","Busy","Absent","Unknown"].map(s => `<option ${status===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+          <div style="margin-top:5px"><span class="status s-${escapeHtml(status)}">${escapeHtml(status)}</span></div>
+        </td>
+        <td>${escapeHtml(p.notes || "—")}</td>
+        <td>
+          <button class="btn-light btn-small" onclick="editPerson('${p.id}')">Edit</button>
+          <button class="btn-danger btn-small" onclick="deletePerson('${p.id}')">Delete</button>
+        </td>
+      </tr>`;
+  }).join("");
+
+  renderDaysControls();
+  renderDaysView();
+  renderDecoder();
+}
+
+function setActiveRole(role){ activeRoleCard = role; render(); }
+function toggleAvailableOnly(){ availableOnly = !availableOnly; document.getElementById("availableBtn").textContent = "Available only: " + (availableOnly ? "ON" : "OFF"); render(); }
+
+function addRole(){
+  const input = document.getElementById("newRole");
+  const role = cleanCell(input.value);
+  if(!role) return;
+  if(roles.some(r => r.toLowerCase() === role.toLowerCase())){ toast("Role already exists"); return; }
+  roles.push(role); roles.sort(); input.value = ""; saveStorage(); render(); toast("Role added");
+}
+function removeRole(role){
+  if(!confirm("Remove role: " + role + "?")) return;
+  roles = roles.filter(r => r !== role);
+  people = people.map(p => ({...p, roles:p.roles.filter(r => r !== role)}));
+  selectedRoles = selectedRoles.filter(r => r !== role);
+  if(activeRoleCard === role) activeRoleCard = "All roles";
+  saveStorage(); render(); toast("Role removed");
+}
+
+async function copyShown(){
+  const rows = getFiltered();
+  const text = rows.map(p => `${p.login}${p.name ? " ("+p.name+")" : ""} — ${normaliseShiftArray(p.shiftCodes).join("/")} — ${daysShort(getPersonDays(p))} — ${p.roles.join(", ")} — ${p.status}`).join("\n");
+  try{ await navigator.clipboard.writeText(text); toast("Copied shown list"); }
+  catch(e){ prompt("Copy this:", text); }
+}
+function csvCell(v){ const s=String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; }
+function exportCsv(){
+  const csv = [
+    ["Login","Name","Shift Codes","Decoded Days","Trained Roles","Status","Notes","Updated"].join(","),
+    ...people.map(p => [p.login,p.name || "",normaliseShiftArray(p.shiftCodes).join("; "),daysShort(getPersonDays(p)),p.roles.join("; "),p.status,p.notes || "",p.updatedAt || ""].map(csvCell).join(","))
+  ].join("\n");
+  downloadFile("indirect-training-tracker-with-shift-days.csv", csv, "text/csv"); toast("CSV downloaded");
+}
+function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people},null,2), "application/json"); toast("Backup downloaded"); }
+function downloadFile(name,content,type){
+  const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),500);
+}
+function importBackup(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{ try{
+      const parsed=JSON.parse(reader.result); if(!Array.isArray(parsed.people)) throw new Error("Bad file");
+      people=parsed.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
+      if(Array.isArray(parsed.roles) && parsed.roles.length) roles=parsed.roles;
+      saveStorage(); render(); toast("Backup imported");
+    }catch(e){ toast("Import failed"); }
+    event.target.value="";
+  };
+  reader.readAsText(file);
+}
+function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); saveStorage(); render(); toast("Sample loaded"); }
+function clearAll(){ if(!confirm("Clear all logins?")) return; people=[]; saveStorage(); render(); toast("Cleared"); }
+function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
+
+function rolePairsForKnownSheet(){
+  return [
+    { role:"SLAM", nameIndex:1, loginIndex:2 },
+    { role:"PG", nameIndex:3, loginIndex:4 },
+    { role:"PS", nameIndex:5, loginIndex:6 },
+    { role:"WS", nameIndex:7, loginIndex:8 },
+    { role:"PT", nameIndex:9, loginIndex:10 }
+  ];
+}
+function parseDelimited(text){ return String(text || "").split(/\r?\n/).filter(l => l.trim() !== "").map(line => line.split("\t")); }
+function looksLikeLogin(v){ const s = cleanLogin(v); return /^[a-z][a-z0-9._-]{2,24}$/i.test(s) && !["login", "name"].includes(s); }
+function isHeaderRow(row){ const joined = row.map(cleanCell).join(" ").toLowerCase(); return joined.includes("shift") || joined.includes("login") || joined.includes("slam") || joined.includes("operators"); }
+
+function importPastedSheet(replaceAll){
+  const text = document.getElementById("pasteBox").value;
+  const rows = parseDelimited(text);
+  if(!rows.length){ toast("Paste your sheet first"); return; }
+
+  const imported = [];
+  const pairs = rolePairsForKnownSheet();
+
+  for(const row of rows){
+    if(isHeaderRow(row)) continue;
+    const shift = cleanCell(row[0]);
+    for(const pair of pairs){
+      const name = cleanCell(row[pair.nameIndex]);
+      const login = cleanLogin(row[pair.loginIndex]);
+      if(!looksLikeLogin(login)) continue;
+      imported.push({ login, name, shift, role: pair.role });
+    }
+  }
+
+  if(!imported.length){
+    document.getElementById("importPreview").innerHTML = "No logins detected. Make sure you copied the cells as tab-separated data from the sheet.";
+    toast("No logins detected");
+    return;
+  }
+
+  if(replaceAll) people = [];
+  const byLogin = new Map(people.map(p => [p.login.toLowerCase(), {...p, shiftCodes:normaliseShiftArray(p.shiftCodes || [])}]));
+
+  for(const item of imported){
+    const key = item.login.toLowerCase();
+    const existing = byLogin.get(key) || { id:id(), login:item.login, name:"", shiftCodes:[], roles:[], status:"Available", notes:"", updatedAt:"" };
+
+    if(item.name && !existing.name) existing.name = item.name;
+    if(item.shift && !existing.shiftCodes.includes(item.shift)) existing.shiftCodes.push(item.shift);
+    if(!existing.roles.includes(item.role)) existing.roles.push(item.role);
+    existing.roles.sort();
+    existing.shiftCodes.sort();
+    existing.updatedAt = new Date().toISOString();
+    byLogin.set(key, existing);
+  }
+
+  people = Array.from(byLogin.values()).sort((a,b) => a.login.localeCompare(b.login));
+
+  for(const r of ["SLAM","PG","PS","WS","PT"]){ if(!roles.includes(r)) roles.push(r); }
+  roles = [...new Set(roles)].sort((a,b) => {
+    const order = ["SLAM","PG","PS","WS","PT","Tote Collector","Water Spider","Jam Buster"];
+    const ai = order.indexOf(a), bi = order.indexOf(b);
+    if(ai >= 0 || bi >= 0) return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi);
+    return a.localeCompare(b);
+  });
+
+  saveStorage();
+  render();
+
+  const roleSummary = {};
+  imported.forEach(i => roleSummary[i.role] = (roleSummary[i.role] || 0) + 1);
+  document.getElementById("importPreview").innerHTML =
+    `<b>Imported ${imported.length} role entries</b><br>` +
+    `<b>Unique logins saved:</b> ${people.length}<br><br>` +
+    Object.keys(roleSummary).sort().map(r => `${escapeHtml(r)}: ${roleSummary[r]}`).join("<br>");
+
+  toast((replaceAll ? "Replaced with " : "Merged ") + imported.length + " entries");
+}
+
+function renderDecoder(){
+  const input = document.getElementById("decoderInput");
+  const box = document.getElementById("decodeResult");
+  if(!input || !box) return;
+
+  const raw = input.value || "";
+  const codes = raw.split(/[,\s]+/).map(cleanCell).filter(Boolean);
+  if(!codes.length){
+    box.innerHTML = `<div class="decode-card"><b>Example</b><div class="desc">Type NA5 or NB1 to decode the shift.</div>${weekdayHtml(["Sunday","Monday","Tuesday","Wednesday"])}</div>`;
+    return;
+  }
+
+  box.innerHTML = codes.map(code => {
+    const d = decodeShift(code);
+    return `<div class="decode-card">
+      <b>${escapeHtml(d.code)}</b>
+      <div class="desc">${escapeHtml(d.summary)}</div>
+      <div class="chips">
+        <span class="chip">${escapeHtml(d.type || "Unknown")}</span>
+        <span class="chip">${escapeHtml(d.label || "Unknown days")}</span>
+        ${d.flex ? `<span class="chip">Group ${escapeHtml(d.flex)}</span>` : ""}
+        ${d.start ? `<span class="chip">Start ${escapeHtml(d.start.slice(0,2)+":"+d.start.slice(2))}</span>` : ""}
+      </div>
+      ${weekdayHtml(d.days)}
+      ${d.note ? `<div class="muted" style="margin-top:8px">${escapeHtml(d.note)}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function weekdayHtml(days){
+  const set = new Set(days || []);
+  return `<div class="weekday-line">${DAYS.map(day => `<div class="weekday ${set.has(day) ? "on" : ""}">${DAY_SHORT[day]}</div>`).join("")}</div>`;
+}
+
+function renderDaysControls(){
+  const sel = document.getElementById("daysRoleFilter");
+  if(!sel) return;
+  const current = sel.value || "All roles";
+  sel.innerHTML = `<option>All roles</option>` + roles.map(r => `<option>${escapeHtml(r)}</option>`).join("");
+  sel.value = roles.includes(current) ? current : "All roles";
+}
+
+function renderDaysView(){
+  const grid = document.getElementById("weekGrid");
+  if(!grid) return;
+
+  const role = document.getElementById("daysRoleFilter")?.value || "All roles";
+  const status = document.getElementById("daysStatusFilter")?.value || "All statuses";
+  const byDay = {};
+  DAYS.forEach(day => byDay[day] = []);
+  byDay.Unknown = [];
+
+  for(const p of people){
+    if(role !== "All roles" && !p.roles.includes(role)) continue;
+    if(status !== "All statuses" && p.status !== status) continue;
+
+    const days = getPersonDays(p);
+    if(!days.length){
+      byDay.Unknown.push(p);
+    }else{
+      days.forEach(day => byDay[day].push(p));
+    }
+  }
+
+  const cards = DAYS.map(day => dayCard(day, byDay[day]));
+  if(byDay.Unknown.length) cards.push(dayCard("Unknown", byDay.Unknown));
+  grid.innerHTML = cards.join("");
+}
+
+function dayCard(day, rows){
+  rows = rows.sort((a,b) => a.login.localeCompare(b.login));
+  return `<div class="day-card">
+    <div class="day-head"><span>${escapeHtml(day)}</span><span>${rows.length}</span></div>
+    <div class="day-body">
+      ${rows.length ? rows.map(p => `<div class="person-mini">
+        <b>${escapeHtml(p.login)}</b>
+        <span>${escapeHtml(p.name || "")}</span>
+        <div class="chips" style="margin-top:6px">${normaliseShiftArray(p.shiftCodes).map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}${p.roles.map(r => `<span class="chip ${roleClass(r)}">${escapeHtml(r)}</span>`).join("")}</div>
+      </div>`).join("") : `<div class="muted">No one listed.</div>`}
+    </div>
+  </div>`;
+}
+
+async function copyDaysView(){
+  const role = document.getElementById("daysRoleFilter")?.value || "All roles";
+  const status = document.getElementById("daysStatusFilter")?.value || "All statuses";
+  const lines = [`Days of week view — role: ${role}, status: ${status}`];
+
+  for(const day of DAYS){
+    const rows = people.filter(p => {
+      if(role !== "All roles" && !p.roles.includes(role)) return false;
+      if(status !== "All statuses" && p.status !== status) return false;
+      return getPersonDays(p).includes(day);
+    }).sort((a,b) => a.login.localeCompare(b.login));
+    lines.push(`${day}: ${rows.map(p => p.login).join(", ") || "-"}`);
+  }
+
+  try{ await navigator.clipboard.writeText(lines.join("\n")); toast("Copied days view"); }
+  catch(e){ prompt("Copy this:", lines.join("\n")); }
+}
+
+function renderShiftReference(){
+  const tbody = document.getElementById("shiftReference");
+  if(!tbody) return;
+  const rows = [];
+
+  rows.push(["D", "Day shift type", "4:00 am – 9:59 am"]);
+  rows.push(["S", "Swing shift type", "10:00 am – 2:59 pm"]);
+  rows.push(["N", "Night shift type", "3:00 pm – 3:59 am"]);
+  rows.push(["PT", "Part Time", "PT101-399"]);
+  rows.push(["RT", "Reduced Time", "RT501-799"]);
+  rows.push(["FT", "Flex Time", "FT801-999"]);
+
+  for(const key of Object.keys(SHIFT_PATTERNS).sort()){
+    rows.push([key, "Shift name / day pattern", `${SHIFT_PATTERNS[key].label} (${daysShort(SHIFT_PATTERNS[key].days)})`]);
+  }
+
+  rows.push(["PT101", "Part-time known example", "Sa/Su PT - Days"]);
+
+  tbody.innerHTML = rows.map(r => `<tr><td><b>${escapeHtml(r[0])}</b></td><td>${escapeHtml(r[1])}</td><td>${escapeHtml(r[2])}</td></tr>`).join("");
+}
+
+
+function saveDraft(){
+  try{
+    const draft = {
+      name: document.getElementById("name")?.value || "",
+      login: document.getElementById("login")?.value || "",
+      shiftCode: document.getElementById("shiftCode")?.value || "",
+      status: document.getElementById("status")?.value || "Available",
+      notes: document.getElementById("notes")?.value || "",
+      selectedRoles
+    };
+    localStorage.setItem(STORAGE_KEY + "_draft", JSON.stringify(draft));
+  }catch(e){}
+}
+
+function loadDraft(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY + "_draft");
+    if(!raw) return;
+    const draft = JSON.parse(raw);
+    if(!draft) return;
+    if(document.getElementById("name")) document.getElementById("name").value = draft.name || "";
+    if(document.getElementById("login")) document.getElementById("login").value = draft.login || "";
+    if(document.getElementById("shiftCode")) document.getElementById("shiftCode").value = draft.shiftCode || "";
+    if(document.getElementById("status")) document.getElementById("status").value = draft.status || "Available";
+    if(document.getElementById("notes")) document.getElementById("notes").value = draft.notes || "";
+    if(Array.isArray(draft.selectedRoles)) selectedRoles = draft.selectedRoles.filter(r => roles.includes(r));
+    renderRoles();
+  }catch(e){}
+}
+
+function clearDraft(){
+  try{ localStorage.removeItem(STORAGE_KEY + "_draft"); }catch(e){}
+}
+
+function bindAutosaveInputs(){
+  ["name","login","shiftCode","status","notes"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener("input", saveDraft);
+    if(el) el.addEventListener("change", saveDraft);
+  });
+}
+
+
+function showAutosaved(){
+  const el = document.getElementById("autosaveState");
+  if(!el) return;
+  el.textContent = "SAVED";
+  el.style.color = "#bbf7d0";
+  clearTimeout(window.__autosaveTimer);
+  window.__autosaveTimer = setTimeout(() => {
+    el.textContent = "ON";
+    el.style.color = "";
+  }, 1000);
+}
+
+function getPortableData(){
+  return {
+    version: 4,
+    exportedAt: new Date().toISOString(),
+    roles,
+    people
+  };
+}
+
+function encodePortableData(data){
+  const json = JSON.stringify(data);
+  const utf8 = new TextEncoder().encode(json);
+  let binary = "";
+  utf8.forEach(byte => binary += String.fromCharCode(byte));
+  return btoa(binary);
+}
+
+function decodePortableData(encoded){
+  const binary = atob(encoded);
+  const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+  const json = new TextDecoder().decode(bytes);
+  return JSON.parse(json);
+}
+
+function readDataFromHash(){
+  if(!location.hash || !location.hash.startsWith("#data=")) return null;
+  try{
+    return decodePortableData(location.hash.slice(6));
+  }catch(e){
+    return null;
+  }
+}
+
+async function copyShareLink(){
+  const encoded = encodePortableData(getPortableData());
+  const link = location.href.split("#")[0] + "#data=" + encoded;
+  try{
+    await navigator.clipboard.writeText(link);
+    toast("Share link copied with data");
+  }catch(e){
+    prompt("Copy this share link:", link);
+  }
+}
+
+function downloadPortableCopy(){
+  const data = getPortableData();
+  let html = "<!doctype html>\n" + document.documentElement.outerHTML;
+
+  const payload = "window.INDIRECT_TRACKER_EMBEDDED_DATA = " + JSON.stringify(data).replace(/</g, "\\u003c") + ";";
+  if(html.includes("window.INDIRECT_TRACKER_EMBEDDED_DATA = null;")){
+    html = html.replace("window.INDIRECT_TRACKER_EMBEDDED_DATA = null;", payload);
+  }else{
+    html = html.replace("<head>", "<head><script id=\"embedded-data-bootstrap\">" + payload + "<\/script>");
+  }
+
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "indirect-tracker-with-my-data.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+  toast("Downloaded copy with data");
+}
+
+
+const GITHUB_SETTINGS_KEY = STORAGE_KEY + "_github_settings_v1";
+let githubSaveTimer = null;
+let githubSaving = false;
+let suppressGithubAutoSave = false;
+
+function b64EncodeUnicode(str){
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function b64DecodeUnicode(b64){
+  const binary = atob(String(b64 || "").replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+function getGithubSettings(){
+  try{
+    return JSON.parse(localStorage.getItem(GITHUB_SETTINGS_KEY) || "{}");
+  }catch(e){
+    return {};
+  }
+}
+
+function loadGithubSettings(){
+  const s = getGithubSettings();
+  const fields = {
+    ghOwner: s.owner || "",
+    ghRepo: s.repo || "",
+    ghBranch: s.branch || "main",
+    ghPath: s.path || "data.json",
+    ghToken: s.token || ""
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if(el) el.value = value;
+  });
+  const auto = document.getElementById("ghAutoSave");
+  if(auto) auto.checked = !!s.autoSave;
+  renderGithubPreview();
+}
+
+function saveGithubSettings(){
+  const settings = {
+    owner: cleanCell(document.getElementById("ghOwner")?.value || ""),
+    repo: cleanCell(document.getElementById("ghRepo")?.value || ""),
+    branch: cleanCell(document.getElementById("ghBranch")?.value || "main"),
+    path: cleanCell(document.getElementById("ghPath")?.value || "data.json"),
+    token: cleanCell(document.getElementById("ghToken")?.value || ""),
+    autoSave: !!document.getElementById("ghAutoSave")?.checked
+  };
+  localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings));
+  renderGithubPreview();
+  toast("GitHub settings saved");
+}
+
+function toggleGithubPanel(){
+  const panel = document.getElementById("githubPanel");
+  if(panel){
+    panel.classList.toggle("show");
+    loadGithubSettings();
+  }
+}
+
+function githubConfigured(){
+  const s = getGithubSettings();
+  return !!(s.owner && s.repo && s.branch && s.path);
+}
+
+function githubHeaders(includeAuth){
+  const s = getGithubSettings();
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+  if(includeAuth && s.token) headers.Authorization = "Bearer " + s.token;
+  return headers;
+}
+
+function githubContentsUrl(){
+  const s = getGithubSettings();
+  return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(s.branch)}`;
+}
+
+function githubPutUrl(){
+  const s = getGithubSettings();
+  return `https://api.github.com/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${s.path.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+function githubPagesUrl(){
+  const s = getGithubSettings();
+  if(!s.owner || !s.repo) return "";
+  return `https://${s.owner}.github.io/${s.repo}/`;
+}
+
+function renderGithubPreview(){
+  const box = document.getElementById("githubPreview");
+  if(!box) return;
+  const s = getGithubSettings();
+  const configured = githubConfigured();
+  box.innerHTML =
+    `<b>Status:</b> ${configured ? "Configured" : "Not configured"}<br>` +
+    `<b>Repo:</b> ${escapeHtml(s.owner || "-")}/${escapeHtml(s.repo || "-")}<br>` +
+    `<b>Branch:</b> ${escapeHtml(s.branch || "main")}<br>` +
+    `<b>Data file:</b> ${escapeHtml(s.path || "data.json")}<br>` +
+    `<b>Auto-save:</b> ${s.autoSave ? "ON" : "OFF"}<br>` +
+    `<b>GitHub Pages:</b> ${s.owner && s.repo ? escapeHtml(githubPagesUrl()) : "-"}`;
+}
+
+async function loadFromGithub(){
+  saveGithubSettings();
+  const s = getGithubSettings();
+  if(!githubConfigured()){
+    toast("Fill GitHub owner/repo/branch/path first");
+    return;
+  }
+
+  try{
+    const res = await fetch(githubContentsUrl(), { headers: githubHeaders(true), cache: "no-store" });
+    if(!res.ok){
+      throw new Error("GitHub load failed: " + res.status);
+    }
+
+    const file = await res.json();
+    const json = b64DecodeUnicode(file.content || "");
+    const data = JSON.parse(json);
+
+    if(Array.isArray(data.roles) && data.roles.length) roles = data.roles;
+    if(Array.isArray(data.people)){
+      people = data.people.map(p => ({
+        ...p,
+        shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
+      }));
+    }
+
+    suppressGithubAutoSave = true;
+    saveStorage();
+    suppressGithubAutoSave = false;
+    render();
+    renderGithubPreview();
+    toast(`Loaded ${people.length} logins from GitHub`);
+  }catch(e){
+    console.error(e);
+    toast(e.message || "GitHub load failed");
+  }
+}
+
+async function getGithubFileSha(){
+  try{
+    const res = await fetch(githubContentsUrl(), { headers: githubHeaders(true), cache: "no-store" });
+    if(res.status === 404) return null;
+    if(!res.ok) throw new Error("Could not check existing data file: " + res.status);
+    const file = await res.json();
+    return file.sha || null;
+  }catch(e){
+    if(String(e.message || "").includes("404")) return null;
+    throw e;
+  }
+}
+
+async function saveToGithub(){
+  saveGithubSettings();
+  const s = getGithubSettings();
+  if(!githubConfigured()){
+    toast("Fill GitHub owner/repo/branch/path first");
+    return;
+  }
+  if(!s.token){
+    toast("PAT required to save to GitHub");
+    return;
+  }
+  if(githubSaving) return;
+
+  githubSaving = true;
+  try{
+    const sha = await getGithubFileSha();
+    const data = {
+      ...getPortableData(),
+      source: "github",
+      updatedAt: new Date().toISOString()
+    };
+
+    const body = {
+      message: `Update indirect tracker data (${people.length} logins)`,
+      content: b64EncodeUnicode(JSON.stringify(data, null, 2)),
+      branch: s.branch
+    };
+    if(sha) body.sha = sha;
+
+    const res = await fetch(githubPutUrl(), {
+      method: "PUT",
+      headers: {
+        ...githubHeaders(true),
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if(!res.ok){
+      let detail = "";
+      try{ detail = (await res.json()).message || ""; }catch(_){}
+      throw new Error("GitHub save failed: " + res.status + (detail ? " - " + detail : ""));
+    }
+
+    toast("Saved tracker data to GitHub");
+    renderGithubPreview();
+  }catch(e){
+    console.error(e);
+    toast(e.message || "GitHub save failed");
+  }finally{
+    githubSaving = false;
+  }
+}
+
+function queueGithubSave(){
+  if(suppressGithubAutoSave) return;
+  const s = getGithubSettings();
+  if(!s.autoSave || !s.token || !githubConfigured()) return;
+  clearTimeout(githubSaveTimer);
+  githubSaveTimer = setTimeout(() => saveToGithub(), 1800);
+}
+
+async function copyGithubPagesLink(){
+  const link = githubPagesUrl();
+  if(!link){
+    toast("Enter GitHub owner/repo first");
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(link);
+    toast("GitHub Pages app link copied");
+  }catch(e){
+    prompt("Copy this app link:", link);
+  }
+}
+
+loadStorage();
+render();
+bindAutosaveInputs();
+loadDraft();
+renderShiftReference();
+</script>
+</body>
+</html>
