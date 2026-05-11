@@ -80,6 +80,49 @@
     @media(max-width:900px){.planner-controls{grid-template-columns:1fr 1fr}.planner-board{grid-template-columns:1fr}}
     @media(max-width:1050px){.grid,.decoder-grid{grid-template-columns:1fr}.role-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:760px){.filters{grid-template-columns:1fr}table{min-width:900px}.week-grid{grid-template-columns:1fr}.import-grid{grid-template-columns:1fr}}
+  
+    /* Shift Planner v2: SCC-style pick-and-choose board */
+    .planner-shell{display:grid;grid-template-columns:360px 1fr;gap:14px;align-items:start}
+    .planner-topbar{display:grid;grid-template-columns:repeat(6,minmax(135px,1fr));gap:10px;margin-bottom:12px}
+    .planner-pool{background:#f8fafc;border:1px solid #dbe3ee;border-radius:16px;overflow:hidden;position:sticky;top:10px}
+    .planner-pool-head{background:#111827;color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .planner-pool-head h3{margin:0;font-size:16px}.planner-pool-head .mini{font-size:12px;opacity:.85}
+    .planner-pool-controls{padding:10px;border-bottom:1px solid #dbe3ee;background:#fff}
+    .planner-pool-list{padding:8px;max-height:670px;overflow:auto}
+    .pool-person{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px;margin-bottom:8px;cursor:pointer}
+    .pool-person:hover{border-color:#2563eb;box-shadow:0 4px 12px rgba(37,99,235,.10)}
+    .pool-person.selected{border-color:#2563eb;background:#eff6ff}
+    .pool-login{font-weight:900;color:#0f172a}.pool-name{font-size:12px;color:#475569;margin-top:2px}
+    .pool-meta{font-size:12px;color:#64748b;margin-top:5px}
+    .pool-actions{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+    .pool-add{border:1px solid #cbd5e1;background:#f8fafc;border-radius:999px;padding:3px 7px;font-size:11px;font-weight:900;cursor:pointer}
+    .pool-add:hover{background:#111827;color:#fff}
+    .planner-board.scc-board{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:12px;align-items:start}
+    .scc-role-card{background:#fff;border:1px solid #d8dee8;border-radius:0;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    .scc-role-head{background:#e5e5e5;color:#000;padding:8px 10px;font-size:13px;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .scc-role-head .role-title{display:flex;align-items:center;gap:4px;white-space:nowrap}
+    .scc-role-head .filled{color:#b91c1c;font-weight:900}
+    .scc-role-head .required{color:#111827;font-weight:900}
+    .scc-role-actions{display:flex;align-items:center;gap:6px}
+    .scc-role-actions input{width:58px;height:28px;border-radius:8px;text-align:center;padding:2px 4px;background:#fff}
+    .scc-role-actions button{height:28px;padding:2px 7px;border-radius:8px}
+    .scc-table{width:100%;border-collapse:collapse;font-size:12px}
+    .scc-table th{background:#f8fafc;color:#0f172a;text-transform:none;letter-spacing:0;font-size:12px;text-align:center;padding:7px;border:1px solid #d8dee8}
+    .scc-table td{padding:6px;border:1px solid #d8dee8;background:#fff;vertical-align:middle}
+    .scc-table tr:hover td{background:#fbfdff}
+    .scc-login-cell{display:flex;align-items:center;gap:7px}
+    .scc-avatar{width:24px;height:24px;border-radius:999px;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#334155;flex:0 0 auto}
+    .scc-login b{display:block;font-size:12px}.scc-login span{display:block;color:#64748b;font-size:10px;margin-top:1px}
+    .scc-lock{display:flex;align-items:center;justify-content:center;gap:4px}
+    .lock-btn{border:0;background:transparent;cursor:pointer;font-size:16px;line-height:1}
+    .lock-btn.locked{color:#0b63ce}.lock-btn.unlocked{opacity:.45}
+    .scc-empty-row td{text-align:center;color:#64748b;background:#fafafa;padding:10px}
+    .scc-remove{border:0;background:#fee2e2;color:#991b1b;border-radius:999px;font-weight:900;cursor:pointer;padding:3px 7px}
+    .planner-summary{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
+    .planner-summary .pill{background:#fff;border:1px solid #dbe3ee;border-radius:999px;padding:7px 10px;font-weight:800}
+    @media(max-width:1200px){.planner-shell{grid-template-columns:1fr}.planner-pool{position:static}.planner-board.scc-board{grid-template-columns:repeat(2,minmax(260px,1fr))}}
+    @media(max-width:760px){.planner-topbar{grid-template-columns:1fr 1fr}.planner-board.scc-board{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -314,14 +357,15 @@
     </section>
 
 
+    
     <section id="tab-planner" class="tab">
       <section class="card">
         <h2>
           <span>Shift Planner</span>
-          <span class="badge">SCC-style rota board</span>
+          <span class="badge">SCC-style pick and choose</span>
         </h2>
         <div class="card-body">
-          <div class="planner-controls">
+          <div class="planner-topbar">
             <div>
               <label>Day</label>
               <select id="plannerDay" onchange="updatePlannerControl('day', this.value)">
@@ -345,8 +389,12 @@
               </select>
             </div>
             <div>
-              <label>Show role</label>
+              <label>Show role board</label>
               <select id="plannerRole" onchange="updatePlannerControl('role', this.value)"></select>
+            </div>
+            <div>
+              <label>Pool search</label>
+              <input id="plannerSearch" placeholder="Search login/name" oninput="updatePlannerControl('search', this.value)" />
             </div>
             <div>
               <label>Actions</label>
@@ -357,18 +405,30 @@
             </div>
           </div>
 
-          <p class="muted">
-            Use this to plan indirect coverage SCC-style. Set required headcount per role, then add trained logins into each bucket.
-            Filters above control who appears in the add dropdowns.
-          </p>
-
           <div class="planner-summary" id="plannerSummary"></div>
-          <div class="planner-board" id="plannerBoard"></div>
+
+          <div class="planner-shell">
+            <aside class="planner-pool">
+              <div class="planner-pool-head">
+                <h3>All logins</h3>
+                <span class="mini" id="plannerPoolCount">0 shown</span>
+              </div>
+              <div class="planner-pool-controls">
+                <p class="muted" style="margin:0">
+                  Click a login to select it, then press <b>Add selected</b> on a role board.
+                  Or use the small role chips on each login.
+                </p>
+              </div>
+              <div class="planner-pool-list" id="plannerPoolList"></div>
+            </aside>
+
+            <div class="planner-board scc-board" id="plannerBoard"></div>
+          </div>
         </div>
       </section>
     </section>
 
-    <section id="tab-decoder" class="tab">
+<section id="tab-decoder" class="tab">
       <div class="decoder-grid">
         <section class="card">
           <h2>Decode shift code</h2>
@@ -702,15 +762,33 @@ function getPersonDays(p){
 
 
 
+
 function defaultPlannerState(){
   return {
-    version: 1,
+    version: 2,
     day: "All days",
     shift: "",
     status: "Available",
     role: "All roles",
+    search: "",
+    selectedLogin: "",
     columns: {}
   };
+}
+
+function plannerRoleLabel(role){
+  const map = {
+    "PS": "Problem Solver",
+    "WS": "Water Spider",
+    "PG": "PG",
+    "PT": "PT",
+    "SLAM": "SLAM",
+    "Tote Collector": "Tote Collector",
+    "Water Spider": "Water Spider",
+    "Jam Buster": "Jam Buster",
+    "Team Lead": "Team Lead"
+  };
+  return map[role] || role;
 }
 
 function normalisePlannerState(state){
@@ -728,7 +806,10 @@ function normalisePlannerState(state){
     next.columns[role] = {
       required: Number.isFinite(Number(col.required)) ? Math.max(0, Number(col.required)) : 0,
       assigned: Array.isArray(col.assigned)
-        ? col.assigned.map(x => typeof x === "string" ? { login:x } : x).filter(x => x && cleanLogin(x.login)).map(x => ({ login: cleanLogin(x.login), note: cleanCell(x.note || "") }))
+        ? col.assigned
+            .map(x => typeof x === "string" ? { login:x } : x)
+            .filter(x => x && cleanLogin(x.login))
+            .map(x => ({ login: cleanLogin(x.login), note: cleanCell(x.note || ""), locked: !!x.locked }))
         : []
     };
   }
@@ -737,6 +818,8 @@ function normalisePlannerState(state){
   if(!DAYS.includes(next.day) && next.day !== "All days") next.day = "All days";
   if(!["Available","All statuses","Busy","Absent","Unknown"].includes(next.status)) next.status = "Available";
   next.shift = cleanCell(next.shift || "").toUpperCase();
+  next.search = cleanCell(next.search || "");
+  next.selectedLogin = cleanLogin(next.selectedLogin || "");
   return next;
 }
 
@@ -759,6 +842,7 @@ function savePlanner(){
 function updatePlannerControl(key, value){
   plannerState = normalisePlannerState(plannerState);
   if(key === "shift") plannerState.shift = cleanCell(value).toUpperCase();
+  else if(key === "search") plannerState.search = cleanCell(value);
   else plannerState[key] = value;
   savePlanner();
 }
@@ -779,8 +863,13 @@ function getPlannedLoginSet(exceptRole){
   return set;
 }
 
-function personMatchesPlannerFilters(p, role){
-  if(!p || !p.roles || !p.roles.includes(role)) return false;
+function isPlannerLoginPlanned(login){
+  const clean = cleanLogin(login);
+  return getPlannedLoginSet().has(clean);
+}
+
+function personMatchesPlannerBaseFilters(p){
+  if(!p) return false;
 
   const statusFilter = plannerState.status || "Available";
   if(statusFilter !== "All statuses" && (p.status || "Unknown") !== statusFilter) return false;
@@ -794,45 +883,86 @@ function personMatchesPlannerFilters(p, role){
     if(!shifts.some(s => s === shift || s.includes(shift))) return false;
   }
 
+  const q = cleanCell(plannerState.search || "").toLowerCase();
+  if(q){
+    const hay = `${p.login || ""} ${p.name || ""} ${normaliseShiftArray(p.shiftCodes).join(" ")} ${(p.roles || []).join(" ")} ${p.notes || ""}`.toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+
+  const roleFilter = plannerState.role || "All roles";
+  if(roleFilter !== "All roles" && !(p.roles || []).includes(roleFilter)) return false;
+
   return true;
 }
 
-function getPlannerCandidates(role){
+function personMatchesPlannerFilters(p, role){
+  return personMatchesPlannerBaseFilters(p) && (!role || (p.roles || []).includes(role));
+}
+
+function getPlannerPoolPeople(){
   const planned = getPlannedLoginSet();
   return people
-    .filter(p => personMatchesPlannerFilters(p, role))
+    .filter(personMatchesPlannerBaseFilters)
     .filter(p => !planned.has(cleanLogin(p.login)))
     .sort((a,b) => String(a.login).localeCompare(String(b.login), undefined, { numeric:true, sensitivity:"base" }));
 }
 
-function addPlannerLogin(role){
-  const key = plannerDomKey(role);
-  const select = document.getElementById("plannerAdd_" + key);
-  const login = cleanLogin(select?.value || "");
-  if(!login){ toast("Choose a login first"); return; }
+function selectPlannerLogin(login){
+  plannerState = normalisePlannerState(plannerState);
+  const clean = cleanLogin(login);
+  plannerState.selectedLogin = plannerState.selectedLogin === clean ? "" : clean;
+  savePlanner();
+}
 
-  const p = people.find(x => cleanLogin(x.login) === login);
+function addPlannerLoginToRole(login, role){
+  const clean = cleanLogin(login);
+  if(!clean){ toast("Choose a login first"); return; }
+
+  const p = people.find(x => cleanLogin(x.login) === clean);
   if(!p){ toast("Login not found"); return; }
 
-  const already = getPlannedLoginSet().has(login);
-  if(already){ toast("Login is already planned"); return; }
+  if(!(p.roles || []).includes(role)){
+    toast(`${clean} is not trained for ${plannerRoleLabel(role)}`);
+    return;
+  }
+
+  if(isPlannerLoginPlanned(clean)){
+    toast(`${clean} is already planned`);
+    return;
+  }
 
   const col = ensurePlannerRole(role);
-  col.assigned.push({ login, note:"" });
+  col.assigned.push({ login: clean, note:"", locked:true });
+  plannerState.selectedLogin = "";
   savePlanner();
-  toast("Added to planner");
+  toast(`Added ${clean} to ${plannerRoleLabel(role)}`);
+}
+
+function addSelectedToPlannerRole(role){
+  plannerState = normalisePlannerState(plannerState);
+  if(!plannerState.selectedLogin){ toast("Select a login from the side list first"); return; }
+  addPlannerLoginToRole(plannerState.selectedLogin, role);
 }
 
 function removePlannerLogin(role, login){
   const col = ensurePlannerRole(role);
   const clean = cleanLogin(login);
   col.assigned = (col.assigned || []).filter(x => cleanLogin(x.login) !== clean);
+  if(plannerState.selectedLogin === clean) plannerState.selectedLogin = "";
   savePlanner();
   toast("Removed from planner");
 }
 
+function togglePlannerLock(role, login){
+  const col = ensurePlannerRole(role);
+  const clean = cleanLogin(login);
+  const item = (col.assigned || []).find(x => cleanLogin(x.login) === clean);
+  if(item) item.locked = !item.locked;
+  savePlanner();
+}
+
 function clearPlannerRole(role){
-  if(!confirm("Clear planned logins for " + role + "?")) return;
+  if(!confirm("Clear planned logins for " + plannerRoleLabel(role) + "?")) return;
   const col = ensurePlannerRole(role);
   col.assigned = [];
   savePlanner();
@@ -853,77 +983,118 @@ function renderPlannerControls(){
   const shift = document.getElementById("plannerShift");
   const status = document.getElementById("plannerStatus");
   const role = document.getElementById("plannerRole");
+  const search = document.getElementById("plannerSearch");
 
   if(day) day.value = plannerState.day || "All days";
   if(shift) shift.value = plannerState.shift || "";
   if(status) status.value = plannerState.status || "Available";
+  if(search) search.value = plannerState.search || "";
 
   if(role){
     const current = plannerState.role || "All roles";
-    role.innerHTML = `<option>All roles</option>` + roles.map(r => `<option>${escapeHtml(r)}</option>`).join("");
+    role.innerHTML = `<option>All roles</option>` + roles.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(plannerRoleLabel(r))}</option>`).join("");
     role.value = roles.includes(current) ? current : "All roles";
   }
 }
 
-function plannerPersonCard(role, item){
-  const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
-  if(!p){
-    return `<div class="planner-person"><div><b>${escapeHtml(item.login)}</b><div class="meta">Login not found in tracker</div></div><button class="btn-danger btn-small" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">Remove</button></div>`;
-  }
+function plannerInitials(p){
+  const name = cleanCell(p.name || p.login || "");
+  const parts = name.split(/[,\s]+/).filter(Boolean);
+  const chars = parts.length > 1 ? (parts[0][0] + parts[1][0]) : name.slice(0,2);
+  return chars.toUpperCase();
+}
 
+function poolPersonCard(p){
   const shifts = normaliseShiftArray(p.shiftCodes);
   const days = getPersonDays(p);
+  const trained = (p.roles || []).filter(r => roles.includes(r));
+  const selected = plannerState.selectedLogin === cleanLogin(p.login);
+
   return `
-    <div class="planner-person">
-      <div>
-        <b>${escapeHtml(p.login)}</b>
-        <div class="meta">${escapeHtml(p.name || "")}</div>
-        <div class="planner-tags">
-          ${shifts.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}
-          <span class="chip ${roleClass(role)}">${escapeHtml(role)}</span>
-          <span class="status s-${escapeHtml(p.status || "Unknown")}">${escapeHtml(p.status || "Unknown")}</span>
-        </div>
-        <div class="meta">${escapeHtml(daysShort(days))}${p.notes ? " • " + escapeHtml(p.notes) : ""}</div>
+    <div class="pool-person ${selected ? "selected" : ""}" onclick="selectPlannerLogin('${escapeForJs(p.login)}')">
+      <div class="pool-login">${escapeHtml(p.login)}</div>
+      <div class="pool-name">${escapeHtml(p.name || "")}</div>
+      <div class="pool-meta">${shifts.map(s => escapeHtml(s)).join(" / ") || "No shift"} • ${escapeHtml(daysShort(days) || "Unknown days")} • ${escapeHtml(p.status || "Unknown")}</div>
+      <div class="pool-actions">
+        ${trained.map(r => `<button class="pool-add" onclick="event.stopPropagation(); addPlannerLoginToRole('${escapeForJs(p.login)}','${escapeForJs(r)}')">${escapeHtml(plannerRoleLabel(r))}</button>`).join("")}
       </div>
-      <button class="btn-danger btn-small" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">Remove</button>
     </div>`;
 }
 
-function renderPlannerColumn(role){
+function renderPlannerPool(){
+  const list = document.getElementById("plannerPoolList");
+  const count = document.getElementById("plannerPoolCount");
+  if(!list) return;
+
+  const pool = getPlannerPoolPeople();
+  if(count) count.textContent = `${pool.length} shown`;
+
+  list.innerHTML = pool.length
+    ? pool.map(poolPersonCard).join("")
+    : `<div class="planner-empty">No matching unplanned logins.</div>`;
+}
+
+function plannerRoleRow(role, item){
+  const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+  const locked = item.locked !== false;
+  if(!p){
+    return `
+      <tr>
+        <td><div class="scc-login-cell"><span class="scc-avatar">?</span><div class="scc-login"><b>${escapeHtml(item.login)}</b><span>Login not found</span></div></div></td>
+        <td class="scc-lock"><button class="lock-btn ${locked ? "locked" : "unlocked"}" onclick="togglePlannerLock('${escapeForJs(role)}','${escapeForJs(item.login)}')">${locked ? "🔒" : "🔓"}</button></td>
+        <td><button class="scc-remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">×</button></td>
+      </tr>`;
+  }
+
+  return `
+    <tr>
+      <td>
+        <div class="scc-login-cell">
+          <span class="scc-avatar">${escapeHtml(plannerInitials(p))}</span>
+          <div class="scc-login">
+            <b>${escapeHtml(p.login)}</b>
+            <span>${escapeHtml(p.name || "")}</span>
+          </div>
+        </div>
+      </td>
+      <td class="scc-lock">
+        <button class="lock-btn ${locked ? "locked" : "unlocked"}" title="Toggle role lock" onclick="togglePlannerLock('${escapeForJs(role)}','${escapeForJs(p.login)}')">${locked ? "🔒" : "🔓"}</button>
+      </td>
+      <td><button class="scc-remove" title="Remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">×</button></td>
+    </tr>`;
+}
+
+function renderPlannerRoleCard(role){
   const col = ensurePlannerRole(role);
   const assigned = (col.assigned || []).filter(x => cleanLogin(x.login));
   const filled = assigned.length;
   const required = Number(col.required || 0);
-  const countClass = required === 0 ? "" : filled === required ? "ok" : filled < required ? "under" : "over";
-  const key = plannerDomKey(role);
-  const candidates = getPlannerCandidates(role);
+  const selected = plannerState.selectedLogin;
+  const selectedPerson = selected ? people.find(p => cleanLogin(p.login) === selected) : null;
+  const canAddSelected = selectedPerson && (selectedPerson.roles || []).includes(role) && !isPlannerLoginPlanned(selected);
 
   return `
-    <div class="planner-col">
-      <div class="planner-col-head">
-        <b>${escapeHtml(role)}</b>
-        <span class="planner-count ${countClass}">${filled}${required ? "/" + required : ""}</span>
+    <div class="scc-role-card">
+      <div class="scc-role-head">
+        <span class="role-title">${escapeHtml(plannerRoleLabel(role))} <span class="filled">${filled}</span>/<span class="required">${required}</span></span>
+        <span class="scc-role-actions">
+          <input type="number" min="0" value="${required}" title="Required headcount" onchange="setPlannerRequired('${escapeForJs(role)}', this.value)" />
+          <button class="${canAddSelected ? "btn-dark" : "btn-light"} btn-small" onclick="addSelectedToPlannerRole('${escapeForJs(role)}')" title="Add selected login">+ selected</button>
+          <button class="btn-light btn-small" onclick="clearPlannerRole('${escapeForJs(role)}')" title="Clear this role">clear</button>
+        </span>
       </div>
-      <div class="planner-col-body">
-        <label>Required</label>
-        <input type="number" min="0" value="${required}" onchange="setPlannerRequired('${escapeForJs(role)}', this.value)" />
-
-        <label>Add trained login</label>
-        <div class="planner-row">
-          <select id="plannerAdd_${key}">
-            <option value="">Choose login</option>
-            ${candidates.map(p => `<option value="${escapeHtml(p.login)}">${escapeHtml(p.login)} — ${escapeHtml(p.name || "")} (${daysShort(getPersonDays(p))})</option>`).join("")}
-          </select>
-          <button class="btn-dark" onclick="addPlannerLogin('${escapeForJs(role)}')">Add</button>
-        </div>
-
-        <div style="margin:8px 0">
-          <button class="btn-light btn-small" onclick="clearPlannerRole('${escapeForJs(role)}')">Clear role</button>
-          <span class="muted" style="font-size:12px;margin-left:6px">${candidates.length} available</span>
-        </div>
-
-        ${assigned.length ? assigned.map(item => plannerPersonCard(role, item)).join("") : `<div class="planner-empty">No one planned yet.</div>`}
-      </div>
+      <table class="scc-table">
+        <thead>
+          <tr>
+            <th>Login</th>
+            <th>Role Lock ⚫</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${assigned.length ? assigned.map(item => plannerRoleRow(role, item)).join("") : `<tr class="scc-empty-row"><td colspan="3">--</td></tr>`}
+        </tbody>
+      </table>
     </div>`;
 }
 
@@ -935,25 +1106,23 @@ function renderShiftPlanner(){
   renderPlannerControls();
 
   const visibleRoles = plannerState.role === "All roles" ? roles : roles.filter(r => r === plannerState.role);
-  board.innerHTML = visibleRoles.map(renderPlannerColumn).join("");
+  board.innerHTML = visibleRoles.map(renderPlannerRoleCard).join("");
+
+  renderPlannerPool();
 
   const totalRequired = roles.reduce((sum, role) => sum + Number(ensurePlannerRole(role).required || 0), 0);
   const totalFilled = roles.reduce((sum, role) => sum + (ensurePlannerRole(role).assigned || []).length, 0);
-  const unplannedAvailable = people.filter(p => {
-    if(plannerState.status !== "All statuses" && (p.status || "Unknown") !== plannerState.status) return false;
-    if(plannerState.day !== "All days" && !getPersonDays(p).includes(plannerState.day)) return false;
-    const planned = getPlannedLoginSet().has(cleanLogin(p.login));
-    return !planned;
-  }).length;
+  const poolCount = getPlannerPoolPeople().length;
 
   const summary = document.getElementById("plannerSummary");
   if(summary){
     summary.innerHTML = `
       <span class="pill">Planned: ${totalFilled}${totalRequired ? "/" + totalRequired : ""}</span>
-      <span class="pill">Unplanned matching filters: ${unplannedAvailable}</span>
+      <span class="pill">Unplanned shown: ${poolCount}</span>
       <span class="pill">Day: ${escapeHtml(plannerState.day)}</span>
       ${plannerState.shift ? `<span class="pill">Shift: ${escapeHtml(plannerState.shift)}</span>` : ""}
-      <span class="pill">Status filter: ${escapeHtml(plannerState.status)}</span>
+      <span class="pill">Status: ${escapeHtml(plannerState.status)}</span>
+      ${plannerState.selectedLogin ? `<span class="pill">Selected: ${escapeHtml(plannerState.selectedLogin)}</span>` : ""}
     `;
   }
 }
@@ -970,11 +1139,11 @@ async function copyPlanner(){
     const assigned = col.assigned || [];
     if(!Number(col.required || 0) && !assigned.length) continue;
 
-    lines.push(`${role} (${assigned.length}${col.required ? "/" + col.required : ""})`);
-    if(!assigned.length) lines.push("- none planned");
+    lines.push(`${plannerRoleLabel(role)} ${assigned.length}/${col.required || 0}`);
+    if(!assigned.length) lines.push("--");
     for(const item of assigned){
       const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
-      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""} | ${normaliseShiftArray(p.shiftCodes).join("/")} | ${daysShort(getPersonDays(p))} | ${p.status}`);
+      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""} ${item.locked !== false ? "🔒" : "🔓"}`);
       else lines.push(`- ${item.login}`);
     }
     lines.push("");
@@ -984,6 +1153,7 @@ async function copyPlanner(){
   try{ await navigator.clipboard.writeText(text); toast("Planner copied"); }
   catch(e){ prompt("Copy this planner:", text); }
 }
+
 
 function setTableSort(field){
   if(tableSortField === field){
