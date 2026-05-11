@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "exportedAt": "2026-05-11T20:01:09.342Z",
+  "exportedAt": "2026-05-11T20:01:24.525Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1630,7 +1630,7 @@
         "assigned": []
       },
       "PG": {
-        "required": 4,
+        "required": 1,
         "assigned": [
           {
             "login": "abbabhay",
@@ -1723,7 +1723,7 @@
             "assigned": []
           },
           "PG": {
-            "required": 4,
+            "required": 1,
             "assigned": [
               {
                 "login": "abbabhay",
@@ -1972,5 +1972,5 @@
     }
   },
   "source": "github",
-  "updatedAt": "2026-05-11T20:01:09.342Z"
+  "updatedAt": "2026-05-11T20:01:24.525Z"
 }
