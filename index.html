@@ -39,6 +39,12 @@
     table{width:100%;border-collapse:collapse;min-width:0;table-layout:fixed}
     th{background:#f8fafc;color:#475569;text-transform:uppercase;letter-spacing:.04em;font-size:12px;text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);position:sticky;top:0}
     td{padding:8px 9px;border-bottom:1px solid #eef2f7;vertical-align:middle;word-break:break-word}tr:hover td{background:#fbfdff}
+
+    .sort-th{all:unset;display:inline-flex;align-items:center;gap:5px;cursor:pointer;border-radius:8px;padding:3px 5px;margin:-3px -5px;user-select:none}
+    .sort-th:hover{background:#e2e8f0;color:#0f172a}
+    .sort-th.active{background:#dbeafe;color:#1d4ed8}
+    .sort-icon{font-size:11px;min-width:12px;opacity:.65}
+    .sort-th.active .sort-icon{opacity:1;font-weight:900}
     .tracker-table th:nth-child(1),.tracker-table td:nth-child(1){width:18%}.tracker-table th:nth-child(2),.tracker-table td:nth-child(2){width:8%}.tracker-table th:nth-child(3),.tracker-table td:nth-child(3){width:16%}.tracker-table th:nth-child(4),.tracker-table td:nth-child(4){width:24%}.tracker-table th:nth-child(5),.tracker-table td:nth-child(5){width:15%}.tracker-table th:nth-child(6),.tracker-table td:nth-child(6){width:9%}.tracker-table th:nth-child(7),.tracker-table td:nth-child(7){width:10%;text-align:right}
     .login{font-weight:900;font-size:14px}.name{font-size:12px;color:var(--muted);margin-top:3px}.chips{display:flex;gap:4px;flex-wrap:wrap}
     .chip{display:inline-flex;align-items:center;background:var(--chip);border:1px solid #e2e8f0;border-radius:999px;padding:3px 7px;font-size:11px;font-weight:800;white-space:nowrap}
@@ -265,12 +271,12 @@
             <table class="tracker-table">
               <thead>
                 <tr>
-                  <th>Login</th>
-                  <th>Shift</th>
-                  <th>Days</th>
-                  <th>Trained for</th>
-                  <th>Status</th>
-                  <th>Notes</th>
+                  <th><button class="sort-th" data-sort-field="login" onclick="setTableSort('login')" title="Sort login A-Z / Z-A">Login <span class="sort-icon"></span></button></th>
+                  <th><button class="sort-th" data-sort-field="shift" onclick="setTableSort('shift')" title="Sort shift A-Z / Z-A">Shift <span class="sort-icon"></span></button></th>
+                  <th><button class="sort-th" data-sort-field="days" onclick="setTableSort('days')" title="Sort days A-Z / Z-A">Days <span class="sort-icon"></span></button></th>
+                  <th><button class="sort-th" data-sort-field="roles" onclick="setTableSort('roles')" title="Sort roles A-Z / Z-A">Trained for <span class="sort-icon"></span></button></th>
+                  <th><button class="sort-th" data-sort-field="status" onclick="setTableSort('status')" title="Sort status A-Z / Z-A">Status <span class="sort-icon"></span></button></th>
+                  <th><button class="sort-th" data-sort-field="notes" onclick="setTableSort('notes')" title="Sort notes A-Z / Z-A">Notes <span class="sort-icon"></span></button></th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -393,6 +399,8 @@ let people = [];
 let selectedRoles = [];
 let availableOnly = false;
 let activeRoleCard = "All roles";
+let tableSortField = "login";
+let tableSortDir = "asc";
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -616,6 +624,50 @@ function getPersonDays(p){
   return [...set].sort((a,b) => DAYS.indexOf(a) - DAYS.indexOf(b));
 }
 
+
+function setTableSort(field){
+  if(tableSortField === field){
+    tableSortDir = tableSortDir === "asc" ? "desc" : "asc";
+  }else{
+    tableSortField = field;
+    tableSortDir = "asc";
+  }
+  render();
+}
+
+function getTableSortValue(p, field){
+  const shifts = normaliseShiftArray(p.shiftCodes);
+  const days = getPersonDays(p);
+  switch(field){
+    case "login": return `${p.login || ""} ${p.name || ""}`;
+    case "shift": return shifts.join(" / ");
+    case "days": return daysShort(days);
+    case "roles": return (p.roles || []).join(" ");
+    case "status": return p.status || "Unknown";
+    case "notes": return p.notes || "";
+    default: return p.login || "";
+  }
+}
+
+function comparePeopleByTableSort(a,b){
+  const av = getTableSortValue(a, tableSortField);
+  const bv = getTableSortValue(b, tableSortField);
+  const primary = String(av).localeCompare(String(bv), undefined, { numeric:true, sensitivity:"base" });
+  const result = primary || String(a.login || "").localeCompare(String(b.login || ""), undefined, { numeric:true, sensitivity:"base" });
+  return tableSortDir === "desc" ? -result : result;
+}
+
+function renderTableSortHeaders(){
+  document.querySelectorAll("[data-sort-field]").forEach(btn => {
+    const field = btn.getAttribute("data-sort-field");
+    const icon = btn.querySelector(".sort-icon");
+    const active = field === tableSortField;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-sort", active ? (tableSortDir === "asc" ? "ascending" : "descending") : "none");
+    if(icon) icon.textContent = active ? (tableSortDir === "asc" ? "▲" : "▼") : "↕";
+  });
+}
+
 function getFiltered(){
   const q = document.getElementById("search").value.trim().toLowerCase();
   const role = document.getElementById("roleFilter").value || "All roles";
@@ -627,7 +679,7 @@ function getFiltered(){
     .filter(p => activeRoleCard === "All roles" || p.roles.includes(activeRoleCard))
     .filter(p => status === "All statuses" || p.status === status)
     .filter(p => !availableOnly || p.status === "Available")
-    .sort((a,b) => a.login.localeCompare(b.login));
+    .sort(comparePeopleByTableSort);
 }
 
 function render(){
@@ -673,6 +725,7 @@ function render(){
       </tr>`;
   }).join("");
 
+  renderTableSortHeaders();
   renderDaysControls();
   renderDaysView();
   renderDecoder();
