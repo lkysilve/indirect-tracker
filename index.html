@@ -65,6 +65,19 @@
     .decode-result{display:flex;flex-direction:column;gap:8px}.decode-card{border:1px solid #e2e8f0;border-radius:14px;padding:11px;background:#fff}.decode-card b{font-size:16px}.decode-card .desc{color:var(--muted);font-size:13px;margin:5px 0}
     .weekday-line{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}.weekday{border:1px solid #e2e8f0;border-radius:8px;padding:7px 4px;text-align:center;font-size:11px;font-weight:900;background:#f8fafc;color:#94a3b8}.weekday.on{background:#111827;color:#fff;border-color:#111827}
     .ref-table{min-width:760px}
+
+    .planner-controls{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+    .planner-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+    .planner-col{background:#f8fafc;border:1px solid #dbe3ee;border-radius:16px;overflow:hidden}
+    .planner-col-head{padding:12px;background:#fff;border-bottom:1px solid #e5edf7;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .planner-col-head b{font-size:16px}.planner-count{font-weight:900;border-radius:999px;padding:4px 9px;background:#e2e8f0}
+    .planner-count.ok{background:#dcfce7;color:#166534}.planner-count.under{background:#fee2e2;color:#991b1b}.planner-count.over{background:#fef3c7;color:#92400e}
+    .planner-col-body{padding:10px}.planner-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
+    .planner-person{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:9px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+    .planner-person .meta{font-size:12px;color:#64748b;margin-top:3px;line-height:1.35}.planner-person .planner-tags{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+    .planner-empty{color:#64748b;font-size:13px;text-align:center;padding:14px;border:1px dashed #cbd5e1;border-radius:12px;background:#fff}
+    .planner-summary{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}.planner-summary .pill{background:#fff;border:1px solid #dbe3ee;border-radius:999px;padding:7px 10px;font-weight:800}
+    @media(max-width:900px){.planner-controls{grid-template-columns:1fr 1fr}.planner-board{grid-template-columns:1fr}}
     @media(max-width:1050px){.grid,.decoder-grid{grid-template-columns:1fr}.role-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}.week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:760px){.filters{grid-template-columns:1fr}table{min-width:900px}.week-grid{grid-template-columns:1fr}.import-grid{grid-template-columns:1fr}}
   </style>
@@ -88,6 +101,7 @@
     <div class="tabs">
       <button class="tabbtn active" onclick="showTab('tracker')">Indirect Tracker</button>
       <button class="tabbtn" onclick="showTab('decoder')">Shift Decoder + Days</button>
+      <button class="tabbtn" onclick="showTab('planner')">Shift Planner</button>
     </div>
 
     <section id="tab-tracker" class="tab active">
@@ -299,6 +313,61 @@
       </section>
     </section>
 
+
+    <section id="tab-planner" class="tab">
+      <section class="card">
+        <h2>
+          <span>Shift Planner</span>
+          <span class="badge">SCC-style rota board</span>
+        </h2>
+        <div class="card-body">
+          <div class="planner-controls">
+            <div>
+              <label>Day</label>
+              <select id="plannerDay" onchange="updatePlannerControl('day', this.value)">
+                <option>All days</option>
+                <option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                <option>Thursday</option><option>Friday</option><option>Saturday</option>
+              </select>
+            </div>
+            <div>
+              <label>Shift code</label>
+              <input id="plannerShift" placeholder="Example: NA5 / NB1 / NF6" oninput="updatePlannerControl('shift', this.value)" />
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="plannerStatus" onchange="updatePlannerControl('status', this.value)">
+                <option>Available</option>
+                <option>All statuses</option>
+                <option>Busy</option>
+                <option>Absent</option>
+                <option>Unknown</option>
+              </select>
+            </div>
+            <div>
+              <label>Show role</label>
+              <select id="plannerRole" onchange="updatePlannerControl('role', this.value)"></select>
+            </div>
+            <div>
+              <label>Actions</label>
+              <div class="row">
+                <button class="btn-light" onclick="copyPlanner()">Copy planner</button>
+                <button class="btn-danger" onclick="clearPlanner()">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <p class="muted">
+            Use this to plan indirect coverage SCC-style. Set required headcount per role, then add trained logins into each bucket.
+            Filters above control who appears in the add dropdowns.
+          </p>
+
+          <div class="planner-summary" id="plannerSummary"></div>
+          <div class="planner-board" id="plannerBoard"></div>
+        </div>
+      </section>
+    </section>
+
     <section id="tab-decoder" class="tab">
       <div class="decoder-grid">
         <section class="card">
@@ -402,6 +471,7 @@ let availableOnly = false;
 let activeRoleCard = "All roles";
 let tableSortField = "login";
 let tableSortDir = "asc";
+let plannerState = defaultPlannerState();
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -415,7 +485,7 @@ function id(){
   return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 }
 function saveStorage(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState }));
   showAutosaved();
   queueGithubSave();
 }
@@ -425,6 +495,7 @@ function loadStorage(){
     if(embedded && Array.isArray(embedded.people)){
       if(Array.isArray(embedded.roles) && embedded.roles.length) roles = embedded.roles;
       people = embedded.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
+      plannerState = normalisePlannerState(embedded.plannerState);
       saveStorage();
       return;
     }
@@ -433,6 +504,7 @@ function loadStorage(){
     if(hashData && Array.isArray(hashData.people)){
       if(Array.isArray(hashData.roles) && hashData.roles.length) roles = hashData.roles;
       people = hashData.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
+      plannerState = normalisePlannerState(hashData.plannerState);
       saveStorage();
       history.replaceState(null, document.title, location.pathname + location.search);
       return;
@@ -443,6 +515,7 @@ function loadStorage(){
     if(Array.isArray(saved.people)) {
       people = saved.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
     }
+    plannerState = normalisePlannerState(saved.plannerState);
   }catch(e){}
 }
 function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1700); }
@@ -458,10 +531,12 @@ function escapeForJs(v){ return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\
 function showTab(name){
   document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  event.target.classList.add("active");
+  const btn = event && event.target ? event.target : document.querySelector(`.tabbtn[onclick*="${name}"]`);
+  if(btn) btn.classList.add("active");
   document.getElementById("tab-" + name).classList.add("active");
   if(name === "decoder"){ renderDecoder(); renderDaysControls(); renderDaysView(); renderShiftReference();
 autoLoadPublicGithubData(); }
+  if(name === "planner"){ renderShiftPlanner(); }
 }
 
 function decodeShift(codeRaw){
@@ -626,6 +701,290 @@ function getPersonDays(p){
 }
 
 
+
+function defaultPlannerState(){
+  return {
+    version: 1,
+    day: "All days",
+    shift: "",
+    status: "Available",
+    role: "All roles",
+    columns: {}
+  };
+}
+
+function normalisePlannerState(state){
+  const base = defaultPlannerState();
+  const incoming = state && typeof state === "object" ? state : {};
+  const next = {
+    ...base,
+    ...incoming,
+    columns: {}
+  };
+
+  const cols = incoming.columns && typeof incoming.columns === "object" ? incoming.columns : {};
+  for(const role of roles){
+    const col = cols[role] || {};
+    next.columns[role] = {
+      required: Number.isFinite(Number(col.required)) ? Math.max(0, Number(col.required)) : 0,
+      assigned: Array.isArray(col.assigned)
+        ? col.assigned.map(x => typeof x === "string" ? { login:x } : x).filter(x => x && cleanLogin(x.login)).map(x => ({ login: cleanLogin(x.login), note: cleanCell(x.note || "") }))
+        : []
+    };
+  }
+
+  if(!roles.includes(next.role) && next.role !== "All roles") next.role = "All roles";
+  if(!DAYS.includes(next.day) && next.day !== "All days") next.day = "All days";
+  if(!["Available","All statuses","Busy","Absent","Unknown"].includes(next.status)) next.status = "Available";
+  next.shift = cleanCell(next.shift || "").toUpperCase();
+  return next;
+}
+
+function ensurePlannerRole(role){
+  plannerState = normalisePlannerState(plannerState);
+  if(!plannerState.columns[role]) plannerState.columns[role] = { required:0, assigned:[] };
+  return plannerState.columns[role];
+}
+
+function plannerDomKey(role){
+  return String(role || "").replace(/[^a-z0-9]+/gi, "_");
+}
+
+function savePlanner(){
+  plannerState = normalisePlannerState(plannerState);
+  saveStorage();
+  renderShiftPlanner();
+}
+
+function updatePlannerControl(key, value){
+  plannerState = normalisePlannerState(plannerState);
+  if(key === "shift") plannerState.shift = cleanCell(value).toUpperCase();
+  else plannerState[key] = value;
+  savePlanner();
+}
+
+function setPlannerRequired(role, value){
+  const col = ensurePlannerRole(role);
+  col.required = Math.max(0, Number(value || 0));
+  savePlanner();
+}
+
+function getPlannedLoginSet(exceptRole){
+  const set = new Set();
+  plannerState = normalisePlannerState(plannerState);
+  for(const [role, col] of Object.entries(plannerState.columns || {})){
+    if(exceptRole && role === exceptRole) continue;
+    for(const item of col.assigned || []) set.add(cleanLogin(item.login));
+  }
+  return set;
+}
+
+function personMatchesPlannerFilters(p, role){
+  if(!p || !p.roles || !p.roles.includes(role)) return false;
+
+  const statusFilter = plannerState.status || "Available";
+  if(statusFilter !== "All statuses" && (p.status || "Unknown") !== statusFilter) return false;
+
+  const dayFilter = plannerState.day || "All days";
+  if(dayFilter !== "All days" && !getPersonDays(p).includes(dayFilter)) return false;
+
+  const shift = cleanCell(plannerState.shift || "").toUpperCase();
+  if(shift){
+    const shifts = normaliseShiftArray(p.shiftCodes).map(s => s.toUpperCase());
+    if(!shifts.some(s => s === shift || s.includes(shift))) return false;
+  }
+
+  return true;
+}
+
+function getPlannerCandidates(role){
+  const planned = getPlannedLoginSet();
+  return people
+    .filter(p => personMatchesPlannerFilters(p, role))
+    .filter(p => !planned.has(cleanLogin(p.login)))
+    .sort((a,b) => String(a.login).localeCompare(String(b.login), undefined, { numeric:true, sensitivity:"base" }));
+}
+
+function addPlannerLogin(role){
+  const key = plannerDomKey(role);
+  const select = document.getElementById("plannerAdd_" + key);
+  const login = cleanLogin(select?.value || "");
+  if(!login){ toast("Choose a login first"); return; }
+
+  const p = people.find(x => cleanLogin(x.login) === login);
+  if(!p){ toast("Login not found"); return; }
+
+  const already = getPlannedLoginSet().has(login);
+  if(already){ toast("Login is already planned"); return; }
+
+  const col = ensurePlannerRole(role);
+  col.assigned.push({ login, note:"" });
+  savePlanner();
+  toast("Added to planner");
+}
+
+function removePlannerLogin(role, login){
+  const col = ensurePlannerRole(role);
+  const clean = cleanLogin(login);
+  col.assigned = (col.assigned || []).filter(x => cleanLogin(x.login) !== clean);
+  savePlanner();
+  toast("Removed from planner");
+}
+
+function clearPlannerRole(role){
+  if(!confirm("Clear planned logins for " + role + "?")) return;
+  const col = ensurePlannerRole(role);
+  col.assigned = [];
+  savePlanner();
+}
+
+function clearPlanner(){
+  if(!confirm("Clear the whole shift planner?")) return;
+  plannerState = defaultPlannerState();
+  roles.forEach(role => ensurePlannerRole(role));
+  savePlanner();
+  toast("Planner cleared");
+}
+
+function renderPlannerControls(){
+  plannerState = normalisePlannerState(plannerState);
+
+  const day = document.getElementById("plannerDay");
+  const shift = document.getElementById("plannerShift");
+  const status = document.getElementById("plannerStatus");
+  const role = document.getElementById("plannerRole");
+
+  if(day) day.value = plannerState.day || "All days";
+  if(shift) shift.value = plannerState.shift || "";
+  if(status) status.value = plannerState.status || "Available";
+
+  if(role){
+    const current = plannerState.role || "All roles";
+    role.innerHTML = `<option>All roles</option>` + roles.map(r => `<option>${escapeHtml(r)}</option>`).join("");
+    role.value = roles.includes(current) ? current : "All roles";
+  }
+}
+
+function plannerPersonCard(role, item){
+  const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+  if(!p){
+    return `<div class="planner-person"><div><b>${escapeHtml(item.login)}</b><div class="meta">Login not found in tracker</div></div><button class="btn-danger btn-small" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">Remove</button></div>`;
+  }
+
+  const shifts = normaliseShiftArray(p.shiftCodes);
+  const days = getPersonDays(p);
+  return `
+    <div class="planner-person">
+      <div>
+        <b>${escapeHtml(p.login)}</b>
+        <div class="meta">${escapeHtml(p.name || "")}</div>
+        <div class="planner-tags">
+          ${shifts.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}
+          <span class="chip ${roleClass(role)}">${escapeHtml(role)}</span>
+          <span class="status s-${escapeHtml(p.status || "Unknown")}">${escapeHtml(p.status || "Unknown")}</span>
+        </div>
+        <div class="meta">${escapeHtml(daysShort(days))}${p.notes ? " • " + escapeHtml(p.notes) : ""}</div>
+      </div>
+      <button class="btn-danger btn-small" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">Remove</button>
+    </div>`;
+}
+
+function renderPlannerColumn(role){
+  const col = ensurePlannerRole(role);
+  const assigned = (col.assigned || []).filter(x => cleanLogin(x.login));
+  const filled = assigned.length;
+  const required = Number(col.required || 0);
+  const countClass = required === 0 ? "" : filled === required ? "ok" : filled < required ? "under" : "over";
+  const key = plannerDomKey(role);
+  const candidates = getPlannerCandidates(role);
+
+  return `
+    <div class="planner-col">
+      <div class="planner-col-head">
+        <b>${escapeHtml(role)}</b>
+        <span class="planner-count ${countClass}">${filled}${required ? "/" + required : ""}</span>
+      </div>
+      <div class="planner-col-body">
+        <label>Required</label>
+        <input type="number" min="0" value="${required}" onchange="setPlannerRequired('${escapeForJs(role)}', this.value)" />
+
+        <label>Add trained login</label>
+        <div class="planner-row">
+          <select id="plannerAdd_${key}">
+            <option value="">Choose login</option>
+            ${candidates.map(p => `<option value="${escapeHtml(p.login)}">${escapeHtml(p.login)} — ${escapeHtml(p.name || "")} (${daysShort(getPersonDays(p))})</option>`).join("")}
+          </select>
+          <button class="btn-dark" onclick="addPlannerLogin('${escapeForJs(role)}')">Add</button>
+        </div>
+
+        <div style="margin:8px 0">
+          <button class="btn-light btn-small" onclick="clearPlannerRole('${escapeForJs(role)}')">Clear role</button>
+          <span class="muted" style="font-size:12px;margin-left:6px">${candidates.length} available</span>
+        </div>
+
+        ${assigned.length ? assigned.map(item => plannerPersonCard(role, item)).join("") : `<div class="planner-empty">No one planned yet.</div>`}
+      </div>
+    </div>`;
+}
+
+function renderShiftPlanner(){
+  const board = document.getElementById("plannerBoard");
+  if(!board) return;
+
+  plannerState = normalisePlannerState(plannerState);
+  renderPlannerControls();
+
+  const visibleRoles = plannerState.role === "All roles" ? roles : roles.filter(r => r === plannerState.role);
+  board.innerHTML = visibleRoles.map(renderPlannerColumn).join("");
+
+  const totalRequired = roles.reduce((sum, role) => sum + Number(ensurePlannerRole(role).required || 0), 0);
+  const totalFilled = roles.reduce((sum, role) => sum + (ensurePlannerRole(role).assigned || []).length, 0);
+  const unplannedAvailable = people.filter(p => {
+    if(plannerState.status !== "All statuses" && (p.status || "Unknown") !== plannerState.status) return false;
+    if(plannerState.day !== "All days" && !getPersonDays(p).includes(plannerState.day)) return false;
+    const planned = getPlannedLoginSet().has(cleanLogin(p.login));
+    return !planned;
+  }).length;
+
+  const summary = document.getElementById("plannerSummary");
+  if(summary){
+    summary.innerHTML = `
+      <span class="pill">Planned: ${totalFilled}${totalRequired ? "/" + totalRequired : ""}</span>
+      <span class="pill">Unplanned matching filters: ${unplannedAvailable}</span>
+      <span class="pill">Day: ${escapeHtml(plannerState.day)}</span>
+      ${plannerState.shift ? `<span class="pill">Shift: ${escapeHtml(plannerState.shift)}</span>` : ""}
+      <span class="pill">Status filter: ${escapeHtml(plannerState.status)}</span>
+    `;
+  }
+}
+
+async function copyPlanner(){
+  plannerState = normalisePlannerState(plannerState);
+  const lines = [];
+  lines.push("Shift Planner");
+  lines.push(`Day: ${plannerState.day || "All days"}${plannerState.shift ? " | Shift: " + plannerState.shift : ""} | Status: ${plannerState.status}`);
+  lines.push("");
+
+  for(const role of roles){
+    const col = ensurePlannerRole(role);
+    const assigned = col.assigned || [];
+    if(!Number(col.required || 0) && !assigned.length) continue;
+
+    lines.push(`${role} (${assigned.length}${col.required ? "/" + col.required : ""})`);
+    if(!assigned.length) lines.push("- none planned");
+    for(const item of assigned){
+      const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""} | ${normaliseShiftArray(p.shiftCodes).join("/")} | ${daysShort(getPersonDays(p))} | ${p.status}`);
+      else lines.push(`- ${item.login}`);
+    }
+    lines.push("");
+  }
+
+  const text = lines.join("\n").trim();
+  try{ await navigator.clipboard.writeText(text); toast("Planner copied"); }
+  catch(e){ prompt("Copy this planner:", text); }
+}
+
 function setTableSort(field){
   if(tableSortField === field){
     tableSortDir = tableSortDir === "asc" ? "desc" : "asc";
@@ -727,6 +1086,7 @@ function render(){
   }).join("");
 
   renderTableSortHeaders();
+  renderShiftPlanner();
   renderDaysControls();
   renderDaysView();
   renderDecoder();
@@ -765,7 +1125,7 @@ function exportCsv(){
   ].join("\n");
   downloadFile("indirect-training-tracker-with-shift-days.csv", csv, "text/csv"); toast("CSV downloaded");
 }
-function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people},null,2), "application/json"); toast("Backup downloaded"); }
+function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState},null,2), "application/json"); toast("Backup downloaded"); }
 function downloadFile(name,content,type){
   const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a");
   a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),500);
@@ -777,14 +1137,15 @@ function importBackup(event){
       const parsed=JSON.parse(reader.result); if(!Array.isArray(parsed.people)) throw new Error("Bad file");
       people=parsed.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
       if(Array.isArray(parsed.roles) && parsed.roles.length) roles=parsed.roles;
+      plannerState = normalisePlannerState(parsed.plannerState);
       saveStorage(); render(); toast("Backup imported");
     }catch(e){ toast("Import failed"); }
     event.target.value="";
   };
   reader.readAsText(file);
 }
-function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); saveStorage(); render(); toast("Sample loaded"); }
-function clearAll(){ if(!confirm("Clear all logins?")) return; people=[]; saveStorage(); render(); toast("Cleared"); }
+function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerState = defaultPlannerState(); saveStorage(); render(); toast("Sample loaded"); }
+function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerState = defaultPlannerState(); saveStorage(); render(); toast("Cleared"); }
 function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
 
 function rolePairsForKnownSheet(){
@@ -1099,7 +1460,8 @@ function getPortableData(){
     version: 4,
     exportedAt: new Date().toISOString(),
     roles,
-    people
+    people,
+    plannerState
   };
 }
 
@@ -1326,9 +1688,10 @@ async function loadSharedDataNow(){
         ...p,
         shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
       }));
+      plannerState = normalisePlannerState(data.plannerState);
 
       // Save a local cache so the page still works after the first successful load.
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState }));
       render();
       try{ renderGithubPreview(); }catch(e){}
       try{ renderSlackWorkflowPreview(); }catch(e){}
@@ -1504,6 +1867,7 @@ async function loadFromGithub(){
         shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
       }));
     }
+    plannerState = normalisePlannerState(data.plannerState);
 
     suppressGithubAutoSave = true;
     saveStorage();
