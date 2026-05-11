@@ -107,15 +107,12 @@
     .scc-role-actions input{width:58px;height:28px;border-radius:8px;text-align:center;padding:2px 4px;background:#fff}
     .scc-role-actions button{height:28px;padding:2px 7px;border-radius:8px}
     .scc-table{width:100%;border-collapse:collapse;font-size:12px}
-    .scc-table th{background:#f8fafc;color:#0f172a;text-transform:none;letter-spacing:0;font-size:12px;text-align:center;padding:7px;border:1px solid #d8dee8}
+    .scc-table th{background:#f8fafc;color:#0f172a;text-transform:none;letter-spacing:0;font-size:12px;text-align:left;padding:7px;border:1px solid #d8dee8}
     .scc-table td{padding:6px;border:1px solid #d8dee8;background:#fff;vertical-align:middle}
     .scc-table tr:hover td{background:#fbfdff}
     .scc-login-cell{display:flex;align-items:center;gap:7px}
     .scc-avatar{width:24px;height:24px;border-radius:999px;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#334155;flex:0 0 auto}
     .scc-login b{display:block;font-size:12px}.scc-login span{display:block;color:#64748b;font-size:10px;margin-top:1px}
-    .scc-lock{display:flex;align-items:center;justify-content:center;gap:4px}
-    .lock-btn{border:0;background:transparent;cursor:pointer;font-size:16px;line-height:1}
-    .lock-btn.locked{color:#0b63ce}.lock-btn.unlocked{opacity:.45}
     .scc-empty-row td{text-align:center;color:#64748b;background:#fafafa;padding:10px}
     .scc-remove{border:0;background:#fee2e2;color:#991b1b;border-radius:999px;font-weight:900;cursor:pointer;padding:3px 7px}
     .planner-summary{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
@@ -809,7 +806,7 @@ function normalisePlannerState(state){
         ? col.assigned
             .map(x => typeof x === "string" ? { login:x } : x)
             .filter(x => x && cleanLogin(x.login))
-            .map(x => ({ login: cleanLogin(x.login), note: cleanCell(x.note || ""), locked: !!x.locked }))
+            .map(x => ({ login: cleanLogin(x.login), note: cleanCell(x.note || "") }))
         : []
     };
   }
@@ -932,7 +929,7 @@ function addPlannerLoginToRole(login, role){
   }
 
   const col = ensurePlannerRole(role);
-  col.assigned.push({ login: clean, note:"", locked:true });
+  col.assigned.push({ login: clean, note:"" });
   plannerState.selectedLogin = "";
   savePlanner();
   toast(`Added ${clean} to ${plannerRoleLabel(role)}`);
@@ -953,13 +950,6 @@ function removePlannerLogin(role, login){
   toast("Removed from planner");
 }
 
-function togglePlannerLock(role, login){
-  const col = ensurePlannerRole(role);
-  const clean = cleanLogin(login);
-  const item = (col.assigned || []).find(x => cleanLogin(x.login) === clean);
-  if(item) item.locked = !item.locked;
-  savePlanner();
-}
 
 function clearPlannerRole(role){
   if(!confirm("Clear planned logins for " + plannerRoleLabel(role) + "?")) return;
@@ -1036,12 +1026,10 @@ function renderPlannerPool(){
 
 function plannerRoleRow(role, item){
   const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
-  const locked = item.locked !== false;
   if(!p){
     return `
       <tr>
         <td><div class="scc-login-cell"><span class="scc-avatar">?</span><div class="scc-login"><b>${escapeHtml(item.login)}</b><span>Login not found</span></div></div></td>
-        <td class="scc-lock"><button class="lock-btn ${locked ? "locked" : "unlocked"}" onclick="togglePlannerLock('${escapeForJs(role)}','${escapeForJs(item.login)}')">${locked ? "🔒" : "🔓"}</button></td>
         <td><button class="scc-remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">×</button></td>
       </tr>`;
   }
@@ -1056,9 +1044,6 @@ function plannerRoleRow(role, item){
             <span>${escapeHtml(p.name || "")}</span>
           </div>
         </div>
-      </td>
-      <td class="scc-lock">
-        <button class="lock-btn ${locked ? "locked" : "unlocked"}" title="Toggle role lock" onclick="togglePlannerLock('${escapeForJs(role)}','${escapeForJs(p.login)}')">${locked ? "🔒" : "🔓"}</button>
       </td>
       <td><button class="scc-remove" title="Remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">×</button></td>
     </tr>`;
@@ -1087,12 +1072,11 @@ function renderPlannerRoleCard(role){
         <thead>
           <tr>
             <th>Login</th>
-            <th>Role Lock ⚫</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          ${assigned.length ? assigned.map(item => plannerRoleRow(role, item)).join("") : `<tr class="scc-empty-row"><td colspan="3">--</td></tr>`}
+          ${assigned.length ? assigned.map(item => plannerRoleRow(role, item)).join("") : `<tr class="scc-empty-row"><td colspan="2">--</td></tr>`}
         </tbody>
       </table>
     </div>`;
@@ -1143,7 +1127,7 @@ async function copyPlanner(){
     if(!assigned.length) lines.push("--");
     for(const item of assigned){
       const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
-      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""} ${item.locked !== false ? "🔒" : "🔓"}`);
+      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""}`);
       else lines.push(`- ${item.login}`);
     }
     lines.push("");
