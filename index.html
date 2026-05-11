@@ -142,6 +142,10 @@
     .employee-tools{margin:10px 0 0;padding:10px;border:1px dashed #cbd5e1;border-radius:14px;background:#f8fafc;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .employee-tools .emp-summary{font-size:13px;color:#475569;font-weight:700}
 
+  
+    /* Live mode hidden risky buttons */
+    button[data-live-hidden="true"]{display:none!important}
+
   </style>
 </head>
 <body>
@@ -230,8 +234,6 @@
             <button class="btn-light" onclick="copyShown()">Copy shown</button>
             <button class="btn-light" onclick="exportCsv()">Export CSV</button>
             <button class="btn-light" onclick="exportBackup()">Backup</button>
-            <button class="btn-green" onclick="copyShareLink()">Copy share link with data</button>
-            <button class="btn-green" onclick="downloadPortableCopy()">Download copy with data</button>
             <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
             <button class="btn-green" onclick="loadSharedDataNow()">Load shared data</button>
             <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
@@ -239,8 +241,6 @@
               Import backup
               <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
             </label>
-            <button class="btn-light" onclick="loadSample()">Sample</button>
-            <button class="btn-danger" onclick="clearAll()">Clear</button>
           </div>
 
 
