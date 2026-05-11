@@ -299,7 +299,7 @@
           <h2>Decode shift code</h2>
           <div class="card-body">
             <label>Enter shift code</label>
-            <input id="decoderInput" placeholder="Example: NA5, NB1, NF6, PT101" oninput="renderDecoder()" />
+            <input id="decoderInput" placeholder="Example: NA5, NB1, NF6, PT101" oninput="renderDecoder(); renderDaysView();" />
             <p class="muted">For full-time codes: 1st character = shift type, 2nd character = days pattern, 3rd character = flex group. Example: NA5 = Night + A pattern + group 5.</p>
             <div class="decode-result" id="decodeResult" style="margin-top:12px"></div>
           </div>
@@ -319,6 +319,7 @@
               </select>
               <button class="btn-light" onclick="copyDaysView()">Copy day view</button>
             </div>
+            <div id="daysShiftFilterNotice" class="muted" style="margin:-4px 0 12px 0"></div>
             <div class="week-grid" id="weekGrid"></div>
           </div>
         </section>
@@ -843,6 +844,42 @@ function weekdayHtml(days){
   return `<div class="weekday-line">${DAYS.map(day => `<div class="weekday ${set.has(day) ? "on" : ""}">${DAY_SHORT[day]}</div>`).join("")}</div>`;
 }
 
+
+function getDecoderShiftFilterCodes(){
+  const raw = document.getElementById("decoderInput")?.value || "";
+  return raw
+    .split(/[,\s]+/)
+    .map(cleanCell)
+    .filter(Boolean)
+    .map(c => c.toUpperCase().replace(/\s+/g,""));
+}
+
+function shiftCodeBase(code){
+  return cleanCell(code).toUpperCase().replace(/\s+/g,"").split("-")[0];
+}
+
+function personMatchesShiftFilter(person, filterCodes){
+  if(!filterCodes.length) return true;
+  const wanted = new Set(filterCodes.map(shiftCodeBase));
+  return normaliseShiftArray(person.shiftCodes).some(code => wanted.has(shiftCodeBase(code)));
+}
+
+function shiftFilterDays(filterCodes){
+  const daySet = new Set();
+  for(const code of filterCodes){
+    const d = decodeShift(code);
+    for(const day of d.days || []) daySet.add(day);
+  }
+  return [...daySet].sort((a,b) => DAYS.indexOf(a) - DAYS.indexOf(b));
+}
+
+function clearDecoderShiftFilter(){
+  const input = document.getElementById("decoderInput");
+  if(input) input.value = "";
+  renderDecoder();
+  renderDaysView();
+}
+
 function renderDaysControls(){
   const sel = document.getElementById("daysRoleFilter");
   if(!sel) return;
@@ -857,6 +894,16 @@ function renderDaysView(){
 
   const role = document.getElementById("daysRoleFilter")?.value || "All roles";
   const status = document.getElementById("daysStatusFilter")?.value || "All statuses";
+  const shiftCodes = getDecoderShiftFilterCodes();
+  const filterDays = shiftFilterDays(shiftCodes);
+  const notice = document.getElementById("daysShiftFilterNotice");
+
+  if(notice){
+    notice.innerHTML = shiftCodes.length
+      ? `Shift filter from decoder: <b>${escapeHtml(shiftCodes.join(", "))}</b> — days view is only showing matching shift code(s). <button class="btn-light" style="padding:5px 9px;margin-left:8px" onclick="clearDecoderShiftFilter()">Clear shift filter</button>`
+      : `Type a shift code in the decoder to filter this days view.`;
+  }
+
   const byDay = {};
   DAYS.forEach(day => byDay[day] = []);
   byDay.Unknown = [];
@@ -864,6 +911,7 @@ function renderDaysView(){
   for(const p of people){
     if(role !== "All roles" && !p.roles.includes(role)) continue;
     if(status !== "All statuses" && p.status !== status) continue;
+    if(!personMatchesShiftFilter(p, shiftCodes)) continue;
 
     const days = getPersonDays(p);
     if(!days.length){
@@ -873,7 +921,8 @@ function renderDaysView(){
     }
   }
 
-  const cards = DAYS.map(day => dayCard(day, byDay[day]));
+  const daysToShow = shiftCodes.length && filterDays.length ? filterDays : DAYS;
+  const cards = daysToShow.map(day => dayCard(day, byDay[day]));
   if(byDay.Unknown.length) cards.push(dayCard("Unknown", byDay.Unknown));
   grid.innerHTML = cards.join("");
 }
@@ -895,12 +944,16 @@ function dayCard(day, rows){
 async function copyDaysView(){
   const role = document.getElementById("daysRoleFilter")?.value || "All roles";
   const status = document.getElementById("daysStatusFilter")?.value || "All statuses";
-  const lines = [`Days of week view — role: ${role}, status: ${status}`];
+  const shiftCodes = getDecoderShiftFilterCodes();
+  const filterDays = shiftFilterDays(shiftCodes);
+  const daysToCopy = shiftCodes.length && filterDays.length ? filterDays : DAYS;
+  const lines = [`Days of week view — role: ${role}, status: ${status}${shiftCodes.length ? `, shift: ${shiftCodes.join(", ")}` : ""}`];
 
-  for(const day of DAYS){
+  for(const day of daysToCopy){
     const rows = people.filter(p => {
       if(role !== "All roles" && !p.roles.includes(role)) return false;
       if(status !== "All statuses" && p.status !== status) return false;
+      if(!personMatchesShiftFilter(p, shiftCodes)) return false;
       return getPersonDays(p).includes(day);
     }).sort((a,b) => a.login.localeCompare(b.login));
     lines.push(`${day}: ${rows.map(p => p.login).join(", ") || "-"}`);
