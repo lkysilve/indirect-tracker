@@ -120,6 +120,20 @@
     @media(max-width:1200px){.planner-shell{grid-template-columns:1fr}.planner-pool{position:static}.planner-board.scc-board{grid-template-columns:repeat(2,minmax(260px,1fr))}}
     @media(max-width:760px){.planner-topbar{grid-template-columns:1fr 1fr}.planner-board.scc-board{grid-template-columns:1fr}}
 
+  
+    /* Shift Planner v3: saved 7-day rota planning */
+    .planner-week-controls{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin:0 0 10px}
+    .planner-week-controls .week-field{min-width:170px}
+    .planner-week-strip{display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:8px;margin:8px 0 12px}
+    .planner-day-card{border:1px solid #dbe3ee;background:#fff;border-radius:14px;padding:9px;cursor:pointer;text-align:left}
+    .planner-day-card:hover{border-color:#2563eb;box-shadow:0 4px 12px rgba(37,99,235,.10)}
+    .planner-day-card.active{background:#111827;color:#fff;border-color:#111827}
+    .planner-day-card.has-plan:not(.active){background:#ecfdf5;border-color:#86efac}
+    .planner-day-card .dow{font-weight:900;font-size:13px}
+    .planner-day-card .date{font-size:12px;opacity:.82;margin-top:2px}
+    .planner-day-card .plan-count{font-size:12px;margin-top:6px;font-weight:900}
+    @media(max-width:900px){.planner-week-strip{grid-template-columns:repeat(2,minmax(120px,1fr))}}
+
   </style>
 </head>
 <body>
@@ -355,16 +369,31 @@
 
 
     
+    
     <section id="tab-planner" class="tab">
       <section class="card">
         <h2>
           <span>Shift Planner</span>
-          <span class="badge">SCC-style pick and choose</span>
+          <span class="badge">7-day SCC-style rota board</span>
         </h2>
         <div class="card-body">
+          <div class="planner-week-controls">
+            <div class="week-field">
+              <label>Week starting</label>
+              <input type="date" id="plannerWeekStart" onchange="setPlannerWeekStart(this.value)" />
+            </div>
+            <button class="btn-light" onclick="movePlannerWeek(-7)">← Previous week</button>
+            <button class="btn-light" onclick="goPlannerToday()">Today</button>
+            <button class="btn-light" onclick="movePlannerWeek(7)">Next week →</button>
+            <button class="btn-light" onclick="copyPlannerWeek()">Copy full week</button>
+            <button class="btn-danger" onclick="clearAllPlannerPlans()">Clear all plans</button>
+          </div>
+
+          <div class="planner-week-strip" id="plannerWeekStrip"></div>
+
           <div class="planner-topbar">
             <div>
-              <label>Day</label>
+              <label>Candidate day</label>
               <select id="plannerDay" onchange="updatePlannerControl('day', this.value)">
                 <option>All days</option>
                 <option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option>
@@ -396,8 +425,8 @@
             <div>
               <label>Actions</label>
               <div class="row">
-                <button class="btn-light" onclick="copyPlanner()">Copy planner</button>
-                <button class="btn-danger" onclick="clearPlanner()">Clear</button>
+                <button class="btn-light" onclick="copyPlanner()">Copy day</button>
+                <button class="btn-danger" onclick="clearPlanner()">Clear day</button>
               </div>
             </div>
           </div>
@@ -412,8 +441,8 @@
               </div>
               <div class="planner-pool-controls">
                 <p class="muted" style="margin:0">
-                  Click a login to select it, then press <b>Add selected</b> on a role board.
-                  Or use the small role chips on each login.
+                  Pick a day above, then click a login to select it. Press <b>+ selected</b> on a role board,
+                  or use the small role chips on each login.
                 </p>
               </div>
               <div class="planner-pool-list" id="plannerPoolList"></div>
@@ -529,6 +558,7 @@ let activeRoleCard = "All roles";
 let tableSortField = "login";
 let tableSortDir = "asc";
 let plannerState = defaultPlannerState();
+let plannerBook = defaultPlannerBook();
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -542,7 +572,8 @@ function id(){
   return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 }
 function saveStorage(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState }));
+  syncCurrentPlannerToBook();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook }));
   showAutosaved();
   queueGithubSave();
 }
@@ -553,6 +584,8 @@ function loadStorage(){
       if(Array.isArray(embedded.roles) && embedded.roles.length) roles = embedded.roles;
       people = embedded.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
       plannerState = normalisePlannerState(embedded.plannerState);
+      plannerBook = normalisePlannerBook((embedded).plannerBook, plannerState);
+      plannerState = getPlannerStateForSelectedDate();
       saveStorage();
       return;
     }
@@ -562,6 +595,8 @@ function loadStorage(){
       if(Array.isArray(hashData.roles) && hashData.roles.length) roles = hashData.roles;
       people = hashData.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
       plannerState = normalisePlannerState(hashData.plannerState);
+      plannerBook = normalisePlannerBook((hashData).plannerBook, plannerState);
+      plannerState = getPlannerStateForSelectedDate();
       saveStorage();
       history.replaceState(null, document.title, location.pathname + location.search);
       return;
@@ -573,6 +608,8 @@ function loadStorage(){
       people = saved.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
     }
     plannerState = normalisePlannerState(saved.plannerState);
+      plannerBook = normalisePlannerBook((saved).plannerBook, plannerState);
+      plannerState = getPlannerStateForSelectedDate();
   }catch(e){}
 }
 function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1700); }
@@ -820,6 +857,232 @@ function normalisePlannerState(state){
   return next;
 }
 
+
+function pad2(n){ return String(n).padStart(2,"0"); }
+
+function isoDateFromLocalDate(d){
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+
+function localDateFromIso(iso){
+  const parts = String(iso || "").split("-").map(Number);
+  if(parts.length !== 3 || parts.some(n => !Number.isFinite(n))) return new Date();
+  return new Date(parts[0], parts[1]-1, parts[2]);
+}
+
+function todayIso(){
+  return isoDateFromLocalDate(new Date());
+}
+
+function addDaysIso(iso, days){
+  const d = localDateFromIso(iso);
+  d.setDate(d.getDate() + Number(days || 0));
+  return isoDateFromLocalDate(d);
+}
+
+function dayNameFromIso(iso){
+  return DAYS[localDateFromIso(iso).getDay()];
+}
+
+function shortDateFromIso(iso){
+  const d = localDateFromIso(iso);
+  return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}`;
+}
+
+function startOfWeekIso(iso){
+  // Sunday start, matching the shift-code tables and app day order.
+  const d = localDateFromIso(iso);
+  d.setDate(d.getDate() - d.getDay());
+  return isoDateFromLocalDate(d);
+}
+
+function weekDatesFromStart(weekStart){
+  return Array.from({length:7}, (_,i) => addDaysIso(weekStart, i));
+}
+
+function defaultPlannerBook(){
+  const today = todayIso();
+  return {
+    version: 1,
+    selectedDate: today,
+    weekStart: startOfWeekIso(today),
+    plans: {}
+  };
+}
+
+function clonePlannerStateForBook(state){
+  return JSON.parse(JSON.stringify(normalisePlannerState(state)));
+}
+
+function normalisePlannerBook(book, fallbackPlan){
+  const base = defaultPlannerBook();
+  const incoming = book && typeof book === "object" ? book : {};
+  const selectedDate = incoming.selectedDate || base.selectedDate;
+  const next = {
+    version: 1,
+    selectedDate,
+    weekStart: incoming.weekStart || startOfWeekIso(selectedDate),
+    plans: {}
+  };
+
+  const plans = incoming.plans && typeof incoming.plans === "object" ? incoming.plans : {};
+  Object.entries(plans).forEach(([date, plan]) => {
+    if(/^\d{4}-\d{2}-\d{2}$/.test(date)){
+      next.plans[date] = normalisePlannerState(plan);
+      if(!next.plans[date].day || next.plans[date].day === "All days"){
+        next.plans[date].day = dayNameFromIso(date);
+      }
+    }
+  });
+
+  if(!next.plans[selectedDate]){
+    const seed = fallbackPlan ? normalisePlannerState(fallbackPlan) : defaultPlannerState();
+    if(!seed.day || seed.day === "All days") seed.day = dayNameFromIso(selectedDate);
+    next.plans[selectedDate] = seed;
+  }
+
+  return next;
+}
+
+function syncCurrentPlannerToBook(){
+  plannerBook = normalisePlannerBook(plannerBook, plannerState);
+  const date = plannerBook.selectedDate || todayIso();
+  const plan = normalisePlannerState(plannerState);
+  if(!plan.day || plan.day === "All days") plan.day = dayNameFromIso(date);
+  plannerBook.plans[date] = clonePlannerStateForBook(plan);
+}
+
+function getPlannerStateForSelectedDate(){
+  plannerBook = normalisePlannerBook(plannerBook, plannerState);
+  const date = plannerBook.selectedDate || todayIso();
+  const plan = plannerBook.plans[date] ? clonePlannerStateForBook(plannerBook.plans[date]) : defaultPlannerState();
+  if(!plan.day || plan.day === "All days") plan.day = dayNameFromIso(date);
+  return normalisePlannerState(plan);
+}
+
+function setPlannerDate(dateIso){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(dateIso || ""))) return;
+
+  syncCurrentPlannerToBook();
+
+  const previous = normalisePlannerState(plannerState);
+  plannerBook.selectedDate = dateIso;
+  plannerBook.weekStart = startOfWeekIso(dateIso);
+
+  if(plannerBook.plans[dateIso]){
+    plannerState = clonePlannerStateForBook(plannerBook.plans[dateIso]);
+  }else{
+    plannerState = defaultPlannerState();
+    plannerState.day = dayNameFromIso(dateIso);
+    // Carry useful filters across days, but not assignments.
+    plannerState.status = previous.status || "Available";
+    plannerState.role = previous.role || "All roles";
+    plannerState.search = previous.search || "";
+    plannerState.shift = previous.shift || "";
+  }
+
+  plannerState.selectedLogin = "";
+  plannerBook.plans[dateIso] = clonePlannerStateForBook(plannerState);
+  saveStorage();
+  renderShiftPlanner();
+}
+
+function setPlannerWeekStart(weekStartIso){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(weekStartIso || ""))) return;
+  syncCurrentPlannerToBook();
+  plannerBook.weekStart = startOfWeekIso(weekStartIso);
+  const selected = plannerBook.weekStart;
+  setPlannerDate(selected);
+}
+
+function movePlannerWeek(offsetDays){
+  syncCurrentPlannerToBook();
+  const current = plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso());
+  const nextStart = addDaysIso(current, offsetDays);
+  plannerBook.weekStart = nextStart;
+  setPlannerDate(nextStart);
+}
+
+function goPlannerToday(){
+  setPlannerDate(todayIso());
+}
+
+function getPlanStatsForDate(dateIso){
+  const plan = plannerBook && plannerBook.plans ? plannerBook.plans[dateIso] : null;
+  const p = normalisePlannerState(plan || defaultPlannerState());
+  const required = roles.reduce((sum, role) => sum + Number((p.columns?.[role]?.required) || 0), 0);
+  const filled = roles.reduce((sum, role) => sum + ((p.columns?.[role]?.assigned || []).length), 0);
+  return { required, filled, hasPlan: required > 0 || filled > 0 };
+}
+
+function renderPlannerWeekBar(){
+  plannerBook = normalisePlannerBook(plannerBook, plannerState);
+  const input = document.getElementById("plannerWeekStart");
+  if(input) input.value = plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso());
+
+  const strip = document.getElementById("plannerWeekStrip");
+  if(!strip) return;
+
+  const dates = weekDatesFromStart(plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso()));
+  strip.innerHTML = dates.map(date => {
+    const stats = getPlanStatsForDate(date);
+    const active = date === plannerBook.selectedDate;
+    return `
+      <button class="planner-day-card ${active ? "active" : ""} ${stats.hasPlan ? "has-plan" : ""}" onclick="setPlannerDate('${date}')">
+        <div class="dow">${escapeHtml(dayNameFromIso(date))}</div>
+        <div class="date">${escapeHtml(shortDateFromIso(date))}</div>
+        <div class="plan-count">${stats.filled}${stats.required ? "/" + stats.required : ""} planned</div>
+      </button>`;
+  }).join("");
+}
+
+function clearAllPlannerPlans(){
+  if(!confirm("Clear every saved planner day, including previous and future plans?")) return;
+  plannerBook = defaultPlannerBook();
+  plannerState = defaultPlannerState();
+  plannerState.day = dayNameFromIso(plannerBook.selectedDate);
+  plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState);
+  saveStorage();
+  renderShiftPlanner();
+  toast("All planner days cleared");
+}
+
+async function copyPlannerWeek(){
+  syncCurrentPlannerToBook();
+
+  const dates = weekDatesFromStart(plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso()));
+  const lines = [];
+  lines.push(`7 Day Shift Planner — week starting ${shortDateFromIso(dates[0])}`);
+  lines.push("");
+
+  for(const date of dates){
+    const plan = normalisePlannerState(plannerBook.plans[date] || defaultPlannerState());
+    const stats = getPlanStatsForDate(date);
+    lines.push(`${dayNameFromIso(date)} ${shortDateFromIso(date)} — ${stats.filled}${stats.required ? "/" + stats.required : ""} planned`);
+
+    let hadRole = false;
+    for(const role of roles){
+      const col = plan.columns?.[role] || { required:0, assigned:[] };
+      const assigned = col.assigned || [];
+      if(!Number(col.required || 0) && !assigned.length) continue;
+      hadRole = true;
+      lines.push(`  ${plannerRoleLabel(role)} ${assigned.length}/${col.required || 0}`);
+      assigned.forEach(item => {
+        const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+        lines.push(`    - ${p ? p.login : item.login}${p && p.name ? " (" + p.name + ")" : ""}`);
+      });
+    }
+    if(!hadRole) lines.push("  --");
+    lines.push("");
+  }
+
+  const text = lines.join("\n").trim();
+  try{ await navigator.clipboard.writeText(text); toast("Full week copied"); }
+  catch(e){ prompt("Copy this week planner:", text); }
+}
+
+
+
 function ensurePlannerRole(role){
   plannerState = normalisePlannerState(plannerState);
   if(!plannerState.columns[role]) plannerState.columns[role] = { required:0, assigned:[] };
@@ -832,6 +1095,7 @@ function plannerDomKey(role){
 
 function savePlanner(){
   plannerState = normalisePlannerState(plannerState);
+  syncCurrentPlannerToBook();
   saveStorage();
   renderShiftPlanner();
 }
@@ -959,11 +1223,14 @@ function clearPlannerRole(role){
 }
 
 function clearPlanner(){
-  if(!confirm("Clear the whole shift planner?")) return;
+  if(!confirm("Clear the selected day plan only?")) return;
+  const date = plannerBook.selectedDate || todayIso();
   plannerState = defaultPlannerState();
-  roles.forEach(role => ensurePlannerRole(role));
-  savePlanner();
-  toast("Planner cleared");
+  plannerState.day = dayNameFromIso(date);
+  plannerBook.plans[date] = clonePlannerStateForBook(plannerState);
+  saveStorage();
+  renderShiftPlanner();
+  toast("Selected day cleared");
 }
 
 function renderPlannerControls(){
@@ -1086,7 +1353,9 @@ function renderShiftPlanner(){
   const board = document.getElementById("plannerBoard");
   if(!board) return;
 
-  plannerState = normalisePlannerState(plannerState);
+  plannerBook = normalisePlannerBook(plannerBook, plannerState);
+  plannerState = getPlannerStateForSelectedDate();
+  renderPlannerWeekBar();
   renderPlannerControls();
 
   const visibleRoles = plannerState.role === "All roles" ? roles : roles.filter(r => r === plannerState.role);
@@ -1101,9 +1370,10 @@ function renderShiftPlanner(){
   const summary = document.getElementById("plannerSummary");
   if(summary){
     summary.innerHTML = `
+      <span class="pill">Selected: ${escapeHtml(dayNameFromIso(plannerBook.selectedDate))} ${escapeHtml(shortDateFromIso(plannerBook.selectedDate))}</span>
       <span class="pill">Planned: ${totalFilled}${totalRequired ? "/" + totalRequired : ""}</span>
       <span class="pill">Unplanned shown: ${poolCount}</span>
-      <span class="pill">Day: ${escapeHtml(plannerState.day)}</span>
+      <span class="pill">Candidate day: ${escapeHtml(plannerState.day)}</span>
       ${plannerState.shift ? `<span class="pill">Shift: ${escapeHtml(plannerState.shift)}</span>` : ""}
       <span class="pill">Status: ${escapeHtml(plannerState.status)}</span>
       ${plannerState.selectedLogin ? `<span class="pill">Selected: ${escapeHtml(plannerState.selectedLogin)}</span>` : ""}
@@ -1114,8 +1384,8 @@ function renderShiftPlanner(){
 async function copyPlanner(){
   plannerState = normalisePlannerState(plannerState);
   const lines = [];
-  lines.push("Shift Planner");
-  lines.push(`Day: ${plannerState.day || "All days"}${plannerState.shift ? " | Shift: " + plannerState.shift : ""} | Status: ${plannerState.status}`);
+  lines.push(`Shift Planner — ${dayNameFromIso(plannerBook.selectedDate)} ${shortDateFromIso(plannerBook.selectedDate)}`);
+  lines.push(`Candidate day: ${plannerState.day || "All days"}${plannerState.shift ? " | Shift: " + plannerState.shift : ""} | Status: ${plannerState.status}`);
   lines.push("");
 
   for(const role of roles){
@@ -1279,7 +1549,7 @@ function exportCsv(){
   ].join("\n");
   downloadFile("indirect-training-tracker-with-shift-days.csv", csv, "text/csv"); toast("CSV downloaded");
 }
-function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState},null,2), "application/json"); toast("Backup downloaded"); }
+function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState,plannerBook},null,2), "application/json"); toast("Backup downloaded"); }
 function downloadFile(name,content,type){
   const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a");
   a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),500);
@@ -1292,14 +1562,16 @@ function importBackup(event){
       people=parsed.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
       if(Array.isArray(parsed.roles) && parsed.roles.length) roles=parsed.roles;
       plannerState = normalisePlannerState(parsed.plannerState);
+      plannerBook = normalisePlannerBook(parsed.plannerBook, plannerState);
+      plannerState = getPlannerStateForSelectedDate();
       saveStorage(); render(); toast("Backup imported");
     }catch(e){ toast("Import failed"); }
     event.target.value="";
   };
   reader.readAsText(file);
 }
-function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerState = defaultPlannerState(); saveStorage(); render(); toast("Sample loaded"); }
-function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerState = defaultPlannerState(); saveStorage(); render(); toast("Cleared"); }
+function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
+function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
 function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
 
 function rolePairsForKnownSheet(){
@@ -1610,12 +1882,14 @@ function showAutosaved(){
 }
 
 function getPortableData(){
+  syncCurrentPlannerToBook();
   return {
-    version: 4,
+    version: 5,
     exportedAt: new Date().toISOString(),
     roles,
     people,
-    plannerState
+    plannerState,
+    plannerBook
   };
 }
 
@@ -1843,9 +2117,11 @@ async function loadSharedDataNow(){
         shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])
       }));
       plannerState = normalisePlannerState(data.plannerState);
+      plannerBook = normalisePlannerBook(data.plannerBook, plannerState);
+      plannerState = getPlannerStateForSelectedDate();
 
       // Save a local cache so the page still works after the first successful load.
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook }));
       render();
       try{ renderGithubPreview(); }catch(e){}
       try{ renderSlackWorkflowPreview(); }catch(e){}
@@ -2022,6 +2298,8 @@ async function loadFromGithub(){
       }));
     }
     plannerState = normalisePlannerState(data.plannerState);
+    plannerBook = normalisePlannerBook(data.plannerBook, plannerState);
+    plannerState = getPlannerStateForSelectedDate();
 
     suppressGithubAutoSave = true;
     saveStorage();
