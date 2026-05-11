@@ -404,6 +404,7 @@
             <button class="btn-light" onclick="goPlannerToday()">Today</button>
             <button class="btn-light" onclick="movePlannerWeek(7)">Next week →</button>
             <button class="btn-light" onclick="copyPlannerWeek()">Copy full week</button>
+            <button class="btn-green" onclick="exportPlannerWeekCsv()">Export week CSV</button>
             <button class="btn-danger" onclick="clearAllPlannerPlans()">Clear all plans</button>
           </div>
 
@@ -444,6 +445,7 @@
               <label>Actions</label>
               <div class="row">
                 <button class="btn-light" onclick="copyPlanner()">Copy day</button>
+                <button class="btn-green" onclick="exportPlannerDayCsv()">Export day CSV</button>
                 <button class="btn-danger" onclick="clearPlanner()">Clear day</button>
               </div>
             </div>
@@ -1675,6 +1677,136 @@ function comparePeopleByTableSort(a,b){
   const result = primary || String(a.login || "").localeCompare(String(b.login || ""), undefined, { numeric:true, sensitivity:"base" });
   return tableSortDir === "desc" ? -result : result;
 }
+
+
+function csvCell(value){
+  const s = String(value ?? "");
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function plannerCsvRowsForDate(dateIso){
+  const plan = normalisePlannerState((plannerBook && plannerBook.plans && plannerBook.plans[dateIso]) ? plannerBook.plans[dateIso] : defaultPlannerState());
+  const rows = [];
+  const dayName = dayNameFromIso(dateIso);
+  const shortDate = shortDateFromIso(dateIso);
+
+  for(const role of roles){
+    const col = plan.columns?.[role] || { required:0, assigned:[] };
+    const required = Number(col.required || 0);
+    const assigned = col.assigned || [];
+    const plannedCount = assigned.length;
+
+    if(!required && !plannedCount) continue;
+
+    assigned.forEach((item, index) => {
+      const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+      rows.push({
+        date: dateIso,
+        day: dayName,
+        shortDate,
+        role: plannerRoleLabel(role),
+        required,
+        plannedCount,
+        slot: index + 1,
+        login: p ? p.login : item.login,
+        name: p ? (p.name || "") : "",
+        shiftCode: p ? normaliseShiftArray(p.shiftCodes).join(" / ") : "",
+        status: p ? (p.status || "") : "",
+        notes: p ? (p.notes || "") : ""
+      });
+    });
+
+    // Add blank rows for unfilled required slots so Excel shows coverage gaps.
+    for(let i = assigned.length; i < required; i++){
+      rows.push({
+        date: dateIso,
+        day: dayName,
+        shortDate,
+        role: plannerRoleLabel(role),
+        required,
+        plannedCount,
+        slot: i + 1,
+        login: "",
+        name: "",
+        shiftCode: "",
+        status: "UNFILLED",
+        notes: ""
+      });
+    }
+  }
+
+  return rows;
+}
+
+function buildPlannerCsv(rows){
+  const headers = [
+    "Date",
+    "Day",
+    "Short Date",
+    "Role",
+    "Required",
+    "Planned Count",
+    "Slot",
+    "Login",
+    "Name",
+    "Shift Code",
+    "Status",
+    "Notes"
+  ];
+
+  const lines = [headers.map(csvCell).join(",")];
+
+  rows.forEach(r => {
+    lines.push([
+      r.date,
+      r.day,
+      r.shortDate,
+      r.role,
+      r.required,
+      r.plannedCount,
+      r.slot,
+      r.login,
+      r.name,
+      r.shiftCode,
+      r.status,
+      r.notes
+    ].map(csvCell).join(","));
+  });
+
+  return lines.join("\n");
+}
+
+function exportPlannerDayCsv(){
+  syncCurrentPlannerToBook();
+  const date = plannerBook.selectedDate || todayIso();
+  const rows = plannerCsvRowsForDate(date);
+
+  if(!rows.length){
+    toast("No planner data for selected day");
+    return;
+  }
+
+  const csv = buildPlannerCsv(rows);
+  downloadFile(`shift-planner-${date}.csv`, csv, "text/csv;charset=utf-8");
+  toast("Day planner CSV downloaded");
+}
+
+function exportPlannerWeekCsv(){
+  syncCurrentPlannerToBook();
+  const weekStart = plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso());
+  const dates = weekDatesFromStart(weekStart);
+  const rows = dates.flatMap(plannerCsvRowsForDate);
+
+  if(!rows.length){
+    toast("No planner data for this week");
+    return;
+  }
+
+  const csv = buildPlannerCsv(rows);
+  downloadFile(`shift-planner-week-${weekStart}.csv`, csv, "text/csv;charset=utf-8");
+  toast("Week planner CSV downloaded");
+}
+
 
 function renderTableSortHeaders(){
   document.querySelectorAll("[data-sort-field]").forEach(btn => {
