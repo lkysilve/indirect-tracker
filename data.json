@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "exportedAt": "2026-05-11T20:00:22.724Z",
+  "exportedAt": "2026-05-11T20:01:06.050Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1614,10 +1614,10 @@
   ],
   "plannerState": {
     "version": 2,
-    "day": "Sunday",
+    "day": "Wednesday",
     "shift": "",
     "status": "Available",
-    "role": "All roles",
+    "role": "PG",
     "search": "",
     "selectedLogin": "",
     "columns": {
@@ -1630,8 +1630,13 @@
         "assigned": []
       },
       "PG": {
-        "required": 0,
-        "assigned": []
+        "required": 4,
+        "assigned": [
+          {
+            "login": "abbabhay",
+            "note": ""
+          }
+        ]
       },
       "PS": {
         "required": 0,
@@ -1643,12 +1648,7 @@
       },
       "SLAM": {
         "required": 0,
-        "assigned": [
-          {
-            "login": "alpshibu",
-            "note": ""
-          }
-        ]
+        "assigned": []
       },
       "WS": {
         "required": 0,
@@ -1658,7 +1658,7 @@
   },
   "plannerBook": {
     "version": 1,
-    "selectedDate": "2026-05-10",
+    "selectedDate": "2026-05-13",
     "weekStart": "2026-05-10",
     "plans": {
       "2026-05-11": {
@@ -1972,5 +1972,5 @@
     }
   },
   "source": "github",
-  "updatedAt": "2026-05-11T20:00:22.724Z"
+  "updatedAt": "2026-05-11T20:01:06.050Z"
 }
