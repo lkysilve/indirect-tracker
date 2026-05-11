@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "exportedAt": "2026-05-11T19:59:37.385Z",
+  "exportedAt": "2026-05-11T19:59:39.672Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1619,7 +1619,7 @@
     "status": "Available",
     "role": "PG",
     "search": "",
-    "selectedLogin": "andmogos",
+    "selectedLogin": "",
     "columns": {
       "IT WS": {
         "required": 0,
@@ -1631,7 +1631,12 @@
       },
       "PG": {
         "required": 4,
-        "assigned": []
+        "assigned": [
+          {
+            "login": "andmogos",
+            "note": ""
+          }
+        ]
       },
       "PS": {
         "required": 0,
@@ -1702,7 +1707,7 @@
         "status": "Available",
         "role": "PG",
         "search": "",
-        "selectedLogin": "andmogos",
+        "selectedLogin": "",
         "columns": {
           "IT WS": {
             "required": 0,
@@ -1714,7 +1719,12 @@
           },
           "PG": {
             "required": 4,
-            "assigned": []
+            "assigned": [
+              {
+                "login": "andmogos",
+                "note": ""
+              }
+            ]
           },
           "PS": {
             "required": 0,
@@ -1737,5 +1747,5 @@
     }
   },
   "source": "github",
-  "updatedAt": "2026-05-11T19:59:37.385Z"
+  "updatedAt": "2026-05-11T19:59:39.672Z"
 }
