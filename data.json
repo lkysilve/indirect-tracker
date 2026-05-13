@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-13T05:33:24.791Z",
+  "exportedAt": "2026-05-13T18:53:08.884Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -26,21 +26,6 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-11T19:18:23.324Z"
-    },
-    {
-      "id": "aca7cf06-1545-4c8f-881a-a964a4d4d92e",
-      "login": "abmamun",
-      "name": "Mamun,Abdullah Al",
-      "shiftCodes": [
-        "NF6"
-      ],
-      "roles": [
-        "PT",
-        "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.979Z"
     },
     {
       "id": "3b248b89-2b8f-4ba4-9597-e7c6f3883cc1",
@@ -391,12 +376,13 @@
     },
     {
       "id": "0597cb46-1284-4a5c-9611-26359a7d765f",
-      "login": "djohnjoh",
       "name": "Davis,John-John James",
+      "login": "djohnjoh",
       "shiftCodes": [
         "NF6-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PG",
         "PT",
         "SLAM",
@@ -404,7 +390,7 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T18:37:28.781Z"
     },
     {
       "id": "4c2114a2-9818-47fe-8957-f3935b77194e",
@@ -570,18 +556,19 @@
     },
     {
       "id": "7b620943-978a-4d79-ab40-204e1f8f70a2",
-      "login": "hedathad",
       "name": "Bin Samad,Swalah",
+      "login": "hedathad",
       "shiftCodes": [
         "NA5-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PG",
         "PT"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T18:37:03.302Z"
     },
     {
       "id": "061ee0fc-1837-4959-bc6f-1a4a02ace2a0",
@@ -1753,5 +1740,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-13T05:33:24.791Z"
+  "updatedAt": "2026-05-13T18:53:08.884Z"
 }
