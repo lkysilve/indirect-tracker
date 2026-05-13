@@ -146,6 +146,21 @@
     /* Live mode hidden risky buttons */
     button[data-live-hidden="true"]{display:none!important}
 
+  
+    /* User-created custom tabs */
+    .add-tab-btn{width:40px;height:40px;border-radius:12px;border:1px solid #cbd5e1;background:#fff;color:#dc2626;font-size:30px;line-height:1;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .add-tab-btn:hover{background:#fee2e2;border-color:#fecaca}
+    .custom-tab-panel{display:grid;grid-template-columns:280px 1fr;gap:12px}
+    .custom-tab-sidebar{border:1px solid #dbe3ee;background:#f8fafc;border-radius:16px;padding:10px}
+    .custom-tab-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .custom-tab-item{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #dbe3ee;background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer}
+    .custom-tab-item.active{background:#111827;color:#fff;border-color:#111827}
+    .custom-tab-item button{border:0;background:transparent;color:inherit;cursor:pointer;font-weight:900}
+    .custom-tab-editor{border:1px solid #dbe3ee;background:#fff;border-radius:16px;padding:14px}
+    .custom-tab-editor textarea{min-height:420px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .custom-tab-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    @media(max-width:900px){.custom-tab-panel{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -168,6 +183,8 @@
       <button class="tabbtn active" onclick="showTab('tracker')">Indirect Tracker</button>
       <button class="tabbtn" onclick="showTab('decoder')">Shift Decoder + Days</button>
       <button class="tabbtn" onclick="showTab('planner')">Shift Planner</button>
+      <span id="customTabButtons"></span>
+      <button class="add-tab-btn" title="Add new tab" onclick="addCustomTab()">+</button>
     </div>
 
     <section id="tab-tracker" class="tab active">
@@ -579,6 +596,8 @@ let tableSortField = "login";
 let tableSortDir = "asc";
 let plannerState = defaultPlannerState();
 let plannerBook = defaultPlannerBook();
+let customTabs = [];
+let activeCustomTabId = "";
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -593,7 +612,7 @@ function id(){
 }
 function saveStorage(){
   syncCurrentPlannerToBook();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook, customTabs, activeCustomTabId }));
   showAutosaved();
   queueGithubSave();
 }
@@ -604,6 +623,8 @@ function loadStorage(){
       if(Array.isArray(embedded.roles) && embedded.roles.length) roles = embedded.roles;
       people = embedded.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
       plannerState = normalisePlannerState(embedded.plannerState);
+      customTabs = normaliseCustomTabs(embedded.customTabs);
+      activeCustomTabId = cleanCell(embedded.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((embedded).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       saveStorage();
@@ -615,6 +636,8 @@ function loadStorage(){
       if(Array.isArray(hashData.roles) && hashData.roles.length) roles = hashData.roles;
       people = hashData.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
       plannerState = normalisePlannerState(hashData.plannerState);
+      customTabs = normaliseCustomTabs(hashData.customTabs);
+      activeCustomTabId = cleanCell(hashData.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((hashData).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       saveStorage();
@@ -628,6 +651,8 @@ function loadStorage(){
       people = saved.people.map(p => ({...p, shiftCodes:normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}));
     }
     plannerState = normalisePlannerState(saved.plannerState);
+      customTabs = normaliseCustomTabs(saved.customTabs);
+      activeCustomTabId = cleanCell(saved.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((saved).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
   }catch(e){}
@@ -853,6 +878,134 @@ function applyEmployeeListUpdates(){
   toast(`Updated ${changed} tracker login(s) from employee CSV${missing ? "; " + missing + " missing" : ""}`);
 }
 
+
+function defaultCustomTab(){
+  return {
+    id: "ct_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7),
+    title: "New tab",
+    content: ""
+  };
+}
+
+function normaliseCustomTabs(tabs){
+  if(!Array.isArray(tabs)) return [];
+  return tabs
+    .filter(t => t && typeof t === "object")
+    .map(t => ({
+      id: cleanCell(t.id || ("ct_" + Math.random().toString(36).slice(2,9))),
+      title: cleanCell(t.title || "New tab").slice(0, 40),
+      content: String(t.content || "")
+    }));
+}
+
+function getActiveCustomTab(){
+  customTabs = normaliseCustomTabs(customTabs);
+  if(!customTabs.length) return null;
+  let tab = customTabs.find(t => t.id === activeCustomTabId);
+  if(!tab){
+    activeCustomTabId = customTabs[0].id;
+    tab = customTabs[0];
+  }
+  return tab;
+}
+
+function addCustomTab(){
+  const title = prompt("New tab name:", "New tab");
+  if(title === null) return;
+  const tab = defaultCustomTab();
+  tab.title = cleanCell(title || "New tab").slice(0, 40) || "New tab";
+  customTabs.push(tab);
+  activeCustomTabId = tab.id;
+  saveStorage();
+  renderCustomTabs();
+  showTab("custom");
+  toast("Custom tab added");
+}
+
+function selectCustomTab(id){
+  activeCustomTabId = id;
+  saveStorage();
+  renderCustomTabs();
+  showTab("custom");
+}
+
+function updateActiveCustomTab(field, value){
+  const tab = getActiveCustomTab();
+  if(!tab) return;
+  if(field === "title"){
+    tab.title = cleanCell(value || "New tab").slice(0, 40) || "New tab";
+  }else if(field === "content"){
+    tab.content = String(value || "");
+  }
+  saveStorage();
+  renderCustomTabs();
+}
+
+function deleteCustomTab(){
+  const tab = getActiveCustomTab();
+  if(!tab) return;
+  if(!confirm(`Delete custom tab "${tab.title}"?`)) return;
+  customTabs = customTabs.filter(t => t.id !== tab.id);
+  activeCustomTabId = customTabs[0]?.id || "";
+  saveStorage();
+  renderCustomTabs();
+  if(!customTabs.length) showTab("main");
+  toast("Custom tab deleted");
+}
+
+function duplicateCustomTab(){
+  const tab = getActiveCustomTab();
+  if(!tab) return;
+  const copy = {
+    id: "ct_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7),
+    title: (tab.title + " copy").slice(0, 40),
+    content: tab.content
+  };
+  customTabs.push(copy);
+  activeCustomTabId = copy.id;
+  saveStorage();
+  renderCustomTabs();
+  toast("Custom tab duplicated");
+}
+
+async function copyCustomTab(){
+  const tab = getActiveCustomTab();
+  if(!tab) return;
+  const text = `${tab.title}\n\n${tab.content || ""}`.trim();
+  try{ await navigator.clipboard.writeText(text); toast("Custom tab copied"); }
+  catch(e){ prompt("Copy this tab:", text); }
+}
+
+function renderCustomTabs(){
+  customTabs = normaliseCustomTabs(customTabs);
+
+  const buttons = document.getElementById("customTabButtons");
+  if(buttons){
+    buttons.innerHTML = customTabs.map(t => `
+      <button class="tabbtn ${t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>
+    `).join("");
+  }
+
+  const list = document.getElementById("customTabList");
+  if(list){
+    list.innerHTML = customTabs.length ? customTabs.map(t => `
+      <div class="custom-tab-item ${t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')">
+        <span>${escapeHtml(t.title)}</span>
+        <button title="Delete" onclick="event.stopPropagation(); activeCustomTabId='${escapeForJs(t.id)}'; deleteCustomTab()">×</button>
+      </div>
+    `).join("") : `<div class="planner-empty">No custom tabs yet. Press + Add new tab.</div>`;
+  }
+
+  const tab = getActiveCustomTab();
+  const heading = document.getElementById("customTabHeading");
+  const title = document.getElementById("customTabTitle");
+  const content = document.getElementById("customTabContent");
+
+  if(heading) heading.textContent = tab ? tab.title : "Custom Tab";
+  if(title && document.activeElement !== title) title.value = tab ? tab.title : "";
+  if(content && document.activeElement !== content) content.value = tab ? tab.content : "";
+}
+
 function showTab(name){
   document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -862,6 +1015,7 @@ function showTab(name){
   if(name === "decoder"){ renderDecoder(); renderDaysControls(); renderDaysView(); renderShiftReference();
 autoLoadPublicGithubData(); }
   if(name === "planner"){ renderShiftPlanner(); }
+  if(name === "custom"){ renderCustomTabs(); }
 }
 
 function decodeShift(codeRaw){
@@ -1917,7 +2071,7 @@ function exportCsv(){
   ].join("\n");
   downloadFile("indirect-training-tracker-with-shift-days.csv", csv, "text/csv"); toast("CSV downloaded");
 }
-function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState,plannerBook},null,2), "application/json"); toast("Backup downloaded"); }
+function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState,plannerBook,customTabs,activeCustomTabId},null,2), "application/json"); toast("Backup downloaded"); }
 function downloadFile(name,content,type){
   const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a");
   a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),500);
@@ -1932,14 +2086,16 @@ function importBackup(event){
       plannerState = normalisePlannerState(parsed.plannerState);
       plannerBook = normalisePlannerBook(parsed.plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      customTabs = normaliseCustomTabs(parsed.customTabs);
+      activeCustomTabId = cleanCell(parsed.activeCustomTabId || (customTabs[0]?.id || ""));
       saveStorage(); render(); toast("Backup imported");
     }catch(e){ toast("Import failed"); }
     event.target.value="";
   };
   reader.readAsText(file);
 }
-function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
-function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
+function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
+function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabs = []; activeCustomTabId = ""; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
 function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
 
 function rolePairsForKnownSheet(){
@@ -2257,7 +2413,9 @@ function getPortableData(){
     roles,
     people,
     plannerState,
-    plannerBook
+    plannerBook,
+    customTabs,
+    activeCustomTabId
   };
 }
 
@@ -2487,9 +2645,11 @@ async function loadSharedDataNow(){
       plannerState = normalisePlannerState(data.plannerState);
       plannerBook = normalisePlannerBook(data.plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      customTabs = normaliseCustomTabs(data.customTabs);
+      activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
 
       // Save a local cache so the page still works after the first successful load.
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook, customTabs, activeCustomTabId }));
       render();
       try{ renderGithubPreview(); }catch(e){}
       try{ renderSlackWorkflowPreview(); }catch(e){}
@@ -2668,6 +2828,8 @@ async function loadFromGithub(){
     plannerState = normalisePlannerState(data.plannerState);
     plannerBook = normalisePlannerBook(data.plannerBook, plannerState);
     plannerState = getPlannerStateForSelectedDate();
+      customTabs = normaliseCustomTabs(data.customTabs);
+      activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
 
     suppressGithubAutoSave = true;
     saveStorage();
