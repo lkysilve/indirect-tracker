@@ -148,8 +148,8 @@
 
   
     /* User-created custom tabs */
-    .add-tab-btn{width:40px;height:40px;border-radius:12px;border:1px solid #cbd5e1;background:#fff;color:#dc2626;font-size:30px;line-height:1;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-    .add-tab-btn:hover{background:#fee2e2;border-color:#fecaca}
+    .add-tab-btn{width:40px;height:40px;border-radius:12px;border:1px solid #111827;background:#111827;color:#fff;font-size:26px;line-height:1;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .add-tab-btn:hover{background:#334155;border-color:#334155;color:#fff}
     .custom-tab-panel{display:grid;grid-template-columns:280px 1fr;gap:12px}
     .custom-tab-sidebar{border:1px solid #dbe3ee;background:#f8fafc;border-radius:16px;padding:10px}
     .custom-tab-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
@@ -598,6 +598,7 @@ let plannerState = defaultPlannerState();
 let plannerBook = defaultPlannerBook();
 let customTabs = [];
 let activeCustomTabId = "";
+let customTabViewActive = false;
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -918,15 +919,28 @@ function addCustomTab(){
   activeCustomTabId = tab.id;
   saveStorage();
   renderCustomTabs();
-  showTab("custom");
+  openCustomTrackerTab(tab.id);
   toast("Custom tab added");
 }
 
-function selectCustomTab(id){
+
+function openCustomTrackerTab(id){
   activeCustomTabId = id;
+  customTabViewActive = true;
   saveStorage();
+
+  document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+  const tracker = document.getElementById("tab-tracker");
+  if(tracker) tracker.classList.add("active");
+
   renderCustomTabs();
-  showTab("custom");
+  render();
+}
+
+function selectCustomTab(id){
+  openCustomTrackerTab(id);
 }
 
 function updateActiveCustomTab(field, value){
@@ -982,7 +996,7 @@ function renderCustomTabs(){
   const buttons = document.getElementById("customTabButtons");
   if(buttons){
     buttons.innerHTML = customTabs.map(t => `
-      <button class="tabbtn ${t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>
+      <button class="tabbtn ${customTabViewActive && t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>
     `).join("");
   }
 
@@ -1007,6 +1021,7 @@ function renderCustomTabs(){
 }
 
 function showTab(name){
+  customTabViewActive = false;
   document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   const btn = event && event.target ? event.target : document.querySelector(`.tabbtn[onclick*="${name}"]`);
