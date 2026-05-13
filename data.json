@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-13T18:53:08.884Z",
+  "exportedAt": "2026-05-13T19:04:05.246Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -246,22 +246,6 @@
       ],
       "roles": [
         "PS",
-        "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
-    },
-    {
-      "id": "38c9875f-4ad3-4c91-9768-6388e1fda658",
-      "login": "bmdabsub",
-      "name": "Subhan,Md Abdus",
-      "shiftCodes": [
-        "NB1-1815"
-      ],
-      "roles": [
-        "PS",
-        "PT",
         "WS"
       ],
       "status": "Available",
@@ -1047,23 +1031,6 @@
       "updatedAt": "2026-05-11T19:18:23.325Z"
     },
     {
-      "id": "049b69ab-6c78-4c9e-9d92-df5ad9e62be7",
-      "login": "peczerk",
-      "name": "Peczer,Karoly",
-      "shiftCodes": [
-        "NB1-1815"
-      ],
-      "roles": [
-        "PG",
-        "PS",
-        "PT",
-        "SLAM"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
-    },
-    {
       "id": "5805da2d-1268-47ab-b8bd-d206122dc678",
       "login": "ppopcipr",
       "name": "Popescu,Ciprian",
@@ -1740,5 +1707,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-13T18:53:08.884Z"
+  "updatedAt": "2026-05-13T19:04:05.246Z"
 }
