@@ -667,6 +667,18 @@ function saveActiveViewStateOnly(){
   }
 }
 
+
+function resetTrackerViewFilters(){
+  activeRoleCard = "All roles";
+  selectedRoles = [];
+  const q = document.getElementById("q");
+  const role = document.getElementById("roleFilter");
+  const status = document.getElementById("statusFilter");
+  if(q) q.value = "";
+  if(role) role.value = "All roles";
+  if(status) status.value = "All statuses";
+}
+
 function restoreMainTrackerView(){
   if(customTabViewActive) saveActiveViewStateOnly();
 
@@ -676,6 +688,7 @@ function restoreMainTrackerView(){
   plannerState = normalisePlannerState(mainPlannerState ?? plannerState);
   plannerBook = normalisePlannerBook(mainPlannerBook ?? plannerBook, plannerState);
   plannerState = getPlannerStateForSelectedDate();
+  resetTrackerViewFilters();
 }
 
 function getStorageSnapshot(){
@@ -1058,6 +1071,7 @@ function openCustomTrackerTab(id){
   plannerState = normalisePlannerState(tab.plannerState);
   plannerBook = normalisePlannerBook(tab.plannerBook, plannerState);
   plannerState = getPlannerStateForSelectedDate();
+  resetTrackerViewFilters();
 
   document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -1211,6 +1225,7 @@ function showTab(name){
   const btn = event && event.target ? event.target : document.querySelector(`.tabbtn[onclick*="${name}"]`);
   if(btn) btn.classList.add("active");
   document.getElementById("tab-" + name).classList.add("active");
+  if(name === "tracker"){ render(); }
   if(name === "decoder"){ renderDecoder(); renderDaysControls(); renderDaysView(); renderShiftReference();
 autoLoadPublicGithubData(); }
   if(name === "planner"){ renderShiftPlanner(); }
@@ -2187,6 +2202,10 @@ function getFiltered(){
 }
 
 function render(){
+  if(activeRoleCard !== "All roles" && !roles.includes(activeRoleCard)){
+    activeRoleCard = "All roles";
+  }
+  selectedRoles = selectedRoles.filter(r => roles.includes(r));
   initEmployeeDatalists();
   renderRoles();
   const rows = getFiltered();
