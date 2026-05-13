@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-13T19:25:22.853Z",
+  "exportedAt": "2026-05-13T19:28:31.279Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1021,19 +1021,20 @@
     },
     {
       "id": "4d83a0d6-c847-4128-9119-21c2e86a7d47",
-      "login": "rahrajam",
       "name": "Ar,Rahman",
+      "login": "rahrajam",
       "shiftCodes": [
         "NF6-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PG",
         "PT",
         "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T19:28:20.702Z"
     },
     {
       "id": "5ce0c55c-11df-4b4d-854a-e47a33d8a420",
@@ -1680,5 +1681,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-13T19:25:22.853Z"
+  "updatedAt": "2026-05-13T19:28:31.279Z"
 }
