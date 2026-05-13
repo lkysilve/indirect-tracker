@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-13T19:04:05.246Z",
+  "exportedAt": "2026-05-13T19:23:05.230Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -585,12 +585,13 @@
     },
     {
       "id": "f79aeb21-cc1e-4aa9-a545-646fb9528ba4",
-      "login": "ioparalu",
       "name": "Paraluta,Ionut Dragos",
+      "login": "ioparalu",
       "shiftCodes": [
         "NAAB"
       ],
       "roles": [
+        "Jam Buster",
         "PG",
         "PT",
         "SLAM",
@@ -598,7 +599,7 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T19:23:02.661Z"
     },
     {
       "id": "812a56f8-67b2-4564-b0c2-97df4e059cd1",
@@ -1707,5 +1708,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-13T19:04:05.246Z"
+  "updatedAt": "2026-05-13T19:23:05.230Z"
 }
