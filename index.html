@@ -162,10 +162,15 @@
     @media(max-width:900px){.custom-tab-panel{grid-template-columns:1fr}}
 
   
-    .custom-tab-wrap{display:inline-flex;align-items:center;gap:2px;margin-right:6px}
+    .custom-tab-wrap{display:inline-flex;align-items:center;gap:4px;margin-right:6px}
     .custom-tab-wrap .tabbtn{margin-right:0}
-    .custom-tab-close{height:30px;min-width:30px;border:1px solid #cbd5e1;background:#fff;color:#64748b;border-radius:10px;font-size:18px;line-height:1;font-weight:900;cursor:pointer}
-    .custom-tab-close:hover{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+    .custom-tab-close{
+      width:28px;height:28px;border:1px solid #dbe3ee;background:#fff;color:#64748b;
+      border-radius:999px;font-size:16px;line-height:1;font-weight:900;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;transition:all .12s ease;
+    }
+    .custom-tab-wrap:hover .custom-tab-close{border-color:#cbd5e1;color:#334155;background:#f8fafc}
+    .custom-tab-close:hover{background:#fee2e2!important;border-color:#fecaca!important;color:#991b1b!important;transform:scale(1.04)}
 
   </style>
 </head>
@@ -605,6 +610,7 @@ let plannerBook = defaultPlannerBook();
 let customTabs = [];
 let activeCustomTabId = "";
 let customTabViewActive = false;
+let mainTrackerRoles = null;
 let mainTrackerPeople = null;
 let mainPlannerState = null;
 let mainPlannerBook = null;
@@ -638,11 +644,14 @@ function saveActiveViewStateOnly(){
     customTabs = normaliseCustomTabs(customTabs);
     const tab = customTabs.find(t => t.id === activeCustomTabId);
     if(tab){
+      tab.roles = roles.map(cleanCell).filter(Boolean);
       tab.people = normalisePeopleForStorage(people);
       tab.plannerState = normalisePlannerState(plannerState);
       tab.plannerBook = normalisePlannerBook(plannerBook, plannerState);
     }
   }else{
+    mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
+    mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
     mainTrackerPeople = normalisePeopleForStorage(people);
     mainPlannerState = normalisePlannerState(plannerState);
     mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
@@ -653,6 +662,7 @@ function restoreMainTrackerView(){
   if(customTabViewActive) saveActiveViewStateOnly();
 
   customTabViewActive = false;
+  roles = Array.isArray(mainTrackerRoles) ? mainTrackerRoles.map(cleanCell).filter(Boolean) : roles;
   people = normalisePeopleForStorage(mainTrackerPeople ?? people);
   plannerState = normalisePlannerState(mainPlannerState ?? plannerState);
   plannerBook = normalisePlannerBook(mainPlannerBook ?? plannerBook, plannerState);
@@ -662,12 +672,13 @@ function restoreMainTrackerView(){
 function getStorageSnapshot(){
   saveActiveViewStateOnly();
 
+  const rootRoles = Array.isArray(mainTrackerRoles) ? mainTrackerRoles.map(cleanCell).filter(Boolean) : roles.map(cleanCell).filter(Boolean);
   const rootPeople = normalisePeopleForStorage(mainTrackerPeople ?? people);
   const rootPlannerState = normalisePlannerState(mainPlannerState ?? plannerState);
   const rootPlannerBook = normalisePlannerBook(mainPlannerBook ?? plannerBook, rootPlannerState);
 
   return {
-    roles,
+    roles: rootRoles,
     people: rootPeople,
     plannerState: rootPlannerState,
     plannerBook: rootPlannerBook,
@@ -693,6 +704,7 @@ function loadStorage(){
       activeCustomTabId = cleanCell(embedded.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((embedded).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
       mainTrackerPeople = normalisePeopleForStorage(people);
       mainPlannerState = normalisePlannerState(plannerState);
       mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
@@ -710,6 +722,7 @@ function loadStorage(){
       activeCustomTabId = cleanCell(hashData.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((hashData).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
       mainTrackerPeople = normalisePeopleForStorage(people);
       mainPlannerState = normalisePlannerState(plannerState);
       mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
@@ -729,6 +742,7 @@ function loadStorage(){
       activeCustomTabId = cleanCell(saved.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((saved).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
       mainTrackerPeople = normalisePeopleForStorage(people);
       mainPlannerState = normalisePlannerState(plannerState);
       mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
@@ -962,6 +976,7 @@ function defaultCustomTab(){
     id: "ct_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7),
     title: "New tab",
     content: "",
+    roles: [],
     people: [],
     plannerState: defaultPlannerState(),
     plannerBook: defaultPlannerBook()
@@ -978,6 +993,7 @@ function normaliseCustomTabs(tabs){
         id: cleanCell(t.id || ("ct_" + Math.random().toString(36).slice(2,9))),
         title: cleanCell(t.title || "New tab").slice(0, 40) || "New tab",
         content: String(t.content || ""),
+        roles: Array.isArray(t.roles) ? t.roles.map(cleanCell).filter(Boolean) : [],
         people: normalisePeopleForStorage(t.people || []),
         plannerState: pState,
         plannerBook: normalisePlannerBook(t.plannerBook, pState)
@@ -1004,7 +1020,10 @@ function addCustomTab(){
 
   const tab = defaultCustomTab();
   tab.title = cleanCell(title || "New tab").slice(0, 40) || "New tab";
-  tab.people = []; // new tabs start empty, but use the same tracker tools
+  tab.roles = []; // new tabs start from scratch
+  tab.people = []; // no logins from Indirect Tracker
+  tab.plannerState = defaultPlannerState();
+  tab.plannerBook = defaultPlannerBook();
   customTabs.push(tab);
 
   openCustomTrackerTab(tab.id);
@@ -1025,6 +1044,7 @@ function openCustomTrackerTab(id){
   activeCustomTabId = tab.id;
   customTabViewActive = true;
 
+  roles = Array.isArray(tab.roles) ? tab.roles.map(cleanCell).filter(Boolean) : [];
   people = normalisePeopleForStorage(tab.people || []);
   plannerState = normalisePlannerState(tab.plannerState);
   plannerBook = normalisePlannerBook(tab.plannerBook, plannerState);
@@ -2232,6 +2252,7 @@ function importBackup(event){
       plannerState = getPlannerStateForSelectedDate();
       customTabs = normaliseCustomTabs(parsed.customTabs);
       activeCustomTabId = cleanCell(parsed.activeCustomTabId || (customTabs[0]?.id || ""));
+    mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
     mainTrackerPeople = normalisePeopleForStorage(people);
     mainPlannerState = normalisePlannerState(plannerState);
     mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
@@ -2243,7 +2264,7 @@ function importBackup(event){
   reader.readAsText(file);
 }
 function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
-function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
+function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerRoles = []; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
 function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
 
 function rolePairsForKnownSheet(){
@@ -2790,6 +2811,7 @@ async function loadSharedDataNow(){
       plannerState = getPlannerStateForSelectedDate();
       customTabs = normaliseCustomTabs(data.customTabs);
       activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
+    mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
     mainTrackerPeople = normalisePeopleForStorage(people);
     mainPlannerState = normalisePlannerState(plannerState);
     mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
