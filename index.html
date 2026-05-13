@@ -161,6 +161,12 @@
     .custom-tab-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
     @media(max-width:900px){.custom-tab-panel{grid-template-columns:1fr}}
 
+  
+    .custom-tab-wrap{display:inline-flex;align-items:center;gap:2px;margin-right:6px}
+    .custom-tab-wrap .tabbtn{margin-right:0}
+    .custom-tab-close{height:30px;min-width:30px;border:1px solid #cbd5e1;background:#fff;color:#64748b;border-radius:10px;font-size:18px;line-height:1;font-weight:900;cursor:pointer}
+    .custom-tab-close:hover{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+
   </style>
 </head>
 <body>
@@ -599,6 +605,9 @@ let plannerBook = defaultPlannerBook();
 let customTabs = [];
 let activeCustomTabId = "";
 let customTabViewActive = false;
+let mainTrackerPeople = null;
+let mainPlannerState = null;
+let mainPlannerBook = null;
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -611,9 +620,65 @@ function id(){
   if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
   return "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 }
-function saveStorage(){
+function normalisePeopleForStorage(arr){
+  return Array.isArray(arr)
+    ? arr.map(p => ({...p, shiftCodes: normaliseShiftArray(p.shiftCodes || p.shiftCode || [])}))
+    : [];
+}
+
+function clonePlannerValue(value){
+  return JSON.parse(JSON.stringify(value));
+}
+
+function saveActiveViewStateOnly(){
+  // Store whichever view is currently open without changing the screen.
   syncCurrentPlannerToBook();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook, customTabs, activeCustomTabId }));
+
+  if(customTabViewActive){
+    customTabs = normaliseCustomTabs(customTabs);
+    const tab = customTabs.find(t => t.id === activeCustomTabId);
+    if(tab){
+      tab.people = normalisePeopleForStorage(people);
+      tab.plannerState = normalisePlannerState(plannerState);
+      tab.plannerBook = normalisePlannerBook(plannerBook, plannerState);
+    }
+  }else{
+    mainTrackerPeople = normalisePeopleForStorage(people);
+    mainPlannerState = normalisePlannerState(plannerState);
+    mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+  }
+}
+
+function restoreMainTrackerView(){
+  if(customTabViewActive) saveActiveViewStateOnly();
+
+  customTabViewActive = false;
+  people = normalisePeopleForStorage(mainTrackerPeople ?? people);
+  plannerState = normalisePlannerState(mainPlannerState ?? plannerState);
+  plannerBook = normalisePlannerBook(mainPlannerBook ?? plannerBook, plannerState);
+  plannerState = getPlannerStateForSelectedDate();
+}
+
+function getStorageSnapshot(){
+  saveActiveViewStateOnly();
+
+  const rootPeople = normalisePeopleForStorage(mainTrackerPeople ?? people);
+  const rootPlannerState = normalisePlannerState(mainPlannerState ?? plannerState);
+  const rootPlannerBook = normalisePlannerBook(mainPlannerBook ?? plannerBook, rootPlannerState);
+
+  return {
+    roles,
+    people: rootPeople,
+    plannerState: rootPlannerState,
+    plannerBook: rootPlannerBook,
+    customTabs: normaliseCustomTabs(customTabs),
+    activeCustomTabId
+  };
+}
+
+function saveStorage(){
+  const snapshot = getStorageSnapshot();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
   showAutosaved();
   queueGithubSave();
 }
@@ -628,6 +693,10 @@ function loadStorage(){
       activeCustomTabId = cleanCell(embedded.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((embedded).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      mainTrackerPeople = normalisePeopleForStorage(people);
+      mainPlannerState = normalisePlannerState(plannerState);
+      mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+      customTabViewActive = false;
       saveStorage();
       return;
     }
@@ -641,6 +710,10 @@ function loadStorage(){
       activeCustomTabId = cleanCell(hashData.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((hashData).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      mainTrackerPeople = normalisePeopleForStorage(people);
+      mainPlannerState = normalisePlannerState(plannerState);
+      mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+      customTabViewActive = false;
       saveStorage();
       history.replaceState(null, document.title, location.pathname + location.search);
       return;
@@ -656,6 +729,10 @@ function loadStorage(){
       activeCustomTabId = cleanCell(saved.activeCustomTabId || (customTabs[0]?.id || ""));
       plannerBook = normalisePlannerBook((saved).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
+      mainTrackerPeople = normalisePeopleForStorage(people);
+      mainPlannerState = normalisePlannerState(plannerState);
+      mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+      customTabViewActive = false;
   }catch(e){}
 }
 function toast(msg){ const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1700); }
@@ -884,7 +961,10 @@ function defaultCustomTab(){
   return {
     id: "ct_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7),
     title: "New tab",
-    content: ""
+    content: "",
+    people: [],
+    plannerState: defaultPlannerState(),
+    plannerBook: defaultPlannerBook()
   };
 }
 
@@ -892,11 +972,17 @@ function normaliseCustomTabs(tabs){
   if(!Array.isArray(tabs)) return [];
   return tabs
     .filter(t => t && typeof t === "object")
-    .map(t => ({
-      id: cleanCell(t.id || ("ct_" + Math.random().toString(36).slice(2,9))),
-      title: cleanCell(t.title || "New tab").slice(0, 40),
-      content: String(t.content || "")
-    }));
+    .map(t => {
+      const pState = normalisePlannerState(t.plannerState);
+      return {
+        id: cleanCell(t.id || ("ct_" + Math.random().toString(36).slice(2,9))),
+        title: cleanCell(t.title || "New tab").slice(0, 40) || "New tab",
+        content: String(t.content || ""),
+        people: normalisePeopleForStorage(t.people || []),
+        plannerState: pState,
+        plannerBook: normalisePlannerBook(t.plannerBook, pState)
+      };
+    });
 }
 
 function getActiveCustomTab(){
@@ -911,23 +997,38 @@ function getActiveCustomTab(){
 }
 
 function addCustomTab(){
+  saveActiveViewStateOnly();
+
   const title = prompt("New tab name:", "New tab");
   if(title === null) return;
+
   const tab = defaultCustomTab();
   tab.title = cleanCell(title || "New tab").slice(0, 40) || "New tab";
+  tab.people = []; // new tabs start empty, but use the same tracker tools
   customTabs.push(tab);
-  activeCustomTabId = tab.id;
-  saveStorage();
-  renderCustomTabs();
+
   openCustomTrackerTab(tab.id);
+  saveStorage();
   toast("Custom tab added");
 }
 
-
 function openCustomTrackerTab(id){
-  activeCustomTabId = id;
+  saveActiveViewStateOnly();
+
+  customTabs = normaliseCustomTabs(customTabs);
+  const tab = customTabs.find(t => t.id === id);
+  if(!tab){
+    toast("Custom tab not found");
+    return;
+  }
+
+  activeCustomTabId = tab.id;
   customTabViewActive = true;
-  saveStorage();
+
+  people = normalisePeopleForStorage(tab.people || []);
+  plannerState = normalisePlannerState(tab.plannerState);
+  plannerBook = normalisePlannerBook(tab.plannerBook, plannerState);
+  plannerState = getPlannerStateForSelectedDate();
 
   document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -955,30 +1056,53 @@ function updateActiveCustomTab(field, value){
   renderCustomTabs();
 }
 
-function deleteCustomTab(){
-  const tab = getActiveCustomTab();
+function deleteCustomTabById(id){
+  saveActiveViewStateOnly();
+
+  customTabs = normaliseCustomTabs(customTabs);
+  const tab = customTabs.find(t => t.id === id);
   if(!tab) return;
+
   if(!confirm(`Delete custom tab "${tab.title}"?`)) return;
-  customTabs = customTabs.filter(t => t.id !== tab.id);
-  activeCustomTabId = customTabs[0]?.id || "";
-  saveStorage();
-  renderCustomTabs();
-  if(!customTabs.length) showTab("main");
+
+  const wasActive = customTabViewActive && activeCustomTabId === id;
+  customTabs = customTabs.filter(t => t.id !== id);
+
+  if(wasActive){
+    activeCustomTabId = customTabs[0]?.id || "";
+    restoreMainTrackerView();
+    saveStorage();
+    renderCustomTabs();
+    showTab("tracker");
+  }else{
+    if(activeCustomTabId === id) activeCustomTabId = customTabs[0]?.id || "";
+    saveStorage();
+    renderCustomTabs();
+    render();
+  }
+
   toast("Custom tab deleted");
 }
 
+function deleteCustomTab(){
+  const tab = getActiveCustomTab();
+  if(!tab) return;
+  deleteCustomTabById(tab.id);
+}
+
 function duplicateCustomTab(){
+  saveActiveViewStateOnly();
+
   const tab = getActiveCustomTab();
   if(!tab) return;
   const copy = {
+    ...JSON.parse(JSON.stringify(tab)),
     id: "ct_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7),
-    title: (tab.title + " copy").slice(0, 40),
-    content: tab.content
+    title: (tab.title + " copy").slice(0, 40)
   };
   customTabs.push(copy);
-  activeCustomTabId = copy.id;
+  openCustomTrackerTab(copy.id);
   saveStorage();
-  renderCustomTabs();
   toast("Custom tab duplicated");
 }
 
@@ -996,7 +1120,10 @@ function renderCustomTabs(){
   const buttons = document.getElementById("customTabButtons");
   if(buttons){
     buttons.innerHTML = customTabs.map(t => `
-      <button class="tabbtn ${customTabViewActive && t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>
+      <span class="custom-tab-wrap">
+        <button class="tabbtn ${customTabViewActive && t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>
+        <button class="custom-tab-close" title="Remove tab" onclick="event.stopPropagation(); deleteCustomTabById('${escapeForJs(t.id)}')">×</button>
+      </span>
     `).join("");
   }
 
@@ -1005,7 +1132,7 @@ function renderCustomTabs(){
     list.innerHTML = customTabs.length ? customTabs.map(t => `
       <div class="custom-tab-item ${t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')">
         <span>${escapeHtml(t.title)}</span>
-        <button title="Delete" onclick="event.stopPropagation(); activeCustomTabId='${escapeForJs(t.id)}'; deleteCustomTab()">×</button>
+        <button title="Delete" onclick="event.stopPropagation(); deleteCustomTabById('${escapeForJs(t.id)}')">×</button>
       </div>
     `).join("") : `<div class="planner-empty">No custom tabs yet. Press + Add new tab.</div>`;
   }
@@ -1021,7 +1148,9 @@ function renderCustomTabs(){
 }
 
 function showTab(name){
-  customTabViewActive = false;
+  if(customTabViewActive) restoreMainTrackerView();
+  else saveActiveViewStateOnly();
+
   document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   const btn = event && event.target ? event.target : document.querySelector(`.tabbtn[onclick*="${name}"]`);
@@ -2103,14 +2232,18 @@ function importBackup(event){
       plannerState = getPlannerStateForSelectedDate();
       customTabs = normaliseCustomTabs(parsed.customTabs);
       activeCustomTabId = cleanCell(parsed.activeCustomTabId || (customTabs[0]?.id || ""));
+    mainTrackerPeople = normalisePeopleForStorage(people);
+    mainPlannerState = normalisePlannerState(plannerState);
+    mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+    customTabViewActive = false;
       saveStorage(); render(); toast("Backup imported");
     }catch(e){ toast("Import failed"); }
     event.target.value="";
   };
   reader.readAsText(file);
 }
-function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
-function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabs = []; activeCustomTabId = ""; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
+function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
+function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
 function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
 
 function rolePairsForKnownSheet(){
@@ -2421,16 +2554,11 @@ function showAutosaved(){
 }
 
 function getPortableData(){
-  syncCurrentPlannerToBook();
+  const snapshot = getStorageSnapshot();
   return {
-    version: 5,
+    version: 6,
     exportedAt: new Date().toISOString(),
-    roles,
-    people,
-    plannerState,
-    plannerBook,
-    customTabs,
-    activeCustomTabId
+    ...snapshot
   };
 }
 
@@ -2662,6 +2790,10 @@ async function loadSharedDataNow(){
       plannerState = getPlannerStateForSelectedDate();
       customTabs = normaliseCustomTabs(data.customTabs);
       activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
+    mainTrackerPeople = normalisePeopleForStorage(people);
+    mainPlannerState = normalisePlannerState(plannerState);
+    mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+    customTabViewActive = false;
 
       // Save a local cache so the page still works after the first successful load.
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ roles, people, plannerState, plannerBook, customTabs, activeCustomTabId }));
