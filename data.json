@@ -1,6 +1,6 @@
 {
-  "version": 5,
-  "exportedAt": "2026-05-11T20:10:32.285Z",
+  "version": 6,
+  "exportedAt": "2026-05-13T05:33:24.791Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1610,6 +1610,20 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-11T19:19:50.361Z"
+    },
+    {
+      "id": "be6c6354-996a-43b2-aa84-d61355f67e0e",
+      "name": "Kaur,Satwinder",
+      "login": "kosatwin",
+      "shiftCodes": [
+        "NK7-1815"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-13T05:18:12.218Z"
     }
   ],
   "plannerState": {
@@ -1736,6 +1750,8 @@
       }
     }
   },
+  "customTabs": [],
+  "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-11T20:10:32.285Z"
+  "updatedAt": "2026-05-13T05:33:24.791Z"
 }
