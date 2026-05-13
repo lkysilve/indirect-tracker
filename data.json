@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-13T19:23:05.230Z",
+  "exportedAt": "2026-05-13T19:25:16.298Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -413,12 +413,13 @@
         "NB1-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PT",
         "SLAM"
       ],
       "status": "Available",
       "notes": "SLAM POC",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T19:23:39.652Z"
     },
     {
       "id": "70ec4740-7faf-4ff6-aa32-de84f04d1b96",
@@ -661,21 +662,6 @@
       "updatedAt": "2026-05-11T19:18:23.325Z"
     },
     {
-      "id": "215ad641-2d49-4a44-b43b-69182502a2c9",
-      "login": "kaasarik",
-      "name": "Sarikaya,Kaan Deklan",
-      "shiftCodes": [
-        "NB1"
-      ],
-      "roles": [
-        "PT",
-        "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
-    },
-    {
       "id": "ee1c1b37-9d9a-449f-8c0e-7015d405116b",
       "name": "Kaur,Kuljeet",
       "login": "kkljeet",
@@ -707,18 +693,19 @@
     },
     {
       "id": "4c3db9c6-2ddc-4e8f-82a3-7383c74e794e",
-      "login": "liamdam",
       "name": "Adams,Liam",
+      "login": "liamdam",
       "shiftCodes": [
         "NA5-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PT",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T19:23:49.212Z"
     },
     {
       "id": "4d13d975-cdd8-4fb6-9d40-5638c4f75419",
@@ -965,21 +952,6 @@
       "roles": [
         "PG",
         "PT"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
-    },
-    {
-      "id": "937da7b5-af93-457c-97b4-c282272e10aa",
-      "login": "nattrg",
-      "name": "Nattrass,Graeme",
-      "shiftCodes": [
-        "S-FYC10A"
-      ],
-      "roles": [
-        "PT",
-        "WS"
       ],
       "status": "Available",
       "notes": "",
@@ -1708,5 +1680,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-13T19:23:05.230Z"
+  "updatedAt": "2026-05-13T19:25:16.298Z"
 }
