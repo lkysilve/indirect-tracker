@@ -181,6 +181,23 @@
     .custom-tab-wrap:hover .custom-tab-rename{border-color:#cbd5e1;color:#334155;background:#f8fafc}
     .custom-tab-rename:hover{background:#dbeafe!important;border-color:#bfdbfe!important;color:#1d4ed8!important;transform:scale(1.04)}
 
+  
+    .actions{align-items:center}
+    .btn-gear{
+      width:46px;min-width:46px;height:46px;border-radius:14px;border:1px solid #cbd5e1;
+      background:#111827;color:#fff;font-size:21px;font-weight:900;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;
+    }
+    .btn-gear:hover{background:#334155;border-color:#334155}
+    .tools-menu{
+      display:none;margin:0 14px 14px;padding:12px;border:1px solid #dbe3ee;border-radius:16px;
+      background:#f8fafc;box-shadow:0 8px 20px rgba(15,23,42,.06)
+    }
+    .tools-menu.show{display:block}
+    .tools-menu-title{font-weight:900;margin-bottom:8px;color:#0f172a}
+    .tools-menu-grid{display:flex;gap:8px;flex-wrap:wrap}
+    .tools-menu .filebtn{display:inline-flex;align-items:center;justify-content:center}
+
   </style>
 </head>
 <body>
@@ -267,17 +284,24 @@
           </div>
 
           <div class="actions">
-            <button class="btn-blue" onclick="toggleImport()">Paste sheet import</button>
-            <button class="btn-light" onclick="copyShown()">Copy shown</button>
-            <button class="btn-light" onclick="exportCsv()">Export CSV</button>
-            <button class="btn-light" onclick="exportBackup()">Backup</button>
             <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
             <button class="btn-green" onclick="loadSharedDataNow()">Load shared data</button>
-            <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
-            <label class="filebtn btn-light">
-              Import backup
-              <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
-            </label>
+            <button class="btn-gear" onclick="toggleToolsMenu()" title="More tools / settings">⚙</button>
+          </div>
+
+          <div class="tools-menu" id="toolsMenu">
+            <div class="tools-menu-title">More tools</div>
+            <div class="tools-menu-grid">
+              <button class="btn-blue" onclick="toggleImport()">Paste sheet import</button>
+              <button class="btn-light" onclick="copyShown()">Copy shown</button>
+              <button class="btn-light" onclick="exportCsv()">Export CSV</button>
+              <button class="btn-light" onclick="exportBackup()">Backup</button>
+              <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
+              <label class="filebtn btn-light">
+                Import backup
+                <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
+              </label>
+            </div>
           </div>
 
 
@@ -2319,6 +2343,12 @@ function importBackup(event){
 }
 function loadSample(){ people = samplePeople.map(p => ({...p,id:id()})); plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Sample loaded"); }
 function clearAll(){ if(!confirm("Clear all logins and planner?")) return; people=[]; plannerBook = defaultPlannerBook(); plannerState = defaultPlannerState(); customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerRoles = []; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; customTabs = []; activeCustomTabId = ""; customTabViewActive = false; mainTrackerPeople = []; mainPlannerState = null; mainPlannerBook = null; plannerState.day = dayNameFromIso(plannerBook.selectedDate); plannerBook.plans[plannerBook.selectedDate] = clonePlannerStateForBook(plannerState); saveStorage(); render(); toast("Cleared"); }
+
+function toggleToolsMenu(){
+  const panel = document.getElementById("toolsMenu");
+  if(panel) panel.classList.toggle("show");
+}
+
 function toggleImport(){ document.getElementById("importPanel").classList.toggle("show"); }
 
 function rolePairsForKnownSheet(){
