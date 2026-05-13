@@ -172,6 +172,15 @@
     .custom-tab-wrap:hover .custom-tab-close{border-color:#cbd5e1;color:#334155;background:#f8fafc}
     .custom-tab-close:hover{background:#fee2e2!important;border-color:#fecaca!important;color:#991b1b!important;transform:scale(1.04)}
 
+  
+    .custom-tab-rename{
+      width:28px;height:28px;border:1px solid #dbe3ee;background:#fff;color:#64748b;
+      border-radius:999px;font-size:13px;line-height:1;font-weight:900;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;transition:all .12s ease;
+    }
+    .custom-tab-wrap:hover .custom-tab-rename{border-color:#cbd5e1;color:#334155;background:#f8fafc}
+    .custom-tab-rename:hover{background:#dbeafe!important;border-color:#bfdbfe!important;color:#1d4ed8!important;transform:scale(1.04)}
+
   </style>
 </head>
 <body>
@@ -1076,6 +1085,30 @@ function updateActiveCustomTab(field, value){
   renderCustomTabs();
 }
 
+
+function renameCustomTabById(id){
+  saveActiveViewStateOnly();
+
+  customTabs = normaliseCustomTabs(customTabs);
+  const tab = customTabs.find(t => t.id === id);
+  if(!tab) return;
+
+  const next = prompt("Rename tab:", tab.title);
+  if(next === null) return;
+
+  const clean = cleanCell(next).slice(0, 40);
+  if(!clean){
+    toast("Tab name cannot be blank");
+    return;
+  }
+
+  tab.title = clean;
+  activeCustomTabId = tab.id;
+  saveStorage();
+  renderCustomTabs();
+  toast("Tab renamed");
+}
+
 function deleteCustomTabById(id){
   saveActiveViewStateOnly();
 
@@ -1141,7 +1174,8 @@ function renderCustomTabs(){
   if(buttons){
     buttons.innerHTML = customTabs.map(t => `
       <span class="custom-tab-wrap">
-        <button class="tabbtn ${customTabViewActive && t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>
+        <button class="tabbtn ${customTabViewActive && t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" ondblclick="event.stopPropagation(); renameCustomTabById('${escapeForJs(t.id)}')" title="Double-click to rename">${escapeHtml(t.title)}</button>
+        <button class="custom-tab-rename" title="Rename tab" onclick="event.stopPropagation(); renameCustomTabById('${escapeForJs(t.id)}')">✎</button>
         <button class="custom-tab-close" title="Remove tab" onclick="event.stopPropagation(); deleteCustomTabById('${escapeForJs(t.id)}')">×</button>
       </span>
     `).join("");
@@ -1152,6 +1186,7 @@ function renderCustomTabs(){
     list.innerHTML = customTabs.length ? customTabs.map(t => `
       <div class="custom-tab-item ${t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')">
         <span>${escapeHtml(t.title)}</span>
+        <button title="Rename" onclick="event.stopPropagation(); renameCustomTabById('${escapeForJs(t.id)}')">✎</button>
         <button title="Delete" onclick="event.stopPropagation(); deleteCustomTabById('${escapeForJs(t.id)}')">×</button>
       </div>
     `).join("") : `<div class="planner-empty">No custom tabs yet. Press + Add new tab.</div>`;
