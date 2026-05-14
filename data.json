@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-14T22:26:41.661Z",
+  "exportedAt": "2026-05-14T22:46:36.781Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -129,8 +129,8 @@
         "SLAM"
       ],
       "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.324Z"
+      "notes": "SlAM POC",
+      "updatedAt": "2026-05-14T22:46:29.612Z"
     },
     {
       "id": "217ab6e7-62c2-4a63-b674-d9808b3894d7",
@@ -1682,5 +1682,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-14T22:26:41.661Z"
+  "updatedAt": "2026-05-14T22:46:36.781Z"
 }
