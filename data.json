@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-13T19:28:31.279Z",
+  "exportedAt": "2026-05-14T03:22:26.740Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -108,13 +108,14 @@
         "NB1-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PT",
         "SLAM",
         "WS"
       ],
       "status": "Available",
       "notes": "SLAM POC",
-      "updatedAt": "2026-05-11T19:18:23.324Z"
+      "updatedAt": "2026-05-13T20:21:32.619Z"
     },
     {
       "id": "2e9f02fd-568a-4a9a-871f-db81c8d5bb5d",
@@ -207,20 +208,20 @@
     },
     {
       "id": "3a6dc591-fc64-49eb-9732-d075799f75a9",
-      "login": "astepin",
       "name": "Stepinski,Andrzej Jacek",
+      "login": "astepin",
       "shiftCodes": [
         "NA5-1815"
       ],
       "roles": [
-        "PG",
+        "Jam Buster",
         "PT",
         "SLAM",
         "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T20:21:54.884Z"
     },
     {
       "id": "8de1f61b-c146-4bbc-8e04-c75c8e74f297",
@@ -378,18 +379,19 @@
     },
     {
       "id": "4c2114a2-9818-47fe-8957-f3935b77194e",
-      "login": "doropreu",
       "name": "Preuschoff,Dorota",
+      "login": "doropreu",
       "shiftCodes": [
         "NF6-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PS",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:10:30.813Z"
     },
     {
       "id": "2284b8ce-5ed8-4b1c-a783-680d9c98c295",
@@ -521,9 +523,9 @@
       "roles": [
         "SLAM"
       ],
-      "status": "Available",
+      "status": "Unknown",
       "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.979Z"
+      "updatedAt": "2026-05-14T03:17:34.187Z"
     },
     {
       "id": "895006a8-fcf4-4510-bfc0-fa46587ddb1f",
@@ -572,17 +574,18 @@
     },
     {
       "id": "a9df940b-0993-4646-ace7-f0288895bff0",
-      "login": "ikpidabi",
       "name": "Idabie,IKPONMWOSA EHI",
+      "login": "ikpidabi",
       "shiftCodes": [
         "NAAB"
       ],
       "roles": [
+        "Jam Buster",
         "PT"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
+      "updatedAt": "2026-05-14T03:07:52.098Z"
     },
     {
       "id": "f79aeb21-cc1e-4aa9-a545-646fb9528ba4",
@@ -601,20 +604,6 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-13T19:23:02.661Z"
-    },
-    {
-      "id": "812a56f8-67b2-4564-b0c2-97df4e059cd1",
-      "login": "isarawra",
-      "name": "Rai,Isaran",
-      "shiftCodes": [
-        "NAAB"
-      ],
-      "roles": [
-        "SLAM"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
     },
     {
       "id": "e2972123-cb77-4130-b2d6-8f2a45128c6f",
@@ -731,20 +720,6 @@
       "roles": [
         "PG",
         "PS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
-    },
-    {
-      "id": "691d676e-2e57-4b4c-937e-c06d1bba81a6",
-      "login": "lkausila",
-      "name": "Limbu,Kausila",
-      "shiftCodes": [
-        "NA5-1815"
-      ],
-      "roles": [
-        "SLAM"
       ],
       "status": "Available",
       "notes": "",
@@ -914,18 +889,19 @@
     },
     {
       "id": "afe32e48-81d7-4d7a-9ad2-7f865cc43907",
-      "login": "mihaelca",
       "name": "Capatina,Mihaela Alexandra",
+      "login": "mihaelca",
       "shiftCodes": [
         "NA5-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PS",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:08:13.609Z"
     },
     {
       "id": "51eae138-9a86-4e56-98c6-fc0304d25e1f",
@@ -974,50 +950,53 @@
     },
     {
       "id": "2a733213-b421-440d-beac-0941d281f7b4",
-      "login": "patelcro",
       "name": "Patel,Ronak",
+      "login": "patelcro",
       "shiftCodes": [
         "NB1-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PG",
         "PT",
         "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T20:22:49.318Z"
     },
     {
       "id": "d7e77edd-bb14-46c6-90b3-1432290dab4d",
-      "login": "paulciuc",
       "name": "ciuca,paul constantin",
+      "login": "paulciuc",
       "shiftCodes": [
         "NAAB"
       ],
       "roles": [
+        "Jam Buster",
         "PT",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:15:35.103Z"
     },
     {
       "id": "5805da2d-1268-47ab-b8bd-d206122dc678",
-      "login": "ppopcipr",
       "name": "Popescu,Ciprian",
+      "login": "ppopcipr",
       "shiftCodes": [
         "NB1-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PT",
         "SLAM",
         "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-13T20:23:01.782Z"
     },
     {
       "id": "4d83a0d6-c847-4128-9119-21c2e86a7d47",
@@ -1034,7 +1013,7 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-13T19:28:20.702Z"
+      "updatedAt": "2026-05-13T20:23:13.438Z"
     },
     {
       "id": "5ce0c55c-11df-4b4d-854a-e47a33d8a420",
@@ -1126,17 +1105,18 @@
     },
     {
       "id": "e1fc731b-211f-4fe2-ad7c-0f503f54e842",
-      "login": "rosuer",
       "name": "Rosu,Elena Beatrice",
+      "login": "rosuer",
       "shiftCodes": [
         "NB1-1815"
       ],
       "roles": [
-        "PT"
+        "PT",
+        "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:15:07.414Z"
     },
     {
       "id": "34bea812-91d3-4daa-99b1-f6c48cbc6444",
@@ -1152,20 +1132,6 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-11T19:18:23.325Z"
-    },
-    {
-      "id": "5d397226-292a-49b8-8673-18f714ba756d",
-      "login": "sarathjc",
-      "name": "Sarath Chandran",
-      "shiftCodes": [
-        "NL4"
-      ],
-      "roles": [
-        "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
     },
     {
       "id": "50e9b3bd-fb6b-45a8-a7d1-f77e33cfe0f5",
@@ -1184,17 +1150,18 @@
     },
     {
       "id": "1e84e8a2-42ad-4011-b85a-053091fd216f",
-      "login": "schvoick",
       "name": "Chvoickinaite,Simona",
+      "login": "schvoick",
       "shiftCodes": [
         "NAAB"
       ],
       "roles": [
+        "Jam Buster",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:14:08.051Z"
     },
     {
       "id": "9cc9e977-4983-4e67-827d-7124dbf14e65",
@@ -1212,20 +1179,6 @@
       "updatedAt": "2026-05-11T19:18:23.325Z"
     },
     {
-      "id": "43101458-92c8-4c02-8798-a8475efec291",
-      "login": "sfpardee",
-      "name": "singh,pardeep",
-      "shiftCodes": [
-        "NL4"
-      ],
-      "roles": [
-        "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.979Z"
-    },
-    {
       "id": "a01a9194-634b-4d6c-8401-ade3b6c6d042",
       "login": "shobhbhu",
       "name": "Bhujel,Shobha",
@@ -1241,18 +1194,19 @@
     },
     {
       "id": "c5c1de88-c328-4d9f-ab11-51f167a2bbf1",
-      "login": "shubakuv",
       "name": "Kumar,Shubam",
+      "login": "shubakuv",
       "shiftCodes": [
         "NB1"
       ],
       "roles": [
+        "Jam Buster",
         "PG",
         "PT"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.979Z"
+      "updatedAt": "2026-05-14T03:13:24.315Z"
     },
     {
       "id": "bad08959-1b9e-4287-84d8-9000c35c29cf",
@@ -1271,17 +1225,18 @@
     },
     {
       "id": "7e6fe0f2-1ad5-42af-9131-f008f9017a5d",
-      "login": "sntbar",
       "name": "Moreira Dos Santos,Barbara",
+      "login": "sntbar",
       "shiftCodes": [
         "NK7-1815"
       ],
       "roles": [
+        "Jam Buster",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:12:22.665Z"
     },
     {
       "id": "0bd33693-8f55-4c3d-8a63-64e215bb955a",
@@ -1301,19 +1256,20 @@
     },
     {
       "id": "ed225ae3-a4d3-4215-8748-2e7b4114488b",
-      "login": "sundmidh",
       "name": "Sunderasan,Midhun",
+      "login": "sundmidh",
       "shiftCodes": [
         "NN2-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PT",
         "SLAM",
         "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:12:07.008Z"
     },
     {
       "id": "139870be-4368-47a6-ac12-5c4227f8fac1",
@@ -1339,11 +1295,12 @@
         "NB1-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PG"
       ],
       "status": "Available",
       "notes": "SNS1/2 only",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:11:53.089Z"
     },
     {
       "id": "50cdd201-9735-4841-a127-3ce49272cff6",
@@ -1452,18 +1409,19 @@
     },
     {
       "id": "64348ff9-fc4e-449d-a884-cc6ed95dd036",
-      "login": "wandreem",
       "name": "Manea,Andreea",
+      "login": "wandreem",
       "shiftCodes": [
         "NA5-1815"
       ],
       "roles": [
+        "Jam Buster",
         "PS",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:11:24.855Z"
     },
     {
       "id": "ddc7b0cf-9afb-4fd9-abb7-b7a1c1d5d92b",
@@ -1498,32 +1456,19 @@
       "updatedAt": "2026-05-11T19:18:23.325Z"
     },
     {
-      "id": "23d4f1a5-52e8-4229-9cea-cc710bed1b3e",
-      "login": "zefkozet",
-      "name": "Zefi,Kozeta",
-      "shiftCodes": [
-        "NAAB"
-      ],
-      "roles": [
-        "SLAM"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
-    },
-    {
       "id": "88778126-3620-4bc2-93bf-a6ad0094e60f",
-      "login": "zksharnp",
       "name": "Kaur,Sharnpreet",
+      "login": "zksharnp",
       "shiftCodes": [
         "NB1-1815"
       ],
       "roles": [
+        "Jam Buster",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:12:30.993Z"
     },
     {
       "id": "a415152f-59d9-4da2-8569-cac8e26b2da0",
@@ -1552,6 +1497,64 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-13T05:18:12.218Z"
+    },
+    {
+      "id": "90bfe708-cf06-4a23-9557-e5b67ff64fe4",
+      "name": "Kaur,Charanjit",
+      "login": "kcharanz",
+      "shiftCodes": [
+        "NA5-1815"
+      ],
+      "roles": [
+        "Jam Buster",
+        "PT",
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-14T03:09:09.361Z"
+    },
+    {
+      "id": "dd6bd61d-9de8-4c8b-9046-4239c2123a2a",
+      "name": "Ptacha,Inga",
+      "login": "ingptach",
+      "shiftCodes": [
+        "NA5-1815"
+      ],
+      "roles": [
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-14T03:20:06.023Z"
+    },
+    {
+      "id": "69341e3d-c21b-408a-80cb-c2a795e46b9d",
+      "name": "Rai,Mamata",
+      "login": "mamatrai",
+      "shiftCodes": [
+        "NA5-1815"
+      ],
+      "roles": [
+        "PG"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-14T03:21:16.229Z"
+    },
+    {
+      "id": "4cc861c9-30c6-491e-8069-5cd751f788b1",
+      "name": "Arackakudy Latheef,Muhammed Riyaz",
+      "login": "arackaku",
+      "shiftCodes": [
+        "NA5-1815"
+      ],
+      "roles": [
+        "PG"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-14T03:21:29.301Z"
     }
   ],
   "plannerState": {
@@ -1681,5 +1684,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-13T19:28:31.279Z"
+  "updatedAt": "2026-05-14T03:22:26.740Z"
 }
