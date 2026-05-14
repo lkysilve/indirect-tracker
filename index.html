@@ -220,6 +220,20 @@
     .login-option:hover{background:#eff6ff;color:#1d4ed8}
     .login-option small{display:block;font-weight:600;color:#64748b;margin-top:2px}
 
+  
+    /* Employee badge photos */
+    .person-cell{display:flex;align-items:center;gap:10px;min-width:220px}
+    .badge-photo-wrap{
+      width:42px;height:42px;border-radius:999px;overflow:hidden;background:#e2e8f0;
+      border:1px solid #cbd5e1;display:flex;align-items:center;justify-content:center;
+      flex:0 0 auto;color:#334155;font-size:12px;font-weight:900;
+    }
+    .badge-photo{
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+    .person-info{min-width:0}
+    .person-info .name{margin-top:2px}
+
   </style>
 </head>
 <body>
@@ -826,6 +840,34 @@ function normaliseShiftArray(v){
 }
 function escapeHtml(v){ return String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 function escapeForJs(v){ return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+
+
+function badgePhotoUrlForLogin(login){
+  const emp = getEmployeeByLogin(login);
+  const employeeId = emp && emp.employeeId ? String(emp.employeeId).trim() : "";
+  return employeeId ? `https://badgephotos.corp.amazon.com/?employeeid=${encodeURIComponent(employeeId)}` : "";
+}
+
+function initialsForPerson(p){
+  const raw = cleanCell((p && p.name) || (p && p.login) || "");
+  if(!raw) return "?";
+  const parts = raw.split(/[,\s]+/).filter(Boolean);
+  if(parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return raw.slice(0,2).toUpperCase();
+}
+
+function badgePhotoHtml(p){
+  const url = badgePhotoUrlForLogin(p.login);
+  const initials = initialsForPerson(p);
+  if(!url){
+    return `<span class="badge-photo-wrap" title="No employee photo ID found">${escapeHtml(initials)}</span>`;
+  }
+  return `
+    <span class="badge-photo-wrap" title="Badge photo">
+      <img class="badge-photo" src="${escapeHtml(url)}" alt="" loading="lazy" referrerpolicy="no-referrer"
+           onerror="this.style.display='none'; this.parentElement.textContent='${escapeForJs(initials)}';" />
+    </span>`;
+}
 
 function fclmEmployeeUrl(login){
   const l = cleanLogin(login);
@@ -1994,7 +2036,7 @@ function plannerRoleRow(role, item){
     <tr>
       <td>
         <div class="scc-login-cell">
-          <span class="scc-avatar">${escapeHtml(plannerInitials(p))}</span>
+          ${badgePhotoHtml(p)}
           <div class="scc-login">
             <b>${escapeHtml(p.login)}</b>
             <span>${escapeHtml(p.name || "")}</span>
@@ -2316,15 +2358,20 @@ function render(){
     return `
       <tr>
         <td>
-          <div class="login-menu-wrap">
-            <button class="login-link-btn login" onclick="toggleLoginMenu('${escapeForJs(p.login)}', event)" title="Open login tools">${escapeHtml(p.login)}</button>
-            <div class="login-options" id="loginMenu_${escapeHtml(cleanLogin(p.login))}">
-              <div class="login-options-title">${escapeHtml(p.login)} quick links</div>
-              <button class="login-option" onclick="openLoginTool('fclm','${escapeForJs(p.login)}', event)">FCLM employee page<small>Time details / employee page</small></button>
-              <button class="login-option" onclick="openLoginTool('guided','${escapeForJs(p.login)}', event)">Guided Coaching location<small>Employee transcript / last seen</small></button>
+          <div class="person-cell">
+            ${badgePhotoHtml(p)}
+            <div class="person-info">
+              <div class="login-menu-wrap">
+                <button class="login-link-btn login" onclick="toggleLoginMenu('${escapeForJs(p.login)}', event)" title="Open login tools">${escapeHtml(p.login)}</button>
+                <div class="login-options" id="loginMenu_${escapeHtml(cleanLogin(p.login))}">
+                  <div class="login-options-title">${escapeHtml(p.login)} quick links</div>
+                  <button class="login-option" onclick="openLoginTool('fclm','${escapeForJs(p.login)}', event)">FCLM employee page<small>Time details / employee page</small></button>
+                  <button class="login-option" onclick="openLoginTool('guided','${escapeForJs(p.login)}', event)">Guided Coaching location<small>Employee transcript / last seen</small></button>
+                </div>
+              </div>
+              <div class="name">${escapeHtml(p.name || "")}</div>
             </div>
           </div>
-          <div class="name">${escapeHtml(p.name || "")}</div>
         </td>
         <td>${shifts.length ? shifts.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join(" ") : "—"}</td>
         <td>${days.length ? daysShort(days) : `<span class="chip unknown">Unknown</span>`}</td>
