@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-14T22:46:36.781Z",
+  "exportedAt": "2026-05-14T23:36:51.523Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -449,20 +449,6 @@
       "roles": [
         "PT",
         "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
-    },
-    {
-      "id": "b88defcf-d7a8-4ebc-b5ee-764e8e3a45c4",
-      "login": "georagac",
-      "name": "Agache,Georgiana",
-      "shiftCodes": [
-        "NK7-1815"
-      ],
-      "roles": [
-        "PT"
       ],
       "status": "Available",
       "notes": "",
@@ -1548,11 +1534,12 @@
         "NAAB"
       ],
       "roles": [
-        "PG"
+        "PG",
+        "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-14T18:17:57.271Z"
+      "updatedAt": "2026-05-14T23:36:47.396Z"
     }
   ],
   "plannerState": {
@@ -1682,5 +1669,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-14T22:46:36.781Z"
+  "updatedAt": "2026-05-14T23:36:51.523Z"
 }
