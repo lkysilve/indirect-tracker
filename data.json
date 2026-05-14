@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-14T18:19:34.951Z",
+  "exportedAt": "2026-05-14T22:26:41.661Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -860,20 +860,6 @@
       "updatedAt": "2026-05-11T19:18:23.325Z"
     },
     {
-      "id": "ec5cd998-0d83-4f04-998d-39ae4d2acdf4",
-      "login": "mehrullh",
-      "name": "Hamidi,Mehrullah",
-      "shiftCodes": [
-        "NL4"
-      ],
-      "roles": [
-        "WS"
-      ],
-      "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
-    },
-    {
       "id": "afe32e48-81d7-4d7a-9ad2-7f865cc43907",
       "name": "Capatina,Mihaela Alexandra",
       "login": "mihaelca",
@@ -1696,5 +1682,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-14T18:19:34.951Z"
+  "updatedAt": "2026-05-14T22:26:41.661Z"
 }
