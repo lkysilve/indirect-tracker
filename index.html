@@ -234,6 +234,59 @@
     .person-info{min-width:0}
     .person-info .name{margin-top:2px}
 
+  
+    /* Polished controls update */
+    .save-status{
+      display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd5e1;background:#fff;
+      border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900;color:#334155
+    }
+    .save-status.saving{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+    .save-status.saved{background:#ecfdf5;border-color:#86efac;color:#166534}
+    .save-status.failed{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+    .save-status.local{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+    .quick-filters{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:#fbfdff;border-bottom:1px solid var(--line)}
+    .quick-filter-btn{border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:7px 10px;font-weight:900;cursor:pointer;color:#334155}
+    .quick-filter-btn.active{background:#111827;color:#fff;border-color:#111827}
+    .bulk-bar{
+      display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:10px;
+      border:1px dashed #cbd5e1;border-radius:14px;background:#f8fafc
+    }
+    .bulk-bar select,.bulk-bar button{height:34px}
+    .bulk-check{width:18px;height:18px;cursor:pointer}
+    .row-updated{font-size:11px;color:#64748b;margin-top:4px}
+    .tab-menu-wrap{display:inline-flex;align-items:center;position:relative;margin-right:6px;gap:4px}
+    .tab-menu-wrap .tabbtn{margin-right:0}
+    .tab-more-btn{
+      width:30px;height:30px;border:1px solid #dbe3ee;background:#fff;color:#64748b;border-radius:999px;
+      font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center
+    }
+    .tab-more-btn:hover{background:#f1f5f9;color:#111827}
+    .tab-more-menu{
+      display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:190px;z-index:9999;
+      background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:6px;box-shadow:0 12px 28px rgba(15,23,42,.18)
+    }
+    .tab-more-menu.show{display:block}
+    .tab-more-menu button{
+      width:100%;border:0;background:#fff;text-align:left;border-radius:10px;padding:9px 10px;
+      cursor:pointer;font-weight:800;color:#0f172a
+    }
+    .tab-more-menu button:hover{background:#eff6ff;color:#1d4ed8}
+    .tab-more-menu button.danger:hover{background:#fee2e2;color:#991b1b}
+    .role-colour-row{display:grid;grid-template-columns:1fr 80px 110px;gap:8px;align-items:center;margin-bottom:8px}
+    .role-colour-chip{font-weight:900}
+    .print-modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:99999;padding:24px;overflow:auto}
+    .print-modal.show{display:block}
+    .print-card{background:#fff;border-radius:18px;max-width:980px;margin:0 auto;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+    .print-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e2e8f0;padding-bottom:10px;margin-bottom:12px}
+    .print-section{border:1px solid #e2e8f0;border-radius:14px;margin:10px 0;padding:10px}
+    .print-section h3{margin:0 0 8px}.print-role{font-weight:900;margin-top:7px}
+    @media print{
+      body > *:not(.print-modal){display:none!important}
+      .print-modal{display:block!important;position:static;background:#fff;padding:0}
+      .print-card{box-shadow:none;max-width:none;border-radius:0}
+      .print-head button{display:none}
+    }
+
   </style>
 </head>
 <body>
@@ -319,10 +372,22 @@
             <button class="btn-light" onclick="toggleAvailableOnly()" id="availableBtn">Available only: OFF</button>
           </div>
 
+          <div class="quick-filters" id="quickFilters">
+            <button class="quick-filter-btn" data-qf="all" onclick="setQuickFilter('all')">All</button>
+            <button class="quick-filter-btn" data-qf="available" onclick="setQuickFilter('available')">Available</button>
+            <button class="quick-filter-btn" data-qf="busy" onclick="setQuickFilter('busy')">Busy</button>
+            <button class="quick-filter-btn" data-qf="absent" onclick="setQuickFilter('absent')">Absent</button>
+            <button class="quick-filter-btn" data-qf="has-notes" onclick="setQuickFilter('has-notes')">Has notes</button>
+            <button class="quick-filter-btn" data-qf="no-notes" onclick="setQuickFilter('no-notes')">No notes</button>
+            <button class="quick-filter-btn" data-qf="no-shift" onclick="setQuickFilter('no-shift')">No shift code</button>
+            <button class="quick-filter-btn" data-qf="missing-employee" onclick="setQuickFilter('missing-employee')">Missing employee list</button>
+          </div>
+
           <div class="actions">
             <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
             <button class="btn-green" onclick="loadSharedDataNow()">Load shared data</button>
             <button class="btn-gear" onclick="toggleToolsMenu()" title="More tools / settings">⚙</button>
+            <span id="githubSaveStatus" class="save-status local">Local changes</span>
           </div>
 
           <div class="tools-menu" id="toolsMenu">
@@ -333,6 +398,10 @@
               <button class="btn-light" onclick="exportCsv()">Export CSV</button>
               <button class="btn-light" onclick="exportBackup()">Backup</button>
               <button class="btn-purple" onclick="toggleSlackWorkflowPanel()">Slack workflow</button>
+              <button class="btn-light" onclick="undoLastChange()">Undo last change</button>
+              <button class="btn-light" onclick="toggleRestorePanel()">Restore history</button>
+              <button class="btn-light" onclick="toggleRoleColoursPanel()">Role colours</button>
+              <button class="btn-light" onclick="openPrintPlannerView()">Print rota view</button>
               <label class="filebtn btn-light">
                 Import backup
                 <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
@@ -340,6 +409,19 @@
             </div>
           </div>
 
+
+          
+          <div class="tools-menu" id="restorePanel">
+            <div class="tools-menu-title">Restore history</div>
+            <p class="muted">Restore one of the recent saved states if something was changed by mistake.</p>
+            <div id="restoreList" class="tools-menu-grid"></div>
+          </div>
+
+          <div class="tools-menu" id="roleColoursPanel">
+            <div class="tools-menu-title">Role colours</div>
+            <p class="muted">Pick custom colours for role chips. These save with the tracker data.</p>
+            <div id="roleColourList"></div>
+          </div>
 
           <div class="employee-tools" id="employeeTools">
             <span class="emp-summary" id="employeeListSummary">Employee list check pending.</span>
@@ -448,12 +530,32 @@
 
           <div class="card-body">
             <div class="role-cards" id="roleCards"></div>
+
+            <div class="bulk-bar" id="bulkBar">
+              <b id="bulkCount">0 selected</b>
+              <button class="btn-light btn-small" onclick="selectAllShown()">Select shown</button>
+              <button class="btn-light btn-small" onclick="clearBulkSelection()">Clear selection</button>
+              <select id="bulkStatus">
+                <option value="">Set status...</option>
+                <option>Available</option>
+                <option>Busy</option>
+                <option>Absent</option>
+                <option>Unknown</option>
+              </select>
+              <button class="btn-light btn-small" onclick="bulkSetStatus()">Apply status</button>
+              <select id="bulkRole"></select>
+              <button class="btn-light btn-small" onclick="bulkAddRole()">Add role</button>
+              <button class="btn-light btn-small" onclick="bulkRemoveRole()">Remove role</button>
+              <button class="btn-danger btn-small" onclick="bulkDeleteSelected()">Delete selected</button>
+            </div>
+
           </div>
 
           <div class="table-wrap">
             <table class="tracker-table">
               <thead>
                 <tr>
+                  <th style="width:34px"><input id="selectAllRows" class="bulk-check" type="checkbox" onclick="toggleSelectAllShown(this.checked)" title="Select all shown" /></th>
                   <th><button class="sort-th" data-sort-field="login" onclick="setTableSort('login')" title="Sort login A-Z / Z-A">Login <span class="sort-icon"></span></button></th>
                   <th><button class="sort-th" data-sort-field="shift" onclick="setTableSort('shift')" title="Sort shift A-Z / Z-A">Shift <span class="sort-icon"></span></button></th>
                   <th><button class="sort-th" data-sort-field="days" onclick="setTableSort('days')" title="Sort days A-Z / Z-A">Days <span class="sort-icon"></span></button></th>
@@ -683,6 +785,10 @@ let mainTrackerRoles = null;
 let mainTrackerPeople = null;
 let mainPlannerState = null;
 let mainPlannerBook = null;
+let selectedBulkIds = new Set();
+let quickFilter = "all";
+let roleColors = {};
+const UNDO_KEY = "indirect-tracker-undo-v2";
 
 const samplePeople = [
   { id: id(), name:"Silvestre, Kyle", login:"lkysilve", shiftCodes:["N52"], roles:["SLAM","PG"], status:"Available", notes:"Example with unknown pattern" },
@@ -765,14 +871,17 @@ function getStorageSnapshot(){
     plannerState: rootPlannerState,
     plannerBook: rootPlannerBook,
     customTabs: normaliseCustomTabs(customTabs),
-    activeCustomTabId
+    activeCustomTabId,
+    roleColors: normaliseRoleColors(roleColors)
   };
 }
 
 function saveStorage(){
+  pushUndoSnapshot();
   const snapshot = getStorageSnapshot();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
   showAutosaved();
+  setGithubSaveStatus("local", "Local changes");
   queueGithubSave();
 }
 function loadStorage(){
@@ -784,6 +893,7 @@ function loadStorage(){
       plannerState = normalisePlannerState(embedded.plannerState);
       customTabs = normaliseCustomTabs(embedded.customTabs);
       activeCustomTabId = cleanCell(embedded.activeCustomTabId || (customTabs[0]?.id || ""));
+      roleColors = normaliseRoleColors(embedded.roleColors);
       plannerBook = normalisePlannerBook((embedded).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
@@ -802,6 +912,7 @@ function loadStorage(){
       plannerState = normalisePlannerState(hashData.plannerState);
       customTabs = normaliseCustomTabs(hashData.customTabs);
       activeCustomTabId = cleanCell(hashData.activeCustomTabId || (customTabs[0]?.id || ""));
+      roleColors = normaliseRoleColors(hashData.roleColors);
       plannerBook = normalisePlannerBook((hashData).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
@@ -822,6 +933,7 @@ function loadStorage(){
     plannerState = normalisePlannerState(saved.plannerState);
       customTabs = normaliseCustomTabs(saved.customTabs);
       activeCustomTabId = cleanCell(saved.activeCustomTabId || (customTabs[0]?.id || ""));
+      roleColors = normaliseRoleColors(saved.roleColors);
       plannerBook = normalisePlannerBook((saved).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
@@ -841,6 +953,402 @@ function normaliseShiftArray(v){
 function escapeHtml(v){ return String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 function escapeForJs(v){ return String(v).replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
 
+
+
+function timeShort(iso){
+  if(!iso) return "Never";
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return "Unknown";
+  return d.toLocaleString([], { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+}
+
+function setGithubSaveStatus(kind, message){
+  const el = document.getElementById("githubSaveStatus");
+  if(!el) return;
+  el.className = "save-status " + (kind || "local");
+  el.textContent = message || "";
+}
+
+function normaliseRoleColors(obj){
+  const out = {};
+  if(obj && typeof obj === "object"){
+    Object.entries(obj).forEach(([k,v]) => {
+      const role = cleanCell(k);
+      const colour = cleanCell(v);
+      if(role && /^#[0-9a-f]{6}$/i.test(colour)) out[role] = colour;
+    });
+  }
+  return out;
+}
+
+function textColourForBg(hex){
+  const h = String(hex || "").replace("#","");
+  if(h.length !== 6) return "#111827";
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return ((r*299 + g*587 + b*114) / 1000) >= 150 ? "#111827" : "#ffffff";
+}
+
+function roleChipHtml(role){
+  const colour = roleColors && roleColors[role];
+  if(colour){
+    return `<span class="chip" style="background:${escapeHtml(colour)};border-color:${escapeHtml(colour)};color:${escapeHtml(textColourForBg(colour))}">${escapeHtml(role)}</span>`;
+  }
+  return `<span class="chip ${roleClass(role)}">${escapeHtml(role)}</span>`;
+}
+
+function renderQuickFilters(){
+  document.querySelectorAll(".quick-filter-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.qf === quickFilter);
+  });
+}
+
+function setQuickFilter(value){
+  quickFilter = value || "all";
+  render();
+}
+
+function matchesQuickFilter(p){
+  if(!quickFilter || quickFilter === "all") return true;
+  if(quickFilter === "available") return p.status === "Available";
+  if(quickFilter === "busy") return p.status === "Busy";
+  if(quickFilter === "absent") return p.status === "Absent";
+  if(quickFilter === "has-notes") return !!cleanCell(p.notes || "");
+  if(quickFilter === "no-notes") return !cleanCell(p.notes || "");
+  if(quickFilter === "no-shift") return !normaliseShiftArray(p.shiftCodes || []).length;
+  if(quickFilter === "missing-employee") return !getEmployeeByLogin(p.login);
+  return true;
+}
+
+function updateBulkUi(){
+  const count = selectedBulkIds.size;
+  const el = document.getElementById("bulkCount");
+  if(el) el.textContent = count + " selected";
+
+  document.querySelectorAll(".bulk-row-check").forEach(cb => {
+    cb.checked = selectedBulkIds.has(cb.value);
+  });
+
+  const selectAll = document.getElementById("selectAllRows");
+  if(selectAll){
+    const rows = getFiltered();
+    selectAll.checked = rows.length > 0 && rows.every(p => selectedBulkIds.has(p.id));
+    selectAll.indeterminate = rows.some(p => selectedBulkIds.has(p.id)) && !selectAll.checked;
+  }
+
+  const role = document.getElementById("bulkRole");
+  if(role){
+    const current = role.value;
+    role.innerHTML = `<option value="">Choose role...</option>` + roles.map(r => `<option>${escapeHtml(r)}</option>`).join("");
+    if(roles.includes(current)) role.value = current;
+  }
+}
+
+function toggleBulkRow(id, checked){
+  if(checked) selectedBulkIds.add(id);
+  else selectedBulkIds.delete(id);
+  updateBulkUi();
+}
+
+function toggleSelectAllShown(checked){
+  getFiltered().forEach(p => {
+    if(checked) selectedBulkIds.add(p.id);
+    else selectedBulkIds.delete(p.id);
+  });
+  updateBulkUi();
+}
+
+function selectAllShown(){
+  getFiltered().forEach(p => selectedBulkIds.add(p.id));
+  updateBulkUi();
+}
+
+function clearBulkSelection(){
+  selectedBulkIds.clear();
+  updateBulkUi();
+}
+
+function bulkSelectedPeople(){
+  return people.filter(p => selectedBulkIds.has(p.id));
+}
+
+function bulkSetStatus(){
+  const status = document.getElementById("bulkStatus")?.value || "";
+  if(!status){ toast("Choose a status"); return; }
+  const selected = bulkSelectedPeople();
+  if(!selected.length){ toast("Select logins first"); return; }
+  people = people.map(p => selectedBulkIds.has(p.id) ? {...p, status, updatedAt:new Date().toISOString()} : p);
+  saveStorage(); render(); toast(`Updated ${selected.length} status`);
+}
+
+function bulkAddRole(){
+  const role = document.getElementById("bulkRole")?.value || "";
+  const selected = bulkSelectedPeople();
+  if(!role){ toast("Choose a role"); return; }
+  if(!selected.length){ toast("Select logins first"); return; }
+  people = people.map(p => selectedBulkIds.has(p.id) ? {...p, roles:[...new Set([...(p.roles || []), role])].sort(), updatedAt:new Date().toISOString()} : p);
+  saveStorage(); render(); toast(`Added ${role} to ${selected.length}`);
+}
+
+function bulkRemoveRole(){
+  const role = document.getElementById("bulkRole")?.value || "";
+  const selected = bulkSelectedPeople();
+  if(!role){ toast("Choose a role"); return; }
+  if(!selected.length){ toast("Select logins first"); return; }
+  people = people.map(p => selectedBulkIds.has(p.id) ? {...p, roles:(p.roles || []).filter(r => r !== role), updatedAt:new Date().toISOString()} : p);
+  saveStorage(); render(); toast(`Removed ${role} from ${selected.length}`);
+}
+
+function bulkDeleteSelected(){
+  const selected = bulkSelectedPeople();
+  if(!selected.length){ toast("Select logins first"); return; }
+  if(!confirm(`Delete ${selected.length} selected login(s)?`)) return;
+  people = people.filter(p => !selectedBulkIds.has(p.id));
+  selectedBulkIds.clear();
+  saveStorage(); render(); toast("Selected logins deleted");
+}
+
+function duplicateLocationsForLogin(login, editId){
+  const l = cleanLogin(login);
+  const locations = [];
+
+  // Current view
+  if(people.some(p => cleanLogin(p.login) === l && p.id !== editId)){
+    locations.push(customTabViewActive ? (getActiveCustomTab()?.title || "custom tab") : "Indirect Tracker");
+  }
+
+  // Main tracker snapshot, if not currently main.
+  const mainPeople = normalisePeopleForStorage(mainTrackerPeople || []);
+  if(customTabViewActive && mainPeople.some(p => cleanLogin(p.login) === l)){
+    locations.push("Indirect Tracker");
+  }
+
+  // Other custom tabs
+  customTabs.forEach(t => {
+    if(customTabViewActive && t.id === activeCustomTabId) return;
+    if(normalisePeopleForStorage(t.people || []).some(p => cleanLogin(p.login) === l)){
+      locations.push(t.title || "Custom tab");
+    }
+  });
+
+  return [...new Set(locations)];
+}
+
+function pushUndoSnapshot(){
+  try{
+    const current = localStorage.getItem(STORAGE_KEY);
+    if(!current) return;
+    const history = JSON.parse(localStorage.getItem(UNDO_KEY) || "[]");
+    const last = history[0];
+    if(last && last.data === current) return;
+    history.unshift({ at:new Date().toISOString(), data:current });
+    localStorage.setItem(UNDO_KEY, JSON.stringify(history.slice(0, 15)));
+  }catch(e){}
+}
+
+function getUndoHistory(){
+  try{ return JSON.parse(localStorage.getItem(UNDO_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+
+function applySnapshotDataString(data){
+  const parsed = JSON.parse(data);
+  if(!Array.isArray(parsed.people)) throw new Error("Bad snapshot");
+  if(Array.isArray(parsed.roles)) roles = parsed.roles.map(cleanCell).filter(Boolean);
+  people = normalisePeopleForStorage(parsed.people || []);
+  plannerState = normalisePlannerState(parsed.plannerState);
+  plannerBook = normalisePlannerBook(parsed.plannerBook, plannerState);
+  plannerState = getPlannerStateForSelectedDate();
+  customTabs = normaliseCustomTabs(parsed.customTabs);
+  activeCustomTabId = cleanCell(parsed.activeCustomTabId || (customTabs[0]?.id || ""));
+  roleColors = normaliseRoleColors(parsed.roleColors);
+  mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
+  mainTrackerPeople = normalisePeopleForStorage(people);
+  mainPlannerState = normalisePlannerState(plannerState);
+  mainPlannerBook = normalisePlannerBook(plannerBook, plannerState);
+  customTabViewActive = false;
+  selectedBulkIds.clear();
+  resetTrackerViewFilters();
+}
+
+function undoLastChange(){
+  const history = getUndoHistory();
+  if(!history.length){ toast("No restore history yet"); return; }
+  if(!confirm("Undo last saved change?")) return;
+  try{
+    applySnapshotDataString(history[0].data);
+    localStorage.setItem(UNDO_KEY, JSON.stringify(history.slice(1)));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(getStorageSnapshot()));
+    render(); toast("Restored previous change");
+    setGithubSaveStatus("local","Restored locally");
+  }catch(e){ console.error(e); toast("Undo failed"); }
+}
+
+function toggleRestorePanel(){
+  const panel = document.getElementById("restorePanel");
+  if(panel){ panel.classList.toggle("show"); renderRestoreList(); }
+}
+
+function renderRestoreList(){
+  const box = document.getElementById("restoreList");
+  if(!box) return;
+  const history = getUndoHistory();
+  box.innerHTML = history.length ? history.map((h,i) => 
+    `<button class="btn-light" onclick="restoreHistoryIndex(${i})">${i+1}. ${escapeHtml(timeShort(h.at))}</button>`
+  ).join("") : `<span class="muted">No history yet.</span>`;
+}
+
+function restoreHistoryIndex(index){
+  const history = getUndoHistory();
+  const item = history[index];
+  if(!item) return;
+  if(!confirm("Restore this saved state?")) return;
+  try{
+    applySnapshotDataString(item.data);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(getStorageSnapshot()));
+    render(); renderRestoreList(); toast("Snapshot restored");
+    setGithubSaveStatus("local","Restored locally");
+  }catch(e){ console.error(e); toast("Restore failed"); }
+}
+
+function toggleRoleColoursPanel(){
+  const panel = document.getElementById("roleColoursPanel");
+  if(panel){ panel.classList.toggle("show"); renderRoleColoursPanel(); }
+}
+
+function renderRoleColoursPanel(){
+  const box = document.getElementById("roleColourList");
+  if(!box) return;
+  roleColors = normaliseRoleColors(roleColors);
+  box.innerHTML = roles.length ? roles.map(role => {
+    const current = roleColors[role] || defaultColourForRole(role);
+    return `
+      <div class="role-colour-row">
+        <span class="role-colour-chip">${roleChipHtml(role)}</span>
+        <input type="color" value="${escapeHtml(current)}" onchange="setRoleColour('${escapeForJs(role)}', this.value)" />
+        <button class="btn-light btn-small" onclick="clearRoleColour('${escapeForJs(role)}')">Reset</button>
+      </div>`;
+  }).join("") : `<p class="muted">No roles to colour yet.</p>`;
+}
+
+function defaultColourForRole(role){
+  const map = {ws:"#dbeafe", ps:"#dcfce7", pg:"#fee2e2", slam:"#fef9c3", pt:"#ede9fe", tc:"#fce7f3", jb:"#ffedd5"};
+  return map[roleClass(role)] || "#e2e8f0";
+}
+
+function setRoleColour(role, colour){
+  roleColors[role] = colour;
+  saveStorage(); render(); renderRoleColoursPanel(); toast("Role colour saved");
+}
+
+function clearRoleColour(role){
+  delete roleColors[role];
+  saveStorage(); render(); renderRoleColoursPanel();
+}
+
+function closeCustomTabMenus(){
+  document.querySelectorAll(".tab-more-menu.show").forEach(el => el.classList.remove("show"));
+}
+
+function toggleCustomTabMenu(id, ev){
+  if(ev) ev.stopPropagation();
+  const menu = document.getElementById("tabMenu_" + id);
+  if(!menu) return;
+  const open = menu.classList.contains("show");
+  closeCustomTabMenus();
+  if(!open) menu.classList.add("show");
+}
+
+function clearCustomTabData(id){
+  customTabs = normaliseCustomTabs(customTabs);
+  const tab = customTabs.find(t => t.id === id);
+  if(!tab) return;
+  if(!confirm(`Clear all logins, roles, and planner data from "${tab.title}"?`)) return;
+  tab.roles = [];
+  tab.people = [];
+  tab.plannerState = defaultPlannerState();
+  tab.plannerBook = defaultPlannerBook();
+  if(customTabViewActive && activeCustomTabId === id){
+    roles = [];
+    people = [];
+    plannerState = tab.plannerState;
+    plannerBook = tab.plannerBook;
+    selectedBulkIds.clear();
+  }
+  saveStorage(); renderCustomTabs(); render(); toast("Custom tab cleared");
+}
+
+function buildPlannerPrintText(){
+  syncCurrentPlannerToBook();
+  const weekStart = plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso());
+  const dates = weekDatesFromStart(weekStart);
+  const lines = [`7 Day Rota — week starting ${shortDateFromIso(weekStart)}`,""];
+  dates.forEach(date => {
+    const plan = normalisePlannerState(plannerBook.plans[date] || defaultPlannerState());
+    const stats = getPlanStatsForDate(date);
+    lines.push(`${dayNameFromIso(date)} ${shortDateFromIso(date)} — ${stats.filled}${stats.required ? "/" + stats.required : ""} planned`);
+    let any = false;
+    roles.forEach(role => {
+      const col = plan.columns?.[role] || {required:0, assigned:[]};
+      if(!Number(col.required || 0) && !(col.assigned || []).length) return;
+      any = true;
+      lines.push(`  ${plannerRoleLabel(role)} ${col.assigned.length}/${col.required || 0}`);
+      (col.assigned || []).forEach(item => {
+        const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+        lines.push(`    - ${p ? p.login : item.login}${p && p.name ? " (" + p.name + ")" : ""}`);
+      });
+      const gaps = Math.max(0, Number(col.required || 0) - (col.assigned || []).length);
+      for(let i=0;i<gaps;i++) lines.push("    - UNFILLED");
+    });
+    if(!any) lines.push("  --");
+    lines.push("");
+  });
+  return lines.join("\n").trim();
+}
+
+function openPrintPlannerView(){
+  const modal = document.getElementById("printModal");
+  const box = document.getElementById("printPlannerContent");
+  if(!modal || !box) return;
+  const text = buildPlannerPrintText();
+  box.innerHTML = text.split("\n").map(line => {
+    if(!line.trim()) return "<br>";
+    if(!line.startsWith(" ") && !line.startsWith("-")) return `<div class="print-section"><h3>${escapeHtml(line)}</h3></div>`;
+    return `<div style="white-space:pre-wrap">${escapeHtml(line)}</div>`;
+  }).join("");
+  modal.classList.add("show");
+}
+
+function closePrintPlannerView(){
+  document.getElementById("printModal")?.classList.remove("show");
+}
+
+async function copyPrintPlannerText(){
+  const text = buildPlannerPrintText();
+  try{ await navigator.clipboard.writeText(text); toast("Rota copied"); }
+  catch(e){ prompt("Copy rota:", text); }
+}
+
+function autofillPlannerRole(role){
+  const col = ensurePlannerRole(role);
+  const required = Number(col.required || 0);
+  if(!required){ toast("Set required headcount first"); return; }
+
+  const needed = Math.max(0, required - (col.assigned || []).length);
+  if(!needed){ toast("Role already filled"); return; }
+
+  const candidates = getPlannerPoolPeople().filter(p => (p.roles || []).includes(role));
+  const picked = candidates.slice(0, needed);
+  if(!picked.length){ toast("No matching available logins"); return; }
+
+  picked.forEach(p => col.assigned.push({ login: cleanLogin(p.login), note:"" }));
+  savePlanner();
+  toast(`Auto-filled ${picked.length} for ${plannerRoleLabel(role)}`);
+}
+
+if(!window.__customTabMenusBound){
+  window.__customTabMenusBound = true;
+  document.addEventListener("click", closeCustomTabMenus);
+}
 
 function badgePhotoUrlForLogin(login){
   const emp = getEmployeeByLogin(login);
@@ -1313,10 +1821,15 @@ function renderCustomTabs(){
   const buttons = document.getElementById("customTabButtons");
   if(buttons){
     buttons.innerHTML = customTabs.map(t => `
-      <span class="custom-tab-wrap">
+      <span class="tab-menu-wrap">
         <button class="tabbtn ${customTabViewActive && t.id === activeCustomTabId ? "active" : ""}" onclick="selectCustomTab('${escapeForJs(t.id)}')" ondblclick="event.stopPropagation(); renameCustomTabById('${escapeForJs(t.id)}')" title="Double-click to rename">${escapeHtml(t.title)}</button>
-        <button class="custom-tab-rename" title="Rename tab" onclick="event.stopPropagation(); renameCustomTabById('${escapeForJs(t.id)}')">✎</button>
-        <button class="custom-tab-close" title="Remove tab" onclick="event.stopPropagation(); deleteCustomTabById('${escapeForJs(t.id)}')">×</button>
+        <button class="tab-more-btn" title="Tab options" onclick="toggleCustomTabMenu('${escapeForJs(t.id)}', event)">⋯</button>
+        <span class="tab-more-menu" id="tabMenu_${escapeHtml(t.id)}">
+          <button onclick="renameCustomTabById('${escapeForJs(t.id)}')">Rename tab</button>
+          <button onclick="duplicateCustomTabById('${escapeForJs(t.id)}')">Duplicate tab</button>
+          <button onclick="clearCustomTabData('${escapeForJs(t.id)}')">Clear tab data</button>
+          <button class="danger" onclick="deleteCustomTabById('${escapeForJs(t.id)}')">Delete tab</button>
+        </span>
       </span>
     `).join("");
   }
@@ -1340,6 +1853,22 @@ function renderCustomTabs(){
   if(heading) heading.textContent = tab ? tab.title : "Custom Tab";
   if(title && document.activeElement !== title) title.value = tab ? tab.title : "";
   if(content && document.activeElement !== content) content.value = tab ? tab.content : "";
+}
+
+function duplicateCustomTabById(id){
+  saveActiveViewStateOnly();
+  customTabs = normaliseCustomTabs(customTabs);
+  const tab = customTabs.find(t => t.id === id);
+  if(!tab) return;
+  const copy = {
+    ...JSON.parse(JSON.stringify(tab)),
+    id: "ct_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7),
+    title: (tab.title + " copy").slice(0, 40)
+  };
+  customTabs.push(copy);
+  openCustomTrackerTab(copy.id);
+  saveStorage();
+  toast("Custom tab duplicated");
 }
 
 function showTab(name){
@@ -1490,7 +2019,13 @@ function savePerson(){
   if(!selectedRoles.length){ toast("Select at least one trained role"); return; }
 
   const duplicate = people.find(p => p.login.toLowerCase() === login && p.id !== editId);
-  if(duplicate){ toast("That login is already in the list"); return; }
+  if(duplicate){ toast("That login is already in this tab"); return; }
+
+  const otherLocations = duplicateLocationsForLogin(login, editId).filter(Boolean);
+  if(otherLocations.length && !editId){
+    const proceed = confirm(`This login already exists in: ${otherLocations.join(", ")}.\n\nAdd it here anyway?`);
+    if(!proceed) return;
+  }
 
   const person = { id: editId || id(), name, login, shiftCodes, roles:[...selectedRoles].sort(), status, notes, updatedAt:new Date().toISOString() };
 
@@ -2063,6 +2598,7 @@ function renderPlannerRoleCard(role){
         <span class="scc-role-actions">
           <input type="number" min="0" value="${required}" title="Required headcount" onchange="setPlannerRequired('${escapeForJs(role)}', this.value)" />
           <button class="${canAddSelected ? "btn-dark" : "btn-light"} btn-small" onclick="addSelectedToPlannerRole('${escapeForJs(role)}')" title="Add selected login">+ selected</button>
+          <button class="btn-light btn-small" onclick="autofillPlannerRole('${escapeForJs(role)}')" title="Auto-fill from matching available people">suggest</button>
           <button class="btn-light btn-small" onclick="clearPlannerRole('${escapeForJs(role)}')" title="Clear this role">clear</button>
         </span>
       </div>
@@ -2324,6 +2860,7 @@ function getFiltered(){
     .filter(p => activeRoleCard === "All roles" || p.roles.includes(activeRoleCard))
     .filter(p => status === "All statuses" || p.status === status)
     .filter(p => !availableOnly || p.status === "Available")
+    .filter(matchesQuickFilter)
     .sort(comparePeopleByTableSort);
 }
 
@@ -2333,6 +2870,7 @@ function render(){
   }
   selectedRoles = selectedRoles.filter(r => roles.includes(r));
   initEmployeeDatalists();
+  renderQuickFilters();
   renderRoles();
   const rows = getFiltered();
   document.getElementById("statPeople").textContent = people.length;
@@ -2357,6 +2895,7 @@ function render(){
     const status = p.status || "Unknown";
     return `
       <tr>
+        <td><input class="bulk-check bulk-row-check" type="checkbox" value="${p.id}" onchange="toggleBulkRow('${p.id}', this.checked)" /></td>
         <td>
           <div class="person-cell">
             ${badgePhotoHtml(p)}
@@ -2370,12 +2909,13 @@ function render(){
                 </div>
               </div>
               <div class="name">${escapeHtml(p.name || "")}</div>
+              <div class="row-updated">Updated ${escapeHtml(timeShort(p.updatedAt))}</div>
             </div>
           </div>
         </td>
         <td>${shifts.length ? shifts.map(s => `<span class="chip">${escapeHtml(s)}</span>`).join(" ") : "—"}</td>
         <td>${days.length ? daysShort(days) : `<span class="chip unknown">Unknown</span>`}</td>
-        <td><div class="chips">${p.roles.map(r => `<span class="chip ${roleClass(r)}">${escapeHtml(r)}</span>`).join("")}</div></td>
+        <td><div class="chips">${p.roles.map(r => roleChipHtml(r)).join("")}</div></td>
         <td>
           <select onchange="changeStatus('${p.id}', this.value)">
             ${["Available","Busy","Absent","Unknown"].map(s => `<option ${status===s?"selected":""}>${s}</option>`).join("")}
@@ -2395,6 +2935,8 @@ function render(){
   renderDaysControls();
   renderDaysView();
   renderDecoder();
+  updateBulkUi();
+  renderRoleColoursPanel();
 }
 
 function setActiveRole(role){ activeRoleCard = role; render(); }
@@ -2430,7 +2972,7 @@ function exportCsv(){
   ].join("\n");
   downloadFile("indirect-training-tracker-with-shift-days.csv", csv, "text/csv"); toast("CSV downloaded");
 }
-function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState,plannerBook,customTabs,activeCustomTabId},null,2), "application/json"); toast("Backup downloaded"); }
+function exportBackup(){ downloadFile("indirect-training-tracker-backup.json", JSON.stringify({roles,people,plannerState,plannerBook,customTabs,activeCustomTabId,roleColors},null,2), "application/json"); toast("Backup downloaded"); }
 function downloadFile(name,content,type){
   const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a");
   a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),500);
@@ -2670,7 +3212,7 @@ function dayCard(day, rows){
       ${rows.length ? rows.map(p => `<div class="person-mini">
         <b>${escapeHtml(p.login)}</b>
         <span>${escapeHtml(p.name || "")}</span>
-        <div class="chips" style="margin-top:6px">${normaliseShiftArray(p.shiftCodes).map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}${p.roles.map(r => `<span class="chip ${roleClass(r)}">${escapeHtml(r)}</span>`).join("")}</div>
+        <div class="chips" style="margin-top:6px">${normaliseShiftArray(p.shiftCodes).map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("")}${p.roles.map(r => roleChipHtml(r)).join("")}</div>
       </div>`).join("") : `<div class="muted">No one listed.</div>`}
     </div>
   </div>`;
@@ -2778,7 +3320,7 @@ function showAutosaved(){
 function getPortableData(){
   const snapshot = getStorageSnapshot();
   return {
-    version: 6,
+    version: 7,
     exportedAt: new Date().toISOString(),
     ...snapshot
   };
@@ -3012,6 +3554,8 @@ async function loadSharedDataNow(){
       plannerState = getPlannerStateForSelectedDate();
       customTabs = normaliseCustomTabs(data.customTabs);
       activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
+    roleColors = normaliseRoleColors(data.roleColors);
+      roleColors = normaliseRoleColors(data.roleColors);
     mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
     mainTrackerPeople = normalisePeopleForStorage(people);
     mainPlannerState = normalisePlannerState(plannerState);
@@ -3200,6 +3744,7 @@ async function loadFromGithub(){
     plannerState = getPlannerStateForSelectedDate();
       customTabs = normaliseCustomTabs(data.customTabs);
       activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
+    roleColors = normaliseRoleColors(data.roleColors);
 
     suppressGithubAutoSave = true;
     saveStorage();
@@ -3240,6 +3785,7 @@ async function saveToGithub(){
   if(githubSaving) return;
 
   githubSaving = true;
+  setGithubSaveStatus("saving", "Saving to GitHub...");
   try{
     const sha = await getGithubFileSha();
     const data = {
@@ -3271,10 +3817,12 @@ async function saveToGithub(){
     }
 
     toast("Saved tracker data to GitHub");
+    setGithubSaveStatus("saved", "Saved to GitHub " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}));
     renderGithubPreview();
     maybePostSlackAfterGithubSave("saved to GitHub");
   }catch(e){
     console.error(e);
+    setGithubSaveStatus("failed", e.message || "GitHub save failed");
     toast(e.message || "GitHub save failed");
   }finally{
     githubSaving = false;
@@ -3286,6 +3834,7 @@ function queueGithubSave(){
   const s = getGithubSettings();
   if(!s.autoSave || !s.token || !githubConfigured()) return;
   clearTimeout(githubSaveTimer);
+  setGithubSaveStatus("saving", "Auto-save queued...");
   githubSaveTimer = setTimeout(() => saveToGithub(), 1800);
 }
 
@@ -3305,6 +3854,7 @@ async function copyGithubPagesLink(){
 
 loadStorage();
 render();
+setGithubSaveStatus("local", "Ready");
 bindAutosaveInputs();
 loadDraft();
 renderShiftReference();
