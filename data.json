@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-14T03:37:39.294Z",
+  "exportedAt": "2026-05-14T18:19:32.365Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -39,8 +39,8 @@
         "SLAM"
       ],
       "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.324Z"
+      "notes": "SLAM POC",
+      "updatedAt": "2026-05-14T18:06:26.417Z"
     },
     {
       "id": "a31c1ff1-6eb3-4604-a464-5fa73768853b",
@@ -1141,12 +1141,11 @@
         "NAAB"
       ],
       "roles": [
-        "Jam Buster",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-14T03:14:08.051Z"
+      "updatedAt": "2026-05-14T18:07:02.472Z"
     },
     {
       "id": "9cc9e977-4983-4e67-827d-7124dbf14e65",
@@ -1540,6 +1539,34 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-14T03:21:29.301Z"
+    },
+    {
+      "id": "44c6d1ba-7947-406c-89d5-25c2d2b016d5",
+      "name": "Chaudhari,Dipak",
+      "login": "chaudhmd",
+      "shiftCodes": [
+        "NL4-1815"
+      ],
+      "roles": [
+        "IT WS"
+      ],
+      "status": "Available",
+      "notes": "AFE AA",
+      "updatedAt": "2026-05-14T18:06:03.914Z"
+    },
+    {
+      "id": "ed8ae33e-0e38-449f-8c14-049831804a59",
+      "name": "Islam,Tawhidul",
+      "login": "islattaw",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PG"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-14T18:17:57.271Z"
     }
   ],
   "plannerState": {
@@ -1669,5 +1696,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-14T03:37:39.294Z"
+  "updatedAt": "2026-05-14T18:19:32.365Z"
 }
