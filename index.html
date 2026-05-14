@@ -287,6 +287,26 @@
       .print-head button{display:none}
     }
 
+  
+    /* Bug fix: tracker table column widths with bulk checkbox */
+    .tracker-table{min-width:1180px!important;table-layout:fixed!important}
+    .tracker-table th:nth-child(1),.tracker-table td:nth-child(1){width:44px!important;min-width:44px!important;text-align:center!important}
+    .tracker-table th:nth-child(2),.tracker-table td:nth-child(2){width:260px!important;min-width:260px!important}
+    .tracker-table th:nth-child(3),.tracker-table td:nth-child(3){width:125px!important;min-width:125px!important}
+    .tracker-table th:nth-child(4),.tracker-table td:nth-child(4){width:175px!important;min-width:175px!important}
+    .tracker-table th:nth-child(5),.tracker-table td:nth-child(5){width:260px!important;min-width:260px!important}
+    .tracker-table th:nth-child(6),.tracker-table td:nth-child(6){width:170px!important;min-width:170px!important}
+    .tracker-table th:nth-child(7),.tracker-table td:nth-child(7){width:150px!important;min-width:150px!important;text-align:left!important}
+    .tracker-table th:nth-child(8),.tracker-table td:nth-child(8){width:120px!important;min-width:120px!important;text-align:right!important}
+    .person-cell{min-width:235px!important;max-width:250px}
+    .person-info{min-width:0;max-width:190px;overflow:hidden}
+    .person-info .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+  
+    /* Bug fix: planner photo rows */
+    .scc-login-cell .badge-photo-wrap{width:28px;height:28px}
+    .scc-login-cell{min-height:32px}
+
   </style>
 </head>
 <body>
@@ -1329,18 +1349,38 @@ async function copyPrintPlannerText(){
 }
 
 function autofillPlannerRole(role){
-  const col = ensurePlannerRole(role);
+  // Keep all reads/writes on the CURRENT plannerState.
+  // getPlannerPoolPeople() calls normalise functions, so re-grab the column after it runs.
+  plannerState = normalisePlannerState(plannerState);
+
+  let col = ensurePlannerRole(role);
   const required = Number(col.required || 0);
   if(!required){ toast("Set required headcount first"); return; }
 
-  const needed = Math.max(0, required - (col.assigned || []).length);
+  const alreadyAssigned = (col.assigned || []).length;
+  const needed = Math.max(0, required - alreadyAssigned);
   if(!needed){ toast("Role already filled"); return; }
 
   const candidates = getPlannerPoolPeople().filter(p => (p.roles || []).includes(role));
   const picked = candidates.slice(0, needed);
   if(!picked.length){ toast("No matching available logins"); return; }
 
-  picked.forEach(p => col.assigned.push({ login: cleanLogin(p.login), note:"" }));
+  // Re-grab after getPlannerPoolPeople(), otherwise we may push into a stale object.
+  col = ensurePlannerRole(role);
+  const existing = new Set((col.assigned || []).map(x => cleanLogin(x.login)));
+
+  picked.forEach(p => {
+    const login = cleanLogin(p.login);
+    if(login && !existing.has(login)){
+      col.assigned.push({ login, note:"" });
+      existing.add(login);
+    }
+  });
+
+  // Save directly into the selected day before re-rendering.
+  const date = plannerBook.selectedDate || todayIso();
+  plannerBook.plans[date] = clonePlannerStateForBook(plannerState);
+
   savePlanner();
   toast(`Auto-filled ${picked.length} for ${plannerRoleLabel(role)}`);
 }
