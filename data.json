@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "exportedAt": "2026-05-14T03:22:26.740Z",
+  "exportedAt": "2026-05-14T03:33:51.253Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -130,21 +130,6 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.324Z"
-    },
-    {
-      "id": "6d32cb0e-33c5-4c64-a4f1-1509c748143f",
-      "name": "Andemariam,Mogos",
-      "login": "andmogos",
-      "shiftCodes": [
-        "NB1-1815"
-      ],
-      "roles": [
-        "PG",
-        "PS"
-      ],
-      "status": "Available",
-      "notes": "FLOW UNCLE",
       "updatedAt": "2026-05-11T19:18:23.324Z"
     },
     {
@@ -337,12 +322,13 @@
       "roles": [
         "Jam Buster",
         "PG",
+        "PS",
         "PT",
         "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:32:33.543Z"
     },
     {
       "id": "c2bb3c6e-565f-40b6-b343-5bbdc162cb88",
@@ -911,12 +897,11 @@
         "NB1-1815"
       ],
       "roles": [
-        "PG",
         "SLAM"
       ],
       "status": "Available",
       "notes": "SLAM POC",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-14T03:32:55.650Z"
     },
     {
       "id": "01c91f42-9e38-47a4-aa34-61bf110fa776",
@@ -1378,8 +1363,8 @@
     },
     {
       "id": "b7b7bdc5-fb3e-453e-822f-5a4b8566db26",
-      "login": "vladcric",
       "name": "Capraru Sr,Vlad",
+      "login": "vladcric",
       "shiftCodes": [
         "NK7-1815"
       ],
@@ -1388,8 +1373,8 @@
         "PT"
       ],
       "status": "Available",
-      "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "notes": "Vendors",
+      "updatedAt": "2026-05-14T03:33:39.668Z"
     },
     {
       "id": "685bffa9-1543-4e86-81dc-cec9fe8e02bf",
@@ -1684,5 +1669,5 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "source": "github",
-  "updatedAt": "2026-05-14T03:22:26.740Z"
+  "updatedAt": "2026-05-14T03:33:51.253Z"
 }
