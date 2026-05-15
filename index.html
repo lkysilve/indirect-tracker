@@ -768,6 +768,7 @@
             <div>
               <label>Actions</label>
               <div class="row">
+                <button class="btn-dark" onclick="manualSavePlannerDay()">Save day</button>
                 <button class="btn-light" onclick="copyPlanner()">Copy day</button>
                 <button class="btn-green" onclick="exportPlannerDayCsv()">Export day CSV</button>
                 <button class="btn-danger" onclick="clearPlanner()">Clear day</button>
@@ -2404,6 +2405,11 @@ function normalisePlannerBook(book, fallbackPlan){
 }
 
 function syncCurrentPlannerToBook(){
+  // Pull any focused/unsaved planner field values before storing the plan.
+  if(typeof syncPlannerDomInputsToState === "function"){
+    syncPlannerDomInputsToState();
+  }
+
   plannerBook = normalisePlannerBook(plannerBook, plannerState);
   const date = plannerBook.selectedDate || todayIso();
   const plan = normalisePlannerState(plannerState);
@@ -2550,6 +2556,60 @@ function ensurePlannerRole(role){
 
 function plannerDomKey(role){
   return String(role || "").replace(/[^a-z0-9]+/gi, "_");
+}
+
+
+function setPlannerAssignmentNoteDraft(role, login, value){
+  const col = ensurePlannerRole(role);
+  const clean = cleanLogin(login);
+  const item = (col.assigned || []).find(x => cleanLogin(x.login) === clean);
+  if(!item) return;
+  item.note = cleanCell(value);
+  const date = plannerBook.selectedDate || todayIso();
+  plannerBook.plans[date] = clonePlannerStateForBook(plannerState);
+}
+
+function syncPlannerDomInputsToState(){
+  // Important: GitHub save can be clicked while an input still has focus.
+  // onchange may not have fired yet, so read the current visible planner DOM.
+  if(!document.getElementById("tab-planner")) return;
+
+  const day = document.getElementById("plannerDay");
+  const shift = document.getElementById("plannerShift");
+  const status = document.getElementById("plannerStatus");
+  const role = document.getElementById("plannerRole");
+  const search = document.getElementById("plannerSearch");
+
+  if(day) plannerState.day = day.value || plannerState.day || "All days";
+  if(shift) plannerState.shift = cleanCell(shift.value || "").toUpperCase();
+  if(status) plannerState.status = status.value || plannerState.status || "Available";
+  if(role) plannerState.role = role.value || plannerState.role || "All roles";
+  if(search) plannerState.search = cleanCell(search.value || "");
+
+  document.querySelectorAll("[data-planner-required-role]").forEach(input => {
+    const r = input.getAttribute("data-planner-required-role") || "";
+    const col = ensurePlannerRole(r);
+    col.required = Math.max(0, Number(input.value || 0));
+  });
+
+  document.querySelectorAll("[data-planner-note-role][data-planner-note-login]").forEach(input => {
+    const r = input.getAttribute("data-planner-note-role") || "";
+    const login = cleanLogin(input.getAttribute("data-planner-note-login") || "");
+    const col = ensurePlannerRole(r);
+    const item = (col.assigned || []).find(x => cleanLogin(x.login) === login);
+    if(item) item.note = cleanCell(input.value || "");
+  });
+
+  plannerState = normalisePlannerState(plannerState);
+  const date = plannerBook.selectedDate || todayIso();
+  plannerBook.plans[date] = clonePlannerStateForBook(plannerState);
+}
+
+function manualSavePlannerDay(){
+  syncPlannerDomInputsToState();
+  saveStorage();
+  renderShiftPlanner();
+  toast("Shift Planner day saved locally");
 }
 
 function savePlanner(){
@@ -2770,7 +2830,7 @@ function plannerRoleRow(role, item){
     return `
       <tr>
         <td><div class="scc-login-cell"><span class="scc-avatar">?</span><div class="scc-login"><b>${escapeHtml(item.login)}</b><span>Login not found</span></div></div></td>
-        <td class="planner-note-td"><input class="planner-note-input" list="plannerNoteOptions" value="${escapeHtml(item.note || "")}" placeholder="Location / note" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(item.login)}', this.value)" /></td>
+        <td class="planner-note-td"><input class="planner-note-input" list="plannerNoteOptions" value="${escapeHtml(item.note || "")}" placeholder="Location / note" data-planner-note-role="${escapeHtml(role)}" data-planner-note-login="${escapeHtml(item.login)}" oninput="setPlannerAssignmentNoteDraft('${escapeForJs(role)}','${escapeForJs(item.login)}', this.value)" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(item.login)}', this.value)" /></td>
         <td><button class="scc-remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">×</button></td>
       </tr>`;
   }
@@ -2787,7 +2847,7 @@ function plannerRoleRow(role, item){
         </div>
       </td>
       <td class="planner-note-td">
-        <input class="planner-note-input" list="plannerNoteOptions" value="${escapeHtml(item.note || "")}" placeholder="Location / note" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(p.login)}', this.value)" />
+        <input class="planner-note-input" list="plannerNoteOptions" value="${escapeHtml(item.note || "")}" placeholder="Location / note" data-planner-note-role="${escapeHtml(role)}" data-planner-note-login="${escapeHtml(p.login)}" oninput="setPlannerAssignmentNoteDraft('${escapeForJs(role)}','${escapeForJs(p.login)}', this.value)" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(p.login)}', this.value)" />
       </td>
       <td><button class="scc-remove" title="Remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">×</button></td>
     </tr>`;
@@ -2807,7 +2867,7 @@ function renderPlannerRoleCard(role){
       <div class="scc-role-head">
         <span class="role-title">${escapeHtml(plannerRoleLabel(role))} <span class="filled">${filled}</span>/<span class="required">${required}</span></span>
         <span class="scc-role-actions">
-          <input type="number" min="0" value="${required}" title="Required headcount" onchange="setPlannerRequired('${escapeForJs(role)}', this.value)" />
+          <input type="number" min="0" value="${required}" title="Required headcount" data-planner-required-role="${escapeHtml(role)}" onchange="setPlannerRequired('${escapeForJs(role)}', this.value)" />
           <button class="${canAddSelected ? "btn-dark" : "btn-light"} btn-small" onclick="addSelectedToPlannerRole('${escapeForJs(role)}')" title="Add selected login">+ selected</button>
           <button class="btn-light btn-small" onclick="autofillPlannerRole('${escapeForJs(role)}')" title="Auto-fill from matching available people">suggest</button>
           <button class="btn-light btn-small" onclick="clearPlannerRole('${escapeForJs(role)}')" title="Clear this role">clear</button>
@@ -4073,6 +4133,7 @@ async function saveToGithub(){
   githubSaving = true;
   setGithubSaveStatus("saving", "Saving to GitHub...");
   try{
+    if(typeof syncPlannerDomInputsToState === "function") syncPlannerDomInputsToState();
     const sha = await getGithubFileSha();
     const data = {
       ...getPortableData(),
@@ -4081,7 +4142,7 @@ async function saveToGithub(){
     };
 
     const body = {
-      message: `Update indirect tracker data (${people.length} logins)`,
+      message: `Update indirect tracker data (${people.length} logins + shift planner)`,
       content: b64EncodeUnicode(JSON.stringify(data, null, 2)),
       branch: s.branch
     };
