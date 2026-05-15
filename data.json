@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T00:52:22.151Z",
+  "exportedAt": "2026-05-15T01:04:27.997Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1560,8 +1560,25 @@
         "assigned": []
       },
       "PG": {
-        "required": 0,
-        "assigned": []
+        "required": 4,
+        "assigned": [
+          {
+            "login": "arackaku",
+            "note": ""
+          },
+          {
+            "login": "vladcric",
+            "note": ""
+          },
+          {
+            "login": "muhrulha",
+            "note": ""
+          },
+          {
+            "login": "lipcea",
+            "note": ""
+          }
+        ]
       },
       "PS": {
         "required": 0,
@@ -1643,8 +1660,25 @@
             "assigned": []
           },
           "PG": {
-            "required": 0,
-            "assigned": []
+            "required": 4,
+            "assigned": [
+              {
+                "login": "arackaku",
+                "note": ""
+              },
+              {
+                "login": "vladcric",
+                "note": ""
+              },
+              {
+                "login": "muhrulha",
+                "note": ""
+              },
+              {
+                "login": "lipcea",
+                "note": ""
+              }
+            ]
           },
           "PS": {
             "required": 0,
@@ -1669,7 +1703,17 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "roleColors": {},
-  "plannerNoteOptions": [],
+  "plannerNoteOptions": [
+    "Slam West POC",
+    "SNS1",
+    "SNS2",
+    "SPP",
+    "Slam East POC",
+    "West",
+    "East",
+    "SM East",
+    "SM West"
+  ],
   "source": "github",
-  "updatedAt": "2026-05-15T00:52:22.151Z"
+  "updatedAt": "2026-05-15T01:04:27.997Z"
 }
