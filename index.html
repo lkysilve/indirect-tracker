@@ -768,7 +768,7 @@
             <div>
               <label>Actions</label>
               <div class="row">
-                <button class="btn-dark" onclick="manualSavePlannerDay()">Save day</button>
+                <button class="btn-dark" onclick="manualSavePlannerDay()" title="Save this day locally and push to GitHub if configured">Save day</button>
                 <button class="btn-light" onclick="copyPlanner()">Copy day</button>
                 <button class="btn-green" onclick="exportPlannerDayCsv()">Export day CSV</button>
                 <button class="btn-danger" onclick="clearPlanner()">Clear day</button>
@@ -2605,11 +2605,26 @@ function syncPlannerDomInputsToState(){
   plannerBook.plans[date] = clonePlannerStateForBook(plannerState);
 }
 
-function manualSavePlannerDay(){
+async function manualSavePlannerDay(){
   syncPlannerDomInputsToState();
+
+  // Save locally first, but do not also queue a delayed autosave,
+  // because this button now does an immediate GitHub save below.
+  const previousSuppress = suppressGithubAutoSave;
+  suppressGithubAutoSave = true;
   saveStorage();
+  suppressGithubAutoSave = previousSuppress;
+
   renderShiftPlanner();
-  toast("Shift Planner day saved locally");
+
+  const s = getGithubSettings();
+  if(githubConfigured() && s.token){
+    toast("Shift Planner day saved locally — saving to GitHub...");
+    await saveToGithub();
+  }else{
+    setGithubSaveStatus("local", "Saved day locally — GitHub not configured");
+    toast("Saved day locally. Add GitHub settings/PAT to save online.");
+  }
 }
 
 function savePlanner(){
@@ -2963,6 +2978,7 @@ function renderShiftPlanner(){
   plannerState = getPlannerStateForSelectedDate();
   renderPlannerWeekBar();
   renderPlannerControls();
+  renderPlannerNoteOptions();
 
   const visibleRoles = plannerState.role === "All roles" ? roles : roles.filter(r => r === plannerState.role);
   board.innerHTML = visibleRoles.map(renderPlannerRoleCard).join("");
@@ -3993,14 +4009,27 @@ function loadGithubSettings(){
 }
 
 function saveGithubSettings(){
-  const settings = {
-    owner: cleanCell(document.getElementById("ghOwner")?.value || ""),
-    repo: cleanCell(document.getElementById("ghRepo")?.value || ""),
-    branch: cleanCell(document.getElementById("ghBranch")?.value || "main"),
-    path: cleanCell(document.getElementById("ghPath")?.value || "data.json"),
-    token: cleanCell(document.getElementById("ghToken")?.value || ""),
-    autoSave: !!document.getElementById("ghAutoSave")?.checked
+  const existing = getGithubSettings();
+
+  const readOrKeep = (id, key, fallback = "") => {
+    const el = document.getElementById(id);
+    if(!el) return existing[key] || fallback;
+    const value = cleanCell(el.value || "");
+    // Preserve stored settings if this field is blank. This prevents Save day / GitHub save
+    // from wiping the PAT/settings when the GitHub panel has not been opened yet.
+    return value || existing[key] || fallback;
   };
+
+  const auto = document.getElementById("ghAutoSave");
+  const settings = {
+    owner: readOrKeep("ghOwner", "owner", "lkysilve"),
+    repo: readOrKeep("ghRepo", "repo", "indirect-tracker"),
+    branch: readOrKeep("ghBranch", "branch", "main"),
+    path: readOrKeep("ghPath", "path", "data.json"),
+    token: readOrKeep("ghToken", "token", ""),
+    autoSave: auto ? !!auto.checked : !!existing.autoSave
+  };
+
   localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify(settings));
   renderGithubPreview();
   toast("GitHub settings saved");
@@ -4096,6 +4125,7 @@ async function loadFromGithub(){
     saveStorage();
     suppressGithubAutoSave = false;
     render();
+    renderPlannerNoteOptions();
     renderGithubPreview();
     toast(`Loaded ${people.length} logins from GitHub`);
   }catch(e){
