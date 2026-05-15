@@ -333,6 +333,25 @@
     #floatingLoginMenu .login-option:hover{background:#eff6ff;color:#1d4ed8}
     #floatingLoginMenu .login-option small{display:block;font-weight:600;color:#64748b;margin-top:2px}
 
+  
+    /* Planner note examples manager */
+    .planner-note-manager{
+      margin:10px 0 12px;padding:10px;border:1px dashed #cbd5e1;border-radius:14px;background:#f8fafc
+    }
+    .planner-note-manager-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .planner-note-manager-title{font-weight:900;color:#0f172a}
+    .planner-note-manager-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+    .planner-note-manager-row input{min-width:260px;flex:1}
+    .planner-note-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .planner-note-chip{
+      display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd5e1;background:#fff;
+      border-radius:999px;padding:5px 8px;font-size:12px;font-weight:800;color:#334155
+    }
+    .planner-note-chip button{
+      border:0;background:#fee2e2;color:#991b1b;border-radius:999px;cursor:pointer;font-weight:900;
+      width:18px;height:18px;line-height:16px;display:inline-flex;align-items:center;justify-content:center
+    }
+
   </style>
 </head>
 <body>
@@ -699,6 +718,21 @@
 
           <div class="planner-summary" id="plannerSummary"></div>
 
+          <div class="planner-note-manager">
+            <div class="planner-note-manager-head">
+              <span class="planner-note-manager-title">Location / notes dropdown examples</span>
+              <span class="muted">Add your own examples. These appear in the planner Location / notes dropdown.</span>
+            </div>
+            <div class="planner-note-manager-row">
+              <input id="plannerNoteExampleInput" placeholder="Example: West Line 3 / SmartPac / Line 5 / Break cover" onkeydown="if(event.key==='Enter'){ event.preventDefault(); addPlannerNoteOption(); }" />
+              <button class="btn-dark" onclick="addPlannerNoteOption()">Add example</button>
+              <button class="btn-light" onclick="clearPlannerNoteOptions()">Clear examples</button>
+            </div>
+            <div class="planner-note-chips" id="plannerNoteChips"></div>
+          </div>
+
+
+
           <div class="planner-shell">
             <aside class="planner-pool">
               <div class="planner-pool-head">
@@ -835,6 +869,7 @@ let mainPlannerBook = null;
 let selectedBulkIds = new Set();
 let quickFilter = "all";
 let roleColors = {};
+let plannerNoteOptions = [];
 const UNDO_KEY = "indirect-tracker-undo-v2";
 
 const samplePeople = [
@@ -919,7 +954,8 @@ function getStorageSnapshot(){
     plannerBook: rootPlannerBook,
     customTabs: normaliseCustomTabs(customTabs),
     activeCustomTabId,
-    roleColors: normaliseRoleColors(roleColors)
+    roleColors: normaliseRoleColors(roleColors),
+    plannerNoteOptions: normalisePlannerNoteOptions(plannerNoteOptions)
   };
 }
 
@@ -941,6 +977,7 @@ function loadStorage(){
       customTabs = normaliseCustomTabs(embedded.customTabs);
       activeCustomTabId = cleanCell(embedded.activeCustomTabId || (customTabs[0]?.id || ""));
       roleColors = normaliseRoleColors(embedded.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(embedded.plannerNoteOptions);
       plannerBook = normalisePlannerBook((embedded).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
@@ -960,6 +997,7 @@ function loadStorage(){
       customTabs = normaliseCustomTabs(hashData.customTabs);
       activeCustomTabId = cleanCell(hashData.activeCustomTabId || (customTabs[0]?.id || ""));
       roleColors = normaliseRoleColors(hashData.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(hashData.plannerNoteOptions);
       plannerBook = normalisePlannerBook((hashData).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
@@ -981,6 +1019,7 @@ function loadStorage(){
       customTabs = normaliseCustomTabs(saved.customTabs);
       activeCustomTabId = cleanCell(saved.activeCustomTabId || (customTabs[0]?.id || ""));
       roleColors = normaliseRoleColors(saved.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(saved.plannerNoteOptions);
       plannerBook = normalisePlannerBook((saved).plannerBook, plannerState);
       plannerState = getPlannerStateForSelectedDate();
       mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
@@ -1208,6 +1247,7 @@ function applySnapshotDataString(data){
   customTabs = normaliseCustomTabs(parsed.customTabs);
   activeCustomTabId = cleanCell(parsed.activeCustomTabId || (customTabs[0]?.id || ""));
   roleColors = normaliseRoleColors(parsed.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(parsed.plannerNoteOptions);
   mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
   mainTrackerPeople = normalisePeopleForStorage(people);
   mainPlannerState = normalisePlannerState(plannerState);
@@ -2727,6 +2767,73 @@ function renderPlannerRoleCard(role){
     </div>`;
 }
 
+
+function normalisePlannerNoteOptions(options){
+  const seen = new Set();
+  const list = Array.isArray(options) ? options : [];
+  return list
+    .map(cleanCell)
+    .filter(Boolean)
+    .filter(v => {
+      const key = v.toLowerCase();
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 150);
+}
+
+function renderPlannerNoteOptions(){
+  plannerNoteOptions = normalisePlannerNoteOptions(plannerNoteOptions);
+
+  const datalist = document.getElementById("plannerNoteOptions");
+  if(datalist){
+    datalist.innerHTML = plannerNoteOptions
+      .map(v => `<option value="${escapeHtml(v)}"></option>`)
+      .join("");
+  }
+
+  const chips = document.getElementById("plannerNoteChips");
+  if(chips){
+    chips.innerHTML = plannerNoteOptions.length
+      ? plannerNoteOptions.map(v => `
+          <span class="planner-note-chip">${escapeHtml(v)}
+            <button title="Remove example" onclick="removePlannerNoteOption('${escapeForJs(v)}')">×</button>
+          </span>
+        `).join("")
+      : `<span class="muted">No examples yet. Add your own above.</span>`;
+  }
+}
+
+function addPlannerNoteOption(){
+  const input = document.getElementById("plannerNoteExampleInput");
+  const value = cleanCell(input ? input.value : "");
+  if(!value){ toast("Type a location/note example first"); return; }
+
+  plannerNoteOptions = normalisePlannerNoteOptions([...plannerNoteOptions, value]);
+  if(input) input.value = "";
+  saveStorage();
+  renderPlannerNoteOptions();
+  toast("Note example added");
+}
+
+function removePlannerNoteOption(value){
+  const key = cleanCell(value).toLowerCase();
+  plannerNoteOptions = normalisePlannerNoteOptions(plannerNoteOptions.filter(v => cleanCell(v).toLowerCase() !== key));
+  saveStorage();
+  renderPlannerNoteOptions();
+  toast("Note example removed");
+}
+
+function clearPlannerNoteOptions(){
+  if(!plannerNoteOptions.length){ toast("No examples to clear"); return; }
+  if(!confirm("Remove all Location / notes dropdown examples?")) return;
+  plannerNoteOptions = [];
+  saveStorage();
+  renderPlannerNoteOptions();
+  toast("Note examples cleared");
+}
+
 function renderShiftPlanner(){
   const board = document.getElementById("plannerBoard");
   if(!board) return;
@@ -3670,7 +3777,9 @@ async function loadSharedDataNow(){
       customTabs = normaliseCustomTabs(data.customTabs);
       activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
     roleColors = normaliseRoleColors(data.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(data.plannerNoteOptions);
       roleColors = normaliseRoleColors(data.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(data.plannerNoteOptions);
     mainTrackerRoles = roles.map(cleanCell).filter(Boolean);
     mainTrackerPeople = normalisePeopleForStorage(people);
     mainPlannerState = normalisePlannerState(plannerState);
@@ -3860,6 +3969,7 @@ async function loadFromGithub(){
       customTabs = normaliseCustomTabs(data.customTabs);
       activeCustomTabId = cleanCell(data.activeCustomTabId || (customTabs[0]?.id || ""));
     roleColors = normaliseRoleColors(data.roleColors);
+      plannerNoteOptions = normalisePlannerNoteOptions(data.plannerNoteOptions);
 
     suppressGithubAutoSave = true;
     saveStorage();
@@ -3976,30 +4086,6 @@ renderShiftReference();
 </script>
 
   <div id="floatingLoginMenu" onclick="event.stopPropagation()"></div>
-
-  <datalist id="plannerNoteOptions">
-    <option value="East Line 1"></option>
-    <option value="East Line 2"></option>
-    <option value="East Line 3"></option>
-    <option value="East Line 4"></option>
-    <option value="West Line 1"></option>
-    <option value="West Line 2"></option>
-    <option value="West Line 3"></option>
-    <option value="West Line 4"></option>
-    <option value="West Line 5"></option>
-    <option value="E Pack"></option>
-    <option value="W Pack"></option>
-    <option value="East Induct"></option>
-    <option value="West Induct"></option>
-    <option value="SLAM"></option>
-    <option value="Problem Solve"></option>
-    <option value="SmartPac"></option>
-    <option value="Water Spider"></option>
-    <option value="Tote Collector"></option>
-    <option value="Jam Buster"></option>
-    <option value="Break Cover"></option>
-    <option value="Training"></option>
-    <option value="Float"></option>
-  </datalist>
+  <datalist id="plannerNoteOptions"></datalist>
 </body>
 </html>
