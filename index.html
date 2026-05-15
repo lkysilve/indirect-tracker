@@ -379,6 +379,15 @@
     .employee-tools.compact{border-top:0;margin:0;padding:10px 0;background:transparent}
     .role-manager-body{padding:0 12px 12px}
 
+  
+    .planner-print-pre{
+      white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:13px;line-height:1.45;margin:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;
+    }
+    @media print{
+      .planner-print-pre{border:0;background:#fff;padding:0;font-size:12px}
+    }
+
   </style>
 </head>
 <body>
@@ -503,7 +512,6 @@
               <button class="btn-light" onclick="undoLastChange()">Undo last change</button>
               <button class="btn-light" onclick="toggleRestorePanel()">Restore history</button>
               <button class="btn-light" onclick="toggleRoleColoursPanel()">Role colours</button>
-              <button class="btn-light" onclick="openPrintPlannerView()">Print rota view</button>
               <label class="filebtn btn-light">
                 Import backup
                 <input class="hidden" type="file" accept=".json,application/json" onchange="importBackup(event)" />
@@ -727,6 +735,7 @@
             <button class="btn-light" onclick="goPlannerToday()">Today</button>
             <button class="btn-light" onclick="movePlannerWeek(7)">Next week →</button>
             <button class="btn-light" onclick="copyPlannerWeek()">Copy full week</button>
+            <button class="btn-light" onclick="openPrintPlannerView('week')">Print full week</button>
             <button class="btn-green" onclick="exportPlannerWeekCsv()">Export week CSV</button>
             <button class="btn-danger" onclick="clearAllPlannerPlans()">Clear all plans</button>
           </div>
@@ -770,6 +779,7 @@
               <div class="row">
                 <button class="btn-dark" onclick="manualSavePlannerDay()" title="Save this day locally and push to GitHub if configured">Save day</button>
                 <button class="btn-light" onclick="copyPlanner()">Copy day</button>
+                <button class="btn-light" onclick="openPrintPlannerView('day')">Print day</button>
                 <button class="btn-green" onclick="exportPlannerDayCsv()">Export day CSV</button>
                 <button class="btn-danger" onclick="clearPlanner()">Clear day</button>
               </div>
@@ -1426,44 +1436,123 @@ function clearCustomTabData(id){
   saveStorage(); renderCustomTabs(); render(); toast("Custom tab cleared");
 }
 
-function buildPlannerPrintText(){
+let currentPrintPlannerScope = "week";
+
+function buildPlannerDayPrintText(date = plannerBook.selectedDate || todayIso()){
   syncCurrentPlannerToBook();
+
+  const plan = normalisePlannerState(plannerBook.plans[date] || plannerState || defaultPlannerState());
+  const stats = getPlanStatsForDate(date);
+  const lines = [`Rota — ${dayNameFromIso(date)} ${shortDateFromIso(date)} — ${stats.filled}${stats.required ? "/" + stats.required : ""} planned`, ""];
+
+  let any = false;
+  roles.forEach(role => {
+    const col = plan.columns?.[role] || { required:0, assigned:[] };
+    if(!Number(col.required || 0) && !(col.assigned || []).length) return;
+
+    any = true;
+    lines.push(`${plannerRoleLabel(role)} ${col.assigned.length}/${col.required || 0}`);
+
+    (col.assigned || []).forEach(item => {
+      const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
+      lines.push(`  - ${p ? p.login : item.login}${p && p.name ? " (" + p.name + ")" : ""}${item.note ? " — " + item.note : ""}`);
+    });
+
+    const gaps = Math.max(0, Number(col.required || 0) - (col.assigned || []).length);
+    for(let i = 0; i < gaps; i++) lines.push("  - UNFILLED");
+    lines.push("");
+  });
+
+  if(!any) lines.push("--");
+  return lines.join("\n").trim();
+}
+
+function buildPlannerPrintText(scope = "week"){
+  syncCurrentPlannerToBook();
+
+  if(scope === "day"){
+    return buildPlannerDayPrintText(plannerBook.selectedDate || todayIso());
+  }
+
   const weekStart = plannerBook.weekStart || startOfWeekIso(plannerBook.selectedDate || todayIso());
   const dates = weekDatesFromStart(weekStart);
   const lines = [`7 Day Rota — week starting ${shortDateFromIso(weekStart)}`,""];
+
   dates.forEach(date => {
     const plan = normalisePlannerState(plannerBook.plans[date] || defaultPlannerState());
     const stats = getPlanStatsForDate(date);
     lines.push(`${dayNameFromIso(date)} ${shortDateFromIso(date)} — ${stats.filled}${stats.required ? "/" + stats.required : ""} planned`);
+
     let any = false;
     roles.forEach(role => {
       const col = plan.columns?.[role] || {required:0, assigned:[]};
       if(!Number(col.required || 0) && !(col.assigned || []).length) return;
+
       any = true;
       lines.push(`  ${plannerRoleLabel(role)} ${col.assigned.length}/${col.required || 0}`);
+
       (col.assigned || []).forEach(item => {
         const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
         lines.push(`    - ${p ? p.login : item.login}${p && p.name ? " (" + p.name + ")" : ""}${item.note ? " — " + item.note : ""}`);
       });
+
       const gaps = Math.max(0, Number(col.required || 0) - (col.assigned || []).length);
       for(let i=0;i<gaps;i++) lines.push("    - UNFILLED");
     });
+
     if(!any) lines.push("  --");
     lines.push("");
   });
+
   return lines.join("\n").trim();
 }
 
-function openPrintPlannerView(){
-  const modal = document.getElementById("printModal");
+function ensurePrintPlannerModal(){
+  let modal = document.getElementById("printModal");
+  if(modal) return modal;
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <div class="print-modal" id="printModal" onclick="if(event.target===this) closePrintPlannerView()">
+      <div class="print-card">
+        <div class="print-head">
+          <div>
+            <h2 id="printPlannerTitle" style="margin:0">Rota print view</h2>
+            <p class="muted" style="margin:4px 0 0">Use Print to print/save as PDF, or Copy rota to paste into Slack/Chime.</p>
+          </div>
+          <div class="row">
+            <button class="btn-light" onclick="copyPrintPlannerText()">Copy rota</button>
+            <button class="btn-dark" onclick="printPlannerNow()">Print</button>
+            <button class="btn-danger" onclick="closePrintPlannerView()">Close</button>
+          </div>
+        </div>
+        <div id="printPlannerContent"></div>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap.firstElementChild);
+  return document.getElementById("printModal");
+}
+
+function openPrintPlannerView(scope = "week"){
+  currentPrintPlannerScope = scope === "day" ? "day" : "week";
+  syncPlannerDomInputsToState();
+
+  const modal = ensurePrintPlannerModal();
   const box = document.getElementById("printPlannerContent");
-  if(!modal || !box) return;
-  const text = buildPlannerPrintText();
-  box.innerHTML = text.split("\n").map(line => {
-    if(!line.trim()) return "<br>";
-    if(!line.startsWith(" ") && !line.startsWith("-")) return `<div class="print-section"><h3>${escapeHtml(line)}</h3></div>`;
-    return `<div style="white-space:pre-wrap">${escapeHtml(line)}</div>`;
-  }).join("");
+  const title = document.getElementById("printPlannerTitle");
+  if(!modal || !box) {
+    toast("Print view could not open");
+    return;
+  }
+
+  const text = buildPlannerPrintText(currentPrintPlannerScope);
+  if(title){
+    title.textContent = currentPrintPlannerScope === "day"
+      ? `Print day — ${dayNameFromIso(plannerBook.selectedDate)} ${shortDateFromIso(plannerBook.selectedDate)}`
+      : `Print full week — week starting ${shortDateFromIso(plannerBook.weekStart)}`;
+  }
+
+  box.innerHTML = `<pre class="planner-print-pre">${escapeHtml(text)}</pre>`;
   modal.classList.add("show");
 }
 
@@ -1471,8 +1560,14 @@ function closePrintPlannerView(){
   document.getElementById("printModal")?.classList.remove("show");
 }
 
+function printPlannerNow(){
+  const modal = ensurePrintPlannerModal();
+  if(!modal.classList.contains("show")) openPrintPlannerView(currentPrintPlannerScope || "week");
+  setTimeout(() => window.print(), 80);
+}
+
 async function copyPrintPlannerText(){
-  const text = buildPlannerPrintText();
+  const text = buildPlannerPrintText(currentPrintPlannerScope || "week");
   try{ await navigator.clipboard.writeText(text); toast("Rota copied"); }
   catch(e){ prompt("Copy rota:", text); }
 }
@@ -4239,5 +4334,23 @@ renderShiftReference();
 
   <div id="floatingLoginMenu" onclick="event.stopPropagation()"></div>
   <datalist id="plannerNoteOptions"></datalist>
+
+  <div class="print-modal" id="printModal" onclick="if(event.target===this) closePrintPlannerView()">
+    <div class="print-card">
+      <div class="print-head">
+        <div>
+          <h2 id="printPlannerTitle" style="margin:0">Rota print view</h2>
+          <p class="muted" style="margin:4px 0 0">Use Print to print/save as PDF, or Copy rota to paste into Slack/Chime.</p>
+        </div>
+        <div class="row">
+          <button class="btn-light" onclick="copyPrintPlannerText()">Copy rota</button>
+          <button class="btn-dark" onclick="printPlannerNow()">Print</button>
+          <button class="btn-danger" onclick="closePrintPlannerView()">Close</button>
+        </div>
+      </div>
+      <div id="printPlannerContent"></div>
+    </div>
+  </div>
+
 </body>
 </html>
