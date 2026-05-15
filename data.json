@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T02:51:09.875Z",
+  "exportedAt": "2026-05-15T03:08:08.899Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1560,25 +1560,8 @@
         "assigned": []
       },
       "PG": {
-        "required": 4,
-        "assigned": [
-          {
-            "login": "abbabhay",
-            "note": "SNS1"
-          },
-          {
-            "login": "szjashan",
-            "note": "SNS2"
-          },
-          {
-            "login": "patelcro",
-            "note": "SPP"
-          },
-          {
-            "login": "muhrulha",
-            "note": "SM East"
-          }
-        ]
+        "required": 0,
+        "assigned": []
       },
       "PS": {
         "required": 0,
@@ -1660,25 +1643,8 @@
             "assigned": []
           },
           "PG": {
-            "required": 4,
-            "assigned": [
-              {
-                "login": "shubakuv",
-                "note": "SM East"
-              },
-              {
-                "login": "djohnjoh",
-                "note": "SM West"
-              },
-              {
-                "login": "szjashan",
-                "note": "SNS1"
-              },
-              {
-                "login": "abbabhay",
-                "note": "SNS2"
-              }
-            ]
+            "required": 0,
+            "assigned": []
           },
           "PS": {
             "required": 0,
@@ -1716,25 +1682,8 @@
             "assigned": []
           },
           "PG": {
-            "required": 4,
-            "assigned": [
-              {
-                "login": "abbabhay",
-                "note": "SNS1"
-              },
-              {
-                "login": "szjashan",
-                "note": "SNS2"
-              },
-              {
-                "login": "patelcro",
-                "note": "SPP"
-              },
-              {
-                "login": "muhrulha",
-                "note": "SM East"
-              }
-            ]
+            "required": 0,
+            "assigned": []
           },
           "PS": {
             "required": 0,
@@ -1771,5 +1720,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-15T02:51:09.876Z"
+  "updatedAt": "2026-05-15T03:08:08.899Z"
 }
