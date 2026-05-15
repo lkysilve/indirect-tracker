@@ -307,6 +307,16 @@
     .scc-login-cell .badge-photo-wrap{width:28px;height:28px}
     .scc-login-cell{min-height:32px}
 
+  
+    /* Shift Planner notes/location and multi-shift input */
+    .planner-note-input{
+      width:100%;min-width:150px;height:30px;border:1px solid #cbd5e1;border-radius:10px;
+      padding:5px 8px;font-size:12px;background:#fff;color:#0f172a;
+    }
+    .planner-note-input:focus{outline:2px solid #bfdbfe;border-color:#2563eb}
+    .planner-shift-hint{font-size:11px;color:#64748b;margin-top:4px;font-weight:700}
+    .scc-table th.planner-note-th,.scc-table td.planner-note-td{width:42%;text-align:left}
+
   </style>
 </head>
 <body>
@@ -639,8 +649,9 @@
               </select>
             </div>
             <div>
-              <label>Shift code</label>
-              <input id="plannerShift" placeholder="Example: NA5 / NB1 / NF6" oninput="updatePlannerControl('shift', this.value)" />
+              <label>Shift code(s)</label>
+              <input id="plannerShift" placeholder="Example: NB1, NA5, NF6" oninput="updatePlannerControl('shift', this.value)" />
+              <div class="planner-shift-hint">Use comma or space to select multiple shift codes.</div>
             </div>
             <div>
               <label>Status</label>
@@ -1314,7 +1325,7 @@ function buildPlannerPrintText(){
       lines.push(`  ${plannerRoleLabel(role)} ${col.assigned.length}/${col.required || 0}`);
       (col.assigned || []).forEach(item => {
         const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
-        lines.push(`    - ${p ? p.login : item.login}${p && p.name ? " (" + p.name + ")" : ""}`);
+        lines.push(`    - ${p ? p.login : item.login}${p && p.name ? " (" + p.name + ")" : ""}${item.note ? " — " + item.note : ""}`);
       });
       const gaps = Math.max(0, Number(col.required || 0) - (col.assigned || []).length);
       for(let i=0;i<gaps;i++) lines.push("    - UNFILLED");
@@ -2444,10 +2455,14 @@ function personMatchesPlannerBaseFilters(p){
   const dayFilter = plannerState.day || "All days";
   if(dayFilter !== "All days" && !getPersonDays(p).includes(dayFilter)) return false;
 
-  const shift = cleanCell(plannerState.shift || "").toUpperCase();
-  if(shift){
+  const shiftQuery = cleanCell(plannerState.shift || "").toUpperCase();
+  if(shiftQuery){
+    const wantedShifts = shiftQuery
+      .split(/[,+/\s]+/)
+      .map(s => cleanCell(s).toUpperCase())
+      .filter(Boolean);
     const shifts = normaliseShiftArray(p.shiftCodes).map(s => s.toUpperCase());
-    if(!shifts.some(s => s === shift || s.includes(shift))) return false;
+    if(wantedShifts.length && !wantedShifts.some(wanted => shifts.some(s => s === wanted || s.includes(wanted)))) return false;
   }
 
   const q = cleanCell(plannerState.search || "").toLowerCase();
@@ -2509,6 +2524,16 @@ function addSelectedToPlannerRole(role){
   plannerState = normalisePlannerState(plannerState);
   if(!plannerState.selectedLogin){ toast("Select a login from the side list first"); return; }
   addPlannerLoginToRole(plannerState.selectedLogin, role);
+}
+
+
+function setPlannerAssignmentNote(role, login, value){
+  const col = ensurePlannerRole(role);
+  const clean = cleanLogin(login);
+  const item = (col.assigned || []).find(x => cleanLogin(x.login) === clean);
+  if(!item) return;
+  item.note = cleanCell(value);
+  savePlanner();
 }
 
 function removePlannerLogin(role, login){
@@ -2603,6 +2628,7 @@ function plannerRoleRow(role, item){
     return `
       <tr>
         <td><div class="scc-login-cell"><span class="scc-avatar">?</span><div class="scc-login"><b>${escapeHtml(item.login)}</b><span>Login not found</span></div></div></td>
+        <td class="planner-note-td"><input class="planner-note-input" value="${escapeHtml(item.note || "")}" placeholder="Location / note" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(item.login)}', this.value)" /></td>
         <td><button class="scc-remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">×</button></td>
       </tr>`;
   }
@@ -2617,6 +2643,9 @@ function plannerRoleRow(role, item){
             <span>${escapeHtml(p.name || "")}</span>
           </div>
         </div>
+      </td>
+      <td class="planner-note-td">
+        <input class="planner-note-input" value="${escapeHtml(item.note || "")}" placeholder="Location / note" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(p.login)}', this.value)" />
       </td>
       <td><button class="scc-remove" title="Remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">×</button></td>
     </tr>`;
@@ -2646,11 +2675,12 @@ function renderPlannerRoleCard(role){
         <thead>
           <tr>
             <th>Login</th>
+            <th class="planner-note-th">Location / notes</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          ${assigned.length ? assigned.map(item => plannerRoleRow(role, item)).join("") : `<tr class="scc-empty-row"><td colspan="2">--</td></tr>`}
+          ${assigned.length ? assigned.map(item => plannerRoleRow(role, item)).join("") : `<tr class="scc-empty-row"><td colspan="3">--</td></tr>`}
         </tbody>
       </table>
     </div>`;
@@ -2704,7 +2734,7 @@ async function copyPlanner(){
     if(!assigned.length) lines.push("--");
     for(const item of assigned){
       const p = people.find(x => cleanLogin(x.login) === cleanLogin(item.login));
-      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""}`);
+      if(p) lines.push(`- ${p.login}${p.name ? " (" + p.name + ")" : ""}${item.note ? " — " + item.note : ""}`);
       else lines.push(`- ${item.login}`);
     }
     lines.push("");
@@ -2782,7 +2812,8 @@ function plannerCsvRowsForDate(dateIso){
         name: p ? (p.name || "") : "",
         shiftCode: p ? normaliseShiftArray(p.shiftCodes).join(" / ") : "",
         status: p ? (p.status || "") : "",
-        notes: p ? (p.notes || "") : ""
+        notes: p ? (p.notes || "") : "",
+        plannerNote: item.note || ""
       });
     });
 
@@ -2800,7 +2831,8 @@ function plannerCsvRowsForDate(dateIso){
         name: "",
         shiftCode: "",
         status: "UNFILLED",
-        notes: ""
+        notes: "",
+        plannerNote: ""
       });
     }
   }
@@ -2821,7 +2853,8 @@ function buildPlannerCsv(rows){
     "Name",
     "Shift Code",
     "Status",
-    "Notes"
+    "Person Notes",
+    "Planner Location / Note"
   ];
 
   const lines = [headers.map(csvCell).join(",")];
@@ -2839,7 +2872,8 @@ function buildPlannerCsv(rows){
       r.name,
       r.shiftCode,
       r.status,
-      r.notes
+      r.notes,
+      r.plannerNote
     ].map(csvCell).join(","));
   });
 
