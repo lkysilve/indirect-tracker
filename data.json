@@ -1,6 +1,6 @@
 {
-  "version": 6,
-  "exportedAt": "2026-05-14T23:36:51.523Z",
+  "version": 7,
+  "exportedAt": "2026-05-15T00:00:30.359Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -712,7 +712,7 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-15T00:00:23.323Z"
     },
     {
       "id": "8705ecc0-3a4c-41fa-9a89-36e148db7047",
@@ -1030,7 +1030,7 @@
       ],
       "status": "Available",
       "notes": "JB C+",
-      "updatedAt": "2026-05-11T19:18:23.325Z"
+      "updatedAt": "2026-05-15T00:00:23.323Z"
     },
     {
       "id": "05e1fe44-fc4e-4b32-8ad8-a47c461bce3e",
@@ -1668,6 +1668,7 @@
   },
   "customTabs": [],
   "activeCustomTabId": "",
+  "roleColors": {},
   "source": "github",
-  "updatedAt": "2026-05-14T23:36:51.523Z"
+  "updatedAt": "2026-05-15T00:00:30.359Z"
 }
