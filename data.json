@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T18:19:02.239Z",
+  "exportedAt": "2026-05-15T19:33:52.151Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1544,11 +1544,11 @@
   ],
   "plannerState": {
     "version": 2,
-    "day": "Friday",
+    "day": "Sunday",
     "shift": "",
     "status": "Available",
     "role": "All roles",
-    "search": "lky",
+    "search": "reb",
     "selectedLogin": "",
     "columns": {
       "IT WS": {
@@ -1572,10 +1572,14 @@
         "assigned": []
       },
       "SLAM": {
-        "required": 1,
+        "required": 2,
         "assigned": [
           {
             "login": "lkysilve",
+            "note": ""
+          },
+          {
+            "login": "rebbarre",
             "note": ""
           }
         ]
@@ -1671,11 +1675,11 @@
       },
       "2026-05-15": {
         "version": 2,
-        "day": "Friday",
+        "day": "Sunday",
         "shift": "",
         "status": "Available",
         "role": "All roles",
-        "search": "lky",
+        "search": "reb",
         "selectedLogin": "",
         "columns": {
           "IT WS": {
@@ -1699,13 +1703,56 @@
             "assigned": []
           },
           "SLAM": {
-            "required": 1,
+            "required": 2,
             "assigned": [
               {
                 "login": "lkysilve",
                 "note": ""
+              },
+              {
+                "login": "rebbarre",
+                "note": ""
               }
             ]
+          },
+          "WS": {
+            "required": 0,
+            "assigned": []
+          }
+        }
+      },
+      "2026-05-14": {
+        "version": 2,
+        "day": "Friday",
+        "shift": "",
+        "status": "Available",
+        "role": "All roles",
+        "search": "",
+        "selectedLogin": "",
+        "columns": {
+          "IT WS": {
+            "required": 0,
+            "assigned": []
+          },
+          "Jam Buster": {
+            "required": 0,
+            "assigned": []
+          },
+          "PG": {
+            "required": 0,
+            "assigned": []
+          },
+          "PS": {
+            "required": 0,
+            "assigned": []
+          },
+          "PT": {
+            "required": 0,
+            "assigned": []
+          },
+          "SLAM": {
+            "required": 2,
+            "assigned": []
           },
           "WS": {
             "required": 0,
@@ -1730,5 +1777,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-15T18:19:02.239Z"
+  "updatedAt": "2026-05-15T19:33:52.151Z"
 }
