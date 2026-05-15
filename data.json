@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T03:08:15.493Z",
+  "exportedAt": "2026-05-15T03:36:37.803Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1544,7 +1544,7 @@
   ],
   "plannerState": {
     "version": 2,
-    "day": "Wednesday",
+    "day": "Friday",
     "shift": "",
     "status": "Available",
     "role": "All roles",
@@ -1560,8 +1560,13 @@
         "assigned": []
       },
       "PG": {
-        "required": 0,
-        "assigned": []
+        "required": 1,
+        "assigned": [
+          {
+            "login": "vshajiak",
+            "note": ""
+          }
+        ]
       },
       "PS": {
         "required": 0,
@@ -1666,7 +1671,7 @@
       },
       "2026-05-15": {
         "version": 2,
-        "day": "Wednesday",
+        "day": "Friday",
         "shift": "",
         "status": "Available",
         "role": "All roles",
@@ -1682,8 +1687,13 @@
             "assigned": []
           },
           "PG": {
-            "required": 0,
-            "assigned": []
+            "required": 1,
+            "assigned": [
+              {
+                "login": "vshajiak",
+                "note": ""
+              }
+            ]
           },
           "PS": {
             "required": 0,
@@ -1720,5 +1730,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-15T03:08:15.493Z"
+  "updatedAt": "2026-05-15T03:36:37.803Z"
 }
