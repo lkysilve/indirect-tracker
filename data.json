@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T00:00:30.359Z",
+  "exportedAt": "2026-05-15T00:52:22.151Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1669,6 +1669,7 @@
   "customTabs": [],
   "activeCustomTabId": "",
   "roleColors": {},
+  "plannerNoteOptions": [],
   "source": "github",
-  "updatedAt": "2026-05-15T00:00:30.359Z"
+  "updatedAt": "2026-05-15T00:52:22.151Z"
 }
