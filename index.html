@@ -352,6 +352,33 @@
       width:18px;height:18px;line-height:16px;display:inline-flex;align-items:center;justify-content:center
     }
 
+  
+    /* Cleaner collapsible tools */
+    .compact-tools{
+      border:1px solid #dbe3ee;border-radius:16px;background:#f8fafc;margin:10px 0 12px;overflow:hidden;
+    }
+    .compact-tools > summary{
+      list-style:none;cursor:pointer;padding:10px 12px;font-weight:900;color:#0f172a;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;user-select:none;
+    }
+    .compact-tools > summary::-webkit-details-marker{display:none}
+    .compact-tools > summary::after{content:"+";font-size:20px;font-weight:900;color:#475569}
+    .compact-tools[open] > summary::after{content:"−"}
+    .compact-tools-body{padding:0 12px 12px}
+    .compact-tools .muted{font-weight:600}
+    .mini-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:#fbfdff;border-bottom:1px solid var(--line)}
+    .mini-toggle-btn{
+      border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:7px 10px;font-weight:900;cursor:pointer;color:#334155;
+    }
+    .mini-toggle-btn:hover{background:#f1f5f9;color:#111827}
+    .mini-count{font-size:12px;color:#64748b;font-weight:800}
+    .bulk-tools-inner{
+      display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:0;padding:10px;
+      border:1px dashed #cbd5e1;border-radius:14px;background:#f8fafc
+    }
+    .employee-tools.compact{border-top:0;margin:0;padding:10px 0;background:transparent}
+    .role-manager-body{padding:0 12px 12px}
+
   </style>
 </head>
 <body>
@@ -437,7 +464,13 @@
             <button class="btn-light" onclick="toggleAvailableOnly()" id="availableBtn">Available only: OFF</button>
           </div>
 
-          <div class="quick-filters" id="quickFilters">
+          <details class="compact-tools">
+            <summary>
+              <span>Quick filters</span>
+              <span class="mini-count">Available / Busy / Notes / Missing employee list</span>
+            </summary>
+            <div class="compact-tools-body">
+              <div class="quick-filters" id="quickFilters">
             <button class="quick-filter-btn" data-qf="all" onclick="setQuickFilter('all')">All</button>
             <button class="quick-filter-btn" data-qf="available" onclick="setQuickFilter('available')">Available</button>
             <button class="quick-filter-btn" data-qf="busy" onclick="setQuickFilter('busy')">Busy</button>
@@ -447,6 +480,10 @@
             <button class="quick-filter-btn" data-qf="no-shift" onclick="setQuickFilter('no-shift')">No shift code</button>
             <button class="quick-filter-btn" data-qf="missing-employee" onclick="setQuickFilter('missing-employee')">Missing employee list</button>
           </div>
+
+          
+            </div>
+          </details>
 
           <div class="actions">
             <button class="btn-light" onclick="toggleGithubPanel()">GitHub sync</button>
@@ -488,11 +525,21 @@
             <div id="roleColourList"></div>
           </div>
 
-          <div class="employee-tools" id="employeeTools">
-            <span class="emp-summary" id="employeeListSummary">Employee list check pending.</span>
+          <details class="compact-tools">
+            <summary>
+              <span>Employee list tools</span>
+              <span class="mini-count" id="employeeListSummary">Employee list check pending.</span>
+            </summary>
+            <div class="compact-tools-body">
+              <div class="employee-tools compact" id="employeeTools">
+            
             <button class="btn-light" onclick="renderEmployeeListCheck()">Check employee list</button>
             <button class="btn-green" onclick="applyEmployeeListUpdates()">Apply employee list updates</button>
           </div>
+
+          
+            </div>
+          </details>
 
           <div class="import-panel" id="importPanel">
             <div class="import-grid">
@@ -596,23 +643,30 @@
           <div class="card-body">
             <div class="role-cards" id="roleCards"></div>
 
-            <div class="bulk-bar" id="bulkBar">
-              <b id="bulkCount">0 selected</b>
-              <button class="btn-light btn-small" onclick="selectAllShown()">Select shown</button>
-              <button class="btn-light btn-small" onclick="clearBulkSelection()">Clear selection</button>
-              <select id="bulkStatus">
-                <option value="">Set status...</option>
-                <option>Available</option>
-                <option>Busy</option>
-                <option>Absent</option>
-                <option>Unknown</option>
-              </select>
-              <button class="btn-light btn-small" onclick="bulkSetStatus()">Apply status</button>
-              <select id="bulkRole"></select>
-              <button class="btn-light btn-small" onclick="bulkAddRole()">Add role</button>
-              <button class="btn-light btn-small" onclick="bulkRemoveRole()">Remove role</button>
-              <button class="btn-danger btn-small" onclick="bulkDeleteSelected()">Delete selected</button>
-            </div>
+            <details class="compact-tools" id="bulkToolsDetails">
+              <summary>
+                <span>Bulk edit tools</span>
+                <span class="mini-count" id="bulkCount">0 selected</span>
+              </summary>
+              <div class="compact-tools-body">
+                <div class="bulk-tools-inner" id="bulkBar">
+                  <button class="btn-light btn-small" onclick="selectAllShown()">Select shown</button>
+                  <button class="btn-light btn-small" onclick="clearBulkSelection()">Clear selection</button>
+                  <select id="bulkStatus">
+                    <option value="">Set status...</option>
+                    <option>Available</option>
+                    <option>Busy</option>
+                    <option>Absent</option>
+                    <option>Unknown</option>
+                  </select>
+                  <button class="btn-light btn-small" onclick="bulkSetStatus()">Apply status</button>
+                  <select id="bulkRole"></select>
+                  <button class="btn-light btn-small" onclick="bulkAddRole()">Add role</button>
+                  <button class="btn-light btn-small" onclick="bulkRemoveRole()">Remove role</button>
+                  <button class="btn-danger btn-small" onclick="bulkDeleteSelected()">Delete selected</button>
+                </div>
+              </div>
+            </details>
 
           </div>
 
@@ -638,14 +692,19 @@
       </div>
 
       <section class="card manage-roles">
-        <h2>Manage role buttons</h2>
-        <div class="card-body">
-          <div class="row">
-            <input id="newRole" placeholder="Add another indirect role, e.g. Tote Runner" />
-            <button class="btn-dark" onclick="addRole()">Add role</button>
+        <details class="compact-tools" style="margin:0;border:0;border-radius:16px;background:#fff">
+          <summary>
+            <span>Manage role buttons</span>
+            <span class="mini-count">add/remove role buttons</span>
+          </summary>
+          <div class="role-manager-body">
+            <div class="row">
+              <input id="newRole" placeholder="Add another indirect role, e.g. Tote Runner" />
+              <button class="btn-dark" onclick="addRole()">Add role</button>
+            </div>
+            <div class="pill-list" id="rolePills" style="margin-top:12px"></div>
           </div>
-          <div class="pill-list" id="rolePills" style="margin-top:12px"></div>
-        </div>
+        </details>
       </section>
     </section>
 
@@ -718,18 +777,20 @@
 
           <div class="planner-summary" id="plannerSummary"></div>
 
-          <div class="planner-note-manager">
-            <div class="planner-note-manager-head">
-              <span class="planner-note-manager-title">Location / notes dropdown examples</span>
-              <span class="muted">Add your own examples. These appear in the planner Location / notes dropdown.</span>
+          <details class="compact-tools planner-note-manager">
+            <summary>
+              <span>Location / notes examples</span>
+              <span class="mini-count">click to add/remove dropdown examples</span>
+            </summary>
+            <div class="compact-tools-body">
+              <div class="planner-note-manager-row">
+                <input id="plannerNoteExampleInput" placeholder="Example: Slam West POC / Sns1 / East / West" onkeydown="if(event.key==='Enter'){ event.preventDefault(); addPlannerNoteOption(); }" />
+                <button class="btn-dark" onclick="addPlannerNoteOption()">Add example</button>
+                <button class="btn-light" onclick="clearPlannerNoteOptions()">Clear examples</button>
+              </div>
+              <div class="planner-note-chips" id="plannerNoteChips"></div>
             </div>
-            <div class="planner-note-manager-row">
-              <input id="plannerNoteExampleInput" placeholder="Example: West Line 3 / SmartPac / Line 5 / Break cover" onkeydown="if(event.key==='Enter'){ event.preventDefault(); addPlannerNoteOption(); }" />
-              <button class="btn-dark" onclick="addPlannerNoteOption()">Add example</button>
-              <button class="btn-light" onclick="clearPlannerNoteOptions()">Clear examples</button>
-            </div>
-            <div class="planner-note-chips" id="plannerNoteChips"></div>
-          </div>
+          </details>
 
 
 
