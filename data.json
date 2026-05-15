@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T03:36:37.803Z",
+  "exportedAt": "2026-05-15T18:17:52.100Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1561,12 +1561,7 @@
       },
       "PG": {
         "required": 1,
-        "assigned": [
-          {
-            "login": "vshajiak",
-            "note": ""
-          }
-        ]
+        "assigned": []
       },
       "PS": {
         "required": 0,
@@ -1688,12 +1683,7 @@
           },
           "PG": {
             "required": 1,
-            "assigned": [
-              {
-                "login": "vshajiak",
-                "note": ""
-              }
-            ]
+            "assigned": []
           },
           "PS": {
             "required": 0,
@@ -1730,5 +1720,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-15T03:36:37.803Z"
+  "updatedAt": "2026-05-15T18:17:52.100Z"
 }
