@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-15T18:17:56.419Z",
+  "exportedAt": "2026-05-15T18:18:31.686Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1548,7 +1548,7 @@
     "shift": "",
     "status": "Available",
     "role": "All roles",
-    "search": "",
+    "search": "lky",
     "selectedLogin": "",
     "columns": {
       "IT WS": {
@@ -1572,8 +1572,13 @@
         "assigned": []
       },
       "SLAM": {
-        "required": 0,
-        "assigned": []
+        "required": 1,
+        "assigned": [
+          {
+            "login": "lkysilve",
+            "note": ""
+          }
+        ]
       },
       "WS": {
         "required": 0,
@@ -1670,7 +1675,7 @@
         "shift": "",
         "status": "Available",
         "role": "All roles",
-        "search": "",
+        "search": "lky",
         "selectedLogin": "",
         "columns": {
           "IT WS": {
@@ -1694,8 +1699,13 @@
             "assigned": []
           },
           "SLAM": {
-            "required": 0,
-            "assigned": []
+            "required": 1,
+            "assigned": [
+              {
+                "login": "lkysilve",
+                "note": ""
+              }
+            ]
           },
           "WS": {
             "required": 0,
@@ -1720,5 +1730,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-15T18:17:56.419Z"
+  "updatedAt": "2026-05-15T18:18:31.686Z"
 }
