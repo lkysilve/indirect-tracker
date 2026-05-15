@@ -388,6 +388,19 @@
       .planner-print-pre{border:0;background:#fff;padding:0;font-size:12px}
     }
 
+  
+    /* Shift Planner reorder controls */
+    .planner-row-actions{
+      display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;
+    }
+    .scc-move{
+      border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:999px;
+      font-weight:900;cursor:pointer;padding:2px 7px;line-height:18px;font-size:12px;
+    }
+    .scc-move:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+    .scc-move:disabled{opacity:.35;cursor:not-allowed;background:#f8fafc;color:#64748b}
+    .scc-table th.planner-actions-th,.scc-table td.planner-actions-td{width:118px;text-align:center}
+
   </style>
 </head>
 <body>
@@ -2848,6 +2861,45 @@ function setPlannerAssignmentNote(role, login, value){
   savePlanner();
 }
 
+
+function plannerRowActionsHtml(role, login){
+  const col = ensurePlannerRole(role);
+  const clean = cleanLogin(login);
+  const assigned = col.assigned || [];
+  const idx = assigned.findIndex(x => cleanLogin(x.login) === clean);
+  const atTop = idx <= 0;
+  const atBottom = idx < 0 || idx >= assigned.length - 1;
+
+  return `
+    <div class="planner-row-actions">
+      <button class="scc-move" title="Move up" ${atTop ? "disabled" : ""} onclick="movePlannerLogin('${escapeForJs(role)}','${escapeForJs(clean)}',-1)">↑</button>
+      <button class="scc-move" title="Move down" ${atBottom ? "disabled" : ""} onclick="movePlannerLogin('${escapeForJs(role)}','${escapeForJs(clean)}',1)">↓</button>
+      <button class="scc-remove" title="Remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(clean)}')">×</button>
+    </div>`;
+}
+
+function movePlannerLogin(role, login, direction){
+  if(typeof syncPlannerDomInputsToState === "function") syncPlannerDomInputsToState();
+
+  const col = ensurePlannerRole(role);
+  const clean = cleanLogin(login);
+  const assigned = col.assigned || [];
+  const from = assigned.findIndex(x => cleanLogin(x.login) === clean);
+  if(from < 0) return;
+
+  const to = from + Number(direction || 0);
+  if(to < 0 || to >= assigned.length) return;
+
+  [assigned[from], assigned[to]] = [assigned[to], assigned[from]];
+  col.assigned = assigned;
+
+  const date = plannerBook.selectedDate || todayIso();
+  plannerBook.plans[date] = clonePlannerStateForBook(plannerState);
+
+  savePlanner();
+  toast("Moved " + clean);
+}
+
 function removePlannerLogin(role, login){
   const col = ensurePlannerRole(role);
   const clean = cleanLogin(login);
@@ -2941,7 +2993,7 @@ function plannerRoleRow(role, item){
       <tr>
         <td><div class="scc-login-cell"><span class="scc-avatar">?</span><div class="scc-login"><b>${escapeHtml(item.login)}</b><span>Login not found</span></div></div></td>
         <td class="planner-note-td"><input class="planner-note-input" list="plannerNoteOptions" value="${escapeHtml(item.note || "")}" placeholder="Location / note" data-planner-note-role="${escapeHtml(role)}" data-planner-note-login="${escapeHtml(item.login)}" oninput="setPlannerAssignmentNoteDraft('${escapeForJs(role)}','${escapeForJs(item.login)}', this.value)" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(item.login)}', this.value)" /></td>
-        <td><button class="scc-remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(item.login)}')">×</button></td>
+        <td class="planner-actions-td">${plannerRowActionsHtml(role, item.login)}</td>
       </tr>`;
   }
 
@@ -2959,7 +3011,7 @@ function plannerRoleRow(role, item){
       <td class="planner-note-td">
         <input class="planner-note-input" list="plannerNoteOptions" value="${escapeHtml(item.note || "")}" placeholder="Location / note" data-planner-note-role="${escapeHtml(role)}" data-planner-note-login="${escapeHtml(p.login)}" oninput="setPlannerAssignmentNoteDraft('${escapeForJs(role)}','${escapeForJs(p.login)}', this.value)" onchange="setPlannerAssignmentNote('${escapeForJs(role)}','${escapeForJs(p.login)}', this.value)" />
       </td>
-      <td><button class="scc-remove" title="Remove" onclick="removePlannerLogin('${escapeForJs(role)}','${escapeForJs(p.login)}')">×</button></td>
+      <td class="planner-actions-td">${plannerRowActionsHtml(role, p.login)}</td>
     </tr>`;
 }
 
@@ -2988,7 +3040,7 @@ function renderPlannerRoleCard(role){
           <tr>
             <th>Login</th>
             <th class="planner-note-th">Location / notes</th>
-            <th></th>
+            <th class="planner-actions-th">Move</th>
           </tr>
         </thead>
         <tbody>
