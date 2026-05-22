@@ -795,14 +795,37 @@
                 <button class="btn-light" onclick="openPrintPlannerView('day')">Print day</button>
                 <button class="btn-green" onclick="exportPlannerDayCsv()">Export day CSV</button>
                 <button class="btn-danger" onclick="clearPlanner()">Clear day</button>
-                <a
- class="btn-dark sp-action-btn"
+               <a
+  class="btn-light install-scc-btn"
   href="https://lkysilve.github.io/indirect-tracker/scripts/lcy2-scc-approve-injector.user.js"
   target="_blank"
   rel="noopener"
+  title="Install or update the SCC Tampermonkey script"
 >
-  Install SCC Script
+  SCC Script
 </a>
+                .install-scc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  min-height: 48px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a !important;
+  font-weight: 800;
+  text-decoration: none !important;
+  line-height: 1.05;
+  text-align: center;
+  cursor: pointer;
+}
+
+.install-scc-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
               </div>
             </div>
           </div>
