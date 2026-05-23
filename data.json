@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T19:55:38.808Z",
+  "exportedAt": "2026-05-23T19:55:41.473Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1548,7 +1548,7 @@
     "shift": "NB1",
     "status": "Available",
     "role": "All roles",
-    "search": "r",
+    "search": "re",
     "selectedLogin": "",
     "columns": {
       "IT WS": {
@@ -1680,7 +1680,7 @@
         "shift": "NB1",
         "status": "Available",
         "role": "All roles",
-        "search": "r",
+        "search": "re",
         "selectedLogin": "",
         "columns": {
           "IT WS": {
@@ -1735,5 +1735,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T19:55:38.808Z"
+  "updatedAt": "2026-05-23T19:55:41.473Z"
 }
