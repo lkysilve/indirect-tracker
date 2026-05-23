@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:01:47.800Z",
+  "exportedAt": "2026-05-23T21:02:30.061Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -8,7 +8,6 @@
     "PS",
     "PT",
     "SLAM",
-    "Team Lead",
     "WS"
   ],
   "people": [
@@ -709,12 +708,11 @@
         "Jam Buster",
         "PG",
         "PT",
-        "SLAM",
-        "Team Lead"
+        "SLAM"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-23T20:56:19.606Z"
+      "updatedAt": "2026-05-23T21:02:24.782Z"
     },
     {
       "id": "8705ecc0-3a4c-41fa-9a89-36e148db7047",
@@ -1577,10 +1575,6 @@
         "required": 1,
         "assigned": []
       },
-      "Team Lead": {
-        "required": 0,
-        "assigned": []
-      },
       "WS": {
         "required": 0,
         "assigned": []
@@ -1630,10 +1624,6 @@
               }
             ]
           },
-          "Team Lead": {
-            "required": 0,
-            "assigned": []
-          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1671,10 +1661,6 @@
           },
           "SLAM": {
             "required": 1,
-            "assigned": []
-          },
-          "Team Lead": {
-            "required": 0,
             "assigned": []
           },
           "WS": {
@@ -1716,15 +1702,6 @@
             "required": 1,
             "assigned": []
           },
-          "Team Lead": {
-            "required": 0,
-            "assigned": [
-              {
-                "login": "lkysilve",
-                "note": ""
-              }
-            ]
-          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1762,10 +1739,6 @@
           },
           "SLAM": {
             "required": 1,
-            "assigned": []
-          },
-          "Team Lead": {
-            "required": 0,
             "assigned": []
           },
           "WS": {
@@ -1807,10 +1780,6 @@
             "required": 1,
             "assigned": []
           },
-          "Team Lead": {
-            "required": 0,
-            "assigned": []
-          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1848,10 +1817,6 @@
           },
           "SLAM": {
             "required": 1,
-            "assigned": []
-          },
-          "Team Lead": {
-            "required": 0,
             "assigned": []
           },
           "WS": {
@@ -1893,10 +1858,6 @@
             "required": 1,
             "assigned": []
           },
-          "Team Lead": {
-            "required": 0,
-            "assigned": []
-          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1936,10 +1897,6 @@
             "required": 1,
             "assigned": []
           },
-          "Team Lead": {
-            "required": 0,
-            "assigned": []
-          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1963,5 +1920,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:01:47.800Z"
+  "updatedAt": "2026-05-23T21:02:30.061Z"
 }
