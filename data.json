@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T19:55:43.842Z",
+  "exportedAt": "2026-05-23T19:55:49.748Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1544,11 +1544,11 @@
   ],
   "plannerState": {
     "version": 2,
-    "day": "Saturday",
+    "day": "Thursday",
     "shift": "NB1",
     "status": "Available",
     "role": "All roles",
-    "search": "",
+    "search": "re",
     "selectedLogin": "",
     "columns": {
       "IT WS": {
@@ -1676,11 +1676,11 @@
       },
       "2026-05-23": {
         "version": 2,
-        "day": "Saturday",
+        "day": "Thursday",
         "shift": "NB1",
         "status": "Available",
         "role": "All roles",
-        "search": "",
+        "search": "re",
         "selectedLogin": "",
         "columns": {
           "IT WS": {
@@ -1735,5 +1735,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T19:55:43.842Z"
+  "updatedAt": "2026-05-23T19:55:49.748Z"
 }
