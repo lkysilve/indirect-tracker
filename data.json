@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T23:40:32.117Z",
+  "exportedAt": "2026-05-23T23:41:29.188Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1155,7 +1155,7 @@
       "name": "Kumar,Shubam",
       "login": "shubakuv",
       "shiftCodes": [
-        "NB1-1815"
+        "NB1"
       ],
       "roles": [
         "Jam Buster",
@@ -1164,7 +1164,7 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-23T23:40:03.560Z"
+      "updatedAt": "2026-05-14T03:13:24.315Z"
     },
     {
       "id": "bad08959-1b9e-4287-84d8-9000c35c29cf",
@@ -1301,9 +1301,9 @@
         "PT",
         "WS"
       ],
-      "status": "Unknown",
+      "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-23T23:40:29.948Z"
+      "updatedAt": "2026-05-11T17:54:45.462Z"
     },
     {
       "id": "611c513d-ac40-4bdd-a8ec-7488ab7482b8",
@@ -1622,7 +1622,7 @@
   },
   "plannerBook": {
     "version": 1,
-    "selectedDate": "2026-05-17",
+    "selectedDate": "2026-05-23",
     "weekStart": "2026-05-17",
     "plans": {
       "2026-05-21": {
@@ -1721,8 +1721,8 @@
         "day": "Saturday",
         "shift": "",
         "status": "Available",
-        "role": "All roles",
-        "search": "lky",
+        "role": "PG",
+        "search": "",
         "selectedLogin": "",
         "columns": {
           "IT WS": {
@@ -52154,5 +52154,5 @@
     ]
   },
   "source": "github",
-  "updatedAt": "2026-05-23T23:40:32.117Z"
+  "updatedAt": "2026-05-23T23:41:29.188Z"
 }
