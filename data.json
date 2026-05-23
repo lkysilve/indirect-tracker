@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:12:12.627Z",
+  "exportedAt": "2026-05-23T21:12:57.578Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1576,7 +1576,7 @@
         "assigned": [
           {
             "login": "lkysilve",
-            "note": "ss"
+            "note": ""
           }
         ]
       },
@@ -1786,7 +1786,7 @@
             "assigned": [
               {
                 "login": "lkysilve",
-                "note": "ss"
+                "note": ""
               }
             ]
           },
@@ -1930,5 +1930,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:12:12.627Z"
+  "updatedAt": "2026-05-23T21:12:57.578Z"
 }
