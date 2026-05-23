@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T23:39:39.700Z",
+  "exportedAt": "2026-05-23T23:40:05.731Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1155,7 +1155,7 @@
       "name": "Kumar,Shubam",
       "login": "shubakuv",
       "shiftCodes": [
-        "NB1"
+        "NB1-1815"
       ],
       "roles": [
         "Jam Buster",
@@ -1164,7 +1164,7 @@
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-14T03:13:24.315Z"
+      "updatedAt": "2026-05-23T23:40:03.560Z"
     },
     {
       "id": "bad08959-1b9e-4287-84d8-9000c35c29cf",
@@ -52154,5 +52154,5 @@
     ]
   },
   "source": "github",
-  "updatedAt": "2026-05-23T23:39:39.700Z"
+  "updatedAt": "2026-05-23T23:40:05.731Z"
 }
