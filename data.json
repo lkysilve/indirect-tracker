@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:32:21.575Z",
+  "exportedAt": "2026-05-23T21:32:26.849Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1588,7 +1588,12 @@
       },
       "SLAM": {
         "required": 1,
-        "assigned": []
+        "assigned": [
+          {
+            "login": "lkysilve",
+            "note": ""
+          }
+        ]
       },
       "Team Lead": {
         "required": 0,
@@ -1727,7 +1732,12 @@
           },
           "SLAM": {
             "required": 1,
-            "assigned": []
+            "assigned": [
+              {
+                "login": "lkysilve",
+                "note": ""
+              }
+            ]
           },
           "Team Lead": {
             "required": 0,
@@ -1976,5 +1986,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:32:21.575Z"
+  "updatedAt": "2026-05-23T21:32:26.849Z"
 }
