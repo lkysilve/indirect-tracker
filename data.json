@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T22:37:03.968Z",
+  "exportedAt": "2026-05-23T23:04:46.512Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -325,11 +325,12 @@
         "PG",
         "PS",
         "PT",
-        "SLAM"
+        "SLAM",
+        "Team Lead"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-14T03:32:33.543Z"
+      "updatedAt": "2026-05-23T23:04:44.184Z"
     },
     {
       "id": "c2bb3c6e-565f-40b6-b343-5bbdc162cb88",
@@ -2000,5 +2001,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T22:37:03.968Z"
+  "updatedAt": "2026-05-23T23:04:46.512Z"
 }
