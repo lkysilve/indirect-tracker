@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:13:11.474Z",
+  "exportedAt": "2026-05-23T21:31:03.680Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -8,6 +8,7 @@
     "PS",
     "PT",
     "SLAM",
+    "Team Lead",
     "WS"
   ],
   "people": [
@@ -1575,6 +1576,10 @@
         "required": 1,
         "assigned": []
       },
+      "Team Lead": {
+        "required": 0,
+        "assigned": []
+      },
       "WS": {
         "required": 0,
         "assigned": []
@@ -1624,6 +1629,10 @@
               }
             ]
           },
+          "Team Lead": {
+            "required": 0,
+            "assigned": []
+          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1661,6 +1670,10 @@
           },
           "SLAM": {
             "required": 1,
+            "assigned": []
+          },
+          "Team Lead": {
+            "required": 0,
             "assigned": []
           },
           "WS": {
@@ -1702,6 +1715,10 @@
             "required": 1,
             "assigned": []
           },
+          "Team Lead": {
+            "required": 0,
+            "assigned": []
+          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1739,6 +1756,10 @@
           },
           "SLAM": {
             "required": 1,
+            "assigned": []
+          },
+          "Team Lead": {
+            "required": 0,
             "assigned": []
           },
           "WS": {
@@ -1785,6 +1806,10 @@
               }
             ]
           },
+          "Team Lead": {
+            "required": 0,
+            "assigned": []
+          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1822,6 +1847,10 @@
           },
           "SLAM": {
             "required": 1,
+            "assigned": []
+          },
+          "Team Lead": {
+            "required": 0,
             "assigned": []
           },
           "WS": {
@@ -1863,6 +1892,10 @@
             "required": 1,
             "assigned": []
           },
+          "Team Lead": {
+            "required": 0,
+            "assigned": []
+          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1902,6 +1935,10 @@
             "required": 1,
             "assigned": []
           },
+          "Team Lead": {
+            "required": 0,
+            "assigned": []
+          },
           "WS": {
             "required": 0,
             "assigned": []
@@ -1925,5 +1962,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:13:11.474Z"
+  "updatedAt": "2026-05-23T21:31:03.680Z"
 }
