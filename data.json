@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:00:47.639Z",
+  "exportedAt": "2026-05-23T21:01:40.042Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1589,8 +1589,8 @@
   },
   "plannerBook": {
     "version": 1,
-    "selectedDate": "2026-05-22",
-    "weekStart": "2026-05-17",
+    "selectedDate": "2026-05-03",
+    "weekStart": "2026-05-03",
     "plans": {
       "2026-05-21": {
         "version": 2,
@@ -1963,5 +1963,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:00:47.639Z"
+  "updatedAt": "2026-05-23T21:01:40.042Z"
 }
