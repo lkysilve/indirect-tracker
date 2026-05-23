@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T22:23:51.422Z",
+  "exportedAt": "2026-05-23T22:37:03.968Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1555,6 +1555,20 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-23T21:31:17.651Z"
+    },
+    {
+      "id": "0c6674dc-6377-4100-8a9a-44f9ca0e7df0",
+      "name": "Risen,Jeffrey",
+      "login": "risenj",
+      "shiftCodes": [
+        "NB1-1815"
+      ],
+      "roles": [
+        "Team Lead"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-23T22:37:01.635Z"
     }
   ],
   "plannerState": {
@@ -1986,5 +2000,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T22:23:51.422Z"
+  "updatedAt": "2026-05-23T22:37:03.968Z"
 }
