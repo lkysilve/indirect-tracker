@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:31:03.680Z",
+  "exportedAt": "2026-05-23T21:31:19.821Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1541,6 +1541,20 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-14T23:36:47.396Z"
+    },
+    {
+      "id": "57fd16e9-29d7-4f7e-ac38-3e2e2c16f9e4",
+      "name": "Rebelo,Roberto",
+      "login": "rebelr",
+      "shiftCodes": [
+        "NB1-1815"
+      ],
+      "roles": [
+        "Team Lead"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-23T21:31:17.651Z"
     }
   ],
   "plannerState": {
@@ -1962,5 +1976,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:31:03.680Z"
+  "updatedAt": "2026-05-23T21:31:19.821Z"
 }
