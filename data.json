@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T21:32:37.569Z",
+  "exportedAt": "2026-05-23T21:32:43.983Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1588,12 +1588,7 @@
       },
       "SLAM": {
         "required": 1,
-        "assigned": [
-          {
-            "login": "lkysilve",
-            "note": ""
-          }
-        ]
+        "assigned": []
       },
       "Team Lead": {
         "required": 0,
@@ -1607,8 +1602,8 @@
   },
   "plannerBook": {
     "version": 1,
-    "selectedDate": "2026-05-23",
-    "weekStart": "2026-05-17",
+    "selectedDate": "2026-05-03",
+    "weekStart": "2026-05-03",
     "plans": {
       "2026-05-21": {
         "version": 2,
@@ -1986,5 +1981,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T21:32:37.569Z"
+  "updatedAt": "2026-05-23T21:32:43.983Z"
 }
