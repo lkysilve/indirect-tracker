@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-22T02:20:13.186Z",
+  "exportedAt": "2026-05-23T18:03:49.120Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1557,12 +1557,7 @@
       },
       "Jam Buster": {
         "required": 0,
-        "assigned": [
-          {
-            "login": "lkysilve",
-            "note": ""
-          }
-        ]
+        "assigned": []
       },
       "PG": {
         "required": 0,
@@ -1574,7 +1569,12 @@
       },
       "PT": {
         "required": 0,
-        "assigned": []
+        "assigned": [
+          {
+            "login": "lkysilve",
+            "note": ""
+          }
+        ]
       },
       "SLAM": {
         "required": 1,
@@ -1588,7 +1588,7 @@
   },
   "plannerBook": {
     "version": 1,
-    "selectedDate": "2026-05-21",
+    "selectedDate": "2026-05-23",
     "weekStart": "2026-05-17",
     "plans": {
       "2026-05-21": {
@@ -1673,6 +1673,50 @@
             "assigned": []
           }
         }
+      },
+      "2026-05-23": {
+        "version": 2,
+        "day": "Thursday",
+        "shift": "",
+        "status": "Available",
+        "role": "All roles",
+        "search": "lky",
+        "selectedLogin": "",
+        "columns": {
+          "IT WS": {
+            "required": 0,
+            "assigned": []
+          },
+          "Jam Buster": {
+            "required": 0,
+            "assigned": []
+          },
+          "PG": {
+            "required": 0,
+            "assigned": []
+          },
+          "PS": {
+            "required": 0,
+            "assigned": []
+          },
+          "PT": {
+            "required": 0,
+            "assigned": [
+              {
+                "login": "lkysilve",
+                "note": ""
+              }
+            ]
+          },
+          "SLAM": {
+            "required": 1,
+            "assigned": []
+          },
+          "WS": {
+            "required": 0,
+            "assigned": []
+          }
+        }
       }
     }
   },
@@ -1691,5 +1735,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-22T02:20:13.186Z"
+  "updatedAt": "2026-05-23T18:03:49.120Z"
 }
