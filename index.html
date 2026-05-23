@@ -423,6 +423,117 @@
   background: #f8fafc;
   border-color: #94a3b8;
 }
+
+    /* Shift-code tick filter */
+    .shift-code-filter-panel{
+      margin:10px 0 0;
+      padding:10px;
+      border:1px solid #dbe3ee;
+      border-radius:14px;
+      background:#fff;
+    }
+    .shift-code-filter-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .shift-code-filter-title{
+      font-size:13px;
+      font-weight:900;
+      color:#0f172a;
+    }
+    .shift-code-filter-count{
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+    .shift-code-filter-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .shift-code-mode-btn,
+    .shift-code-clear-btn{
+      border:1px solid #cbd5e1;
+      background:#f8fafc;
+      color:#334155;
+      border-radius:999px;
+      padding:5px 9px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .shift-code-mode-btn.active{
+      background:#111827;
+      color:#fff;
+      border-color:#111827;
+    }
+    .shift-code-clear-btn:hover,
+    .shift-code-mode-btn:hover{
+      background:#eef2ff;
+      color:#111827;
+    }
+    .shift-code-mode-btn.active:hover{
+      background:#1f2937;
+      color:#fff;
+    }
+    .shift-code-chip-list{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      max-height:122px;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .shift-code-chip-btn{
+      border:1px solid #cbd5e1;
+      background:#fff;
+      color:#0f172a;
+      border-radius:999px;
+      padding:6px 9px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      line-height:1;
+    }
+    .shift-code-chip-btn:hover{
+      background:#f1f5f9;
+      border-color:#94a3b8;
+    }
+    .shift-code-chip-btn.active{
+      background:#111827;
+      color:#fff;
+      border-color:#111827;
+    }
+    .shift-code-chip-btn .shift-code-chip-count{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:18px;
+      height:18px;
+      border-radius:999px;
+      background:#e2e8f0;
+      color:#334155;
+      font-size:11px;
+      padding:0 5px;
+    }
+    .shift-code-chip-btn.active .shift-code-chip-count{
+      background:rgba(255,255,255,.18);
+      color:#fff;
+    }
+    .shift-code-filter-empty{
+      font-size:12px;
+      color:#64748b;
+      font-weight:700;
+    }
+
   </style>
 </head>
 <body>
@@ -524,6 +635,8 @@
             <button class="quick-filter-btn" data-qf="no-shift" onclick="setQuickFilter('no-shift')">No shift code</button>
             <button class="quick-filter-btn" data-qf="missing-employee" onclick="setQuickFilter('missing-employee')">Missing employee list</button>
           </div>
+
+              <div class="shift-code-filter-panel" id="shiftCodeFilterPanel"></div>
 
           
             </div>
@@ -984,6 +1097,8 @@ let mainPlannerState = null;
 let mainPlannerBook = null;
 let selectedBulkIds = new Set();
 let quickFilter = "all";
+let selectedShiftCodeFilters = new Set();
+let shiftCodeFilterMode = "include";
 let roleColors = {};
 let plannerNoteOptions = [];
 const UNDO_KEY = "indirect-tracker-undo-v2";
@@ -1220,6 +1335,106 @@ function matchesQuickFilter(p){
   if(quickFilter === "missing-employee") return !getEmployeeByLogin(p.login);
   return true;
 }
+
+function normaliseShiftCodeForFilter(code){
+  return cleanCell(code || "").toUpperCase();
+}
+
+function getAllShiftCodes(){
+  const counts = new Map();
+  people.forEach(p => {
+    normaliseShiftArray(p.shiftCodes || []).forEach(code => {
+      const c = normaliseShiftCodeForFilter(code);
+      if(c) counts.set(c, (counts.get(c) || 0) + 1);
+    });
+  });
+  return [...counts.keys()].sort((a,b) => a.localeCompare(b, undefined, {numeric:true, sensitivity:"base"}));
+}
+
+function getShiftCodeCounts(){
+  const counts = new Map();
+  people.forEach(p => {
+    normaliseShiftArray(p.shiftCodes || []).forEach(code => {
+      const c = normaliseShiftCodeForFilter(code);
+      if(c) counts.set(c, (counts.get(c) || 0) + 1);
+    });
+  });
+  return counts;
+}
+
+function pruneShiftCodeFilters(){
+  const available = new Set(getAllShiftCodes());
+  [...selectedShiftCodeFilters].forEach(code => {
+    if(!available.has(code)) selectedShiftCodeFilters.delete(code);
+  });
+  if(!selectedShiftCodeFilters.size) shiftCodeFilterMode = "include";
+}
+
+function renderShiftCodeQuickFilters(){
+  const el = document.getElementById("shiftCodeFilterPanel");
+  if(!el) return;
+
+  pruneShiftCodeFilters();
+
+  const codes = getAllShiftCodes();
+  const counts = getShiftCodeCounts();
+  if(!codes.length){
+    el.innerHTML = `<div class="shift-code-filter-empty">Shift code filter will appear when logins have shift codes.</div>`;
+    return;
+  }
+
+  const selectedCount = selectedShiftCodeFilters.size;
+  const modeText = shiftCodeFilterMode === "exclude" ? "excluding selected" : "showing selected";
+  const countText = selectedCount ? `${selectedCount} selected — ${modeText}` : `${codes.length} shift code${codes.length === 1 ? "" : "s"} available`;
+
+  el.innerHTML = `
+    <div class="shift-code-filter-head">
+      <div>
+        <div class="shift-code-filter-title">Shift code filter</div>
+        <div class="shift-code-filter-count">${escapeHtml(countText)}</div>
+      </div>
+      <div class="shift-code-filter-actions">
+        <button class="shift-code-mode-btn ${shiftCodeFilterMode === "include" ? "active" : ""}" onclick="setShiftCodeFilterMode('include')" title="Only show people with selected shift codes">Show selected</button>
+        <button class="shift-code-mode-btn ${shiftCodeFilterMode === "exclude" ? "active" : ""}" onclick="setShiftCodeFilterMode('exclude')" title="Hide people with selected shift codes">Hide selected</button>
+        <button class="shift-code-clear-btn" onclick="clearShiftCodeFilters()">Clear</button>
+      </div>
+    </div>
+    <div class="shift-code-chip-list">
+      ${codes.map(code => `
+        <button class="shift-code-chip-btn ${selectedShiftCodeFilters.has(code) ? "active" : ""}" onclick="toggleShiftCodeFilter('${escapeForJs(code)}')" title="Toggle ${escapeHtml(code)}">
+          <span>${escapeHtml(code)}</span>
+          <span class="shift-code-chip-count">${counts.get(code) || 0}</span>
+        </button>
+      `).join("")}
+    </div>`;
+}
+
+function toggleShiftCodeFilter(code){
+  const c = normaliseShiftCodeForFilter(code);
+  if(!c) return;
+  if(selectedShiftCodeFilters.has(c)) selectedShiftCodeFilters.delete(c);
+  else selectedShiftCodeFilters.add(c);
+  render();
+}
+
+function clearShiftCodeFilters(){
+  selectedShiftCodeFilters.clear();
+  shiftCodeFilterMode = "include";
+  render();
+}
+
+function setShiftCodeFilterMode(mode){
+  shiftCodeFilterMode = mode === "exclude" ? "exclude" : "include";
+  render();
+}
+
+function matchesShiftCodeFilter(p){
+  if(!selectedShiftCodeFilters || !selectedShiftCodeFilters.size) return true;
+  const shifts = normaliseShiftArray(p.shiftCodes || []).map(normaliseShiftCodeForFilter).filter(Boolean);
+  const hasSelected = shifts.some(code => selectedShiftCodeFilters.has(code));
+  return shiftCodeFilterMode === "exclude" ? !hasSelected : hasSelected;
+}
+
 
 function updateBulkUi(){
   const count = selectedBulkIds.size;
@@ -3398,6 +3613,7 @@ function getFiltered(){
     .filter(p => status === "All statuses" || p.status === status)
     .filter(p => !availableOnly || p.status === "Available")
     .filter(matchesQuickFilter)
+    .filter(matchesShiftCodeFilter)
     .sort(comparePeopleByTableSort);
 }
 
@@ -3407,7 +3623,9 @@ function render(){
   }
   selectedRoles = selectedRoles.filter(r => roles.includes(r));
   initEmployeeDatalists();
+  pruneShiftCodeFilters();
   renderQuickFilters();
+  renderShiftCodeQuickFilters();
   renderRoles();
   const rows = getFiltered();
   document.getElementById("statPeople").textContent = people.length;
