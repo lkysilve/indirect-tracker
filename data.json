@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T19:53:21.366Z",
+  "exportedAt": "2026-05-23T19:53:42.500Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1545,7 +1545,7 @@
   "plannerState": {
     "version": 2,
     "day": "Saturday",
-    "shift": "",
+    "shift": "N",
     "status": "Available",
     "role": "All roles",
     "search": "lky",
@@ -1677,7 +1677,7 @@
       "2026-05-23": {
         "version": 2,
         "day": "Saturday",
-        "shift": "",
+        "shift": "N",
         "status": "Available",
         "role": "All roles",
         "search": "lky",
@@ -1735,5 +1735,5 @@
     "SM West"
   ],
   "source": "github",
-  "updatedAt": "2026-05-23T19:53:21.366Z"
+  "updatedAt": "2026-05-23T19:53:42.500Z"
 }
