@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-23T23:41:33.804Z",
+  "exportedAt": "2026-05-24T00:04:35.369Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -180,17 +180,18 @@
     },
     {
       "id": "7e1c26bb-7525-4548-a7e0-53823109c869",
-      "login": "apstefan",
       "name": "Apostol,Stefania",
+      "login": "apstefan",
       "shiftCodes": [
         "NAAB"
       ],
       "roles": [
-        "PT"
+        "PT",
+        "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
+      "updatedAt": "2026-05-23T23:52:07.397Z"
     },
     {
       "id": "3a6dc591-fc64-49eb-9732-d075799f75a9",
@@ -301,17 +302,18 @@
     },
     {
       "id": "537d350c-e6ab-4384-9058-65427d2f3f49",
-      "login": "cioinesa",
       "name": "Cioineag,Sarah",
+      "login": "cioinesa",
       "shiftCodes": [
         "NPT8856"
       ],
       "roles": [
-        "PT"
+        "PT",
+        "WS"
       ],
       "status": "Available",
       "notes": "",
-      "updatedAt": "2026-05-09T18:21:52.980Z"
+      "updatedAt": "2026-05-23T23:52:48.683Z"
     },
     {
       "id": "64f82419-be2f-4104-b171-febfc15c256b",
@@ -1570,6 +1572,64 @@
       "status": "Available",
       "notes": "",
       "updatedAt": "2026-05-23T22:37:01.635Z"
+    },
+    {
+      "id": "6d5a1b0c-097c-43c6-aa24-343c40ba8f25",
+      "name": "Prundoiu,Denisa Emanuela",
+      "login": "pdenisae",
+      "shiftCodes": [
+        "NAAB"
+      ],
+      "roles": [
+        "PS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-23T23:49:18.404Z"
+    },
+    {
+      "id": "41d42dcf-ac42-472b-a4db-c204d82c4020",
+      "name": "Neelamkavil,Antony Jose",
+      "login": "antonyjn",
+      "shiftCodes": [
+        "NH3-1815"
+      ],
+      "roles": [
+        "SLAM"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-23T23:50:59.445Z"
+    },
+    {
+      "id": "b1018f77-d103-4e7a-a5b0-99dd92a10e44",
+      "name": "Subhan,Md Abdus",
+      "login": "bmdabsub",
+      "shiftCodes": [
+        "NB1-1815"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-23T23:55:34.700Z"
+    },
+    {
+      "id": "2be68ae5-c306-4c81-9a13-e935e114ef1a",
+      "name": "Shubham,SHUBHAM",
+      "login": "shpshubh",
+      "shiftCodes": [
+        "NH3-1815"
+      ],
+      "roles": [
+        "PT",
+        "WS"
+      ],
+      "status": "Available",
+      "notes": "",
+      "updatedAt": "2026-05-23T23:56:45.409Z"
     }
   ],
   "plannerState": {
@@ -1590,12 +1650,42 @@
         "assigned": []
       },
       "PG": {
-        "required": 0,
-        "assigned": []
+        "required": 5,
+        "assigned": [
+          {
+            "login": "abbabhay",
+            "note": "SNS1"
+          },
+          {
+            "login": "shubakuv",
+            "note": ""
+          },
+          {
+            "login": "szjashan",
+            "note": ""
+          },
+          {
+            "login": "vshajiak",
+            "note": "SM East"
+          },
+          {
+            "login": "wprasapr",
+            "note": ""
+          }
+        ]
       },
       "PS": {
         "required": 0,
-        "assigned": []
+        "assigned": [
+          {
+            "login": "pdenisae",
+            "note": "East"
+          },
+          {
+            "login": "rmalarik",
+            "note": "West"
+          }
+        ]
       },
       "PT": {
         "required": 0,
@@ -1607,16 +1697,78 @@
           {
             "login": "lkysilve",
             "note": ""
+          },
+          {
+            "login": "adeyadem",
+            "note": ""
+          },
+          {
+            "login": "alpshibu",
+            "note": ""
+          },
+          {
+            "login": "dilesale",
+            "note": ""
+          },
+          {
+            "login": "rebbarre",
+            "note": ""
+          },
+          {
+            "login": "antonyjn",
+            "note": ""
           }
         ]
       },
       "Team Lead": {
         "required": 0,
-        "assigned": []
+        "assigned": [
+          {
+            "login": "cojamesc",
+            "note": "West"
+          },
+          {
+            "login": "rebelr",
+            "note": "East"
+          },
+          {
+            "login": "risenj",
+            "note": "East support"
+          }
+        ]
       },
       "WS": {
         "required": 0,
-        "assigned": []
+        "assigned": [
+          {
+            "login": "apstefan",
+            "note": ""
+          },
+          {
+            "login": "cioinesa",
+            "note": ""
+          },
+          {
+            "login": "patelcro",
+            "note": ""
+          },
+          {
+            "login": "saliquea",
+            "note": ""
+          },
+          {
+            "login": "bmdabsub",
+            "note": ""
+          },
+          {
+            "login": "jibereke",
+            "note": ""
+          },
+          {
+            "login": "shpshubh",
+            "note": ""
+          }
+        ]
       }
     }
   },
@@ -1734,12 +1886,42 @@
             "assigned": []
           },
           "PG": {
-            "required": 0,
-            "assigned": []
+            "required": 5,
+            "assigned": [
+              {
+                "login": "abbabhay",
+                "note": "SNS1"
+              },
+              {
+                "login": "shubakuv",
+                "note": ""
+              },
+              {
+                "login": "szjashan",
+                "note": ""
+              },
+              {
+                "login": "vshajiak",
+                "note": "SM East"
+              },
+              {
+                "login": "wprasapr",
+                "note": ""
+              }
+            ]
           },
           "PS": {
             "required": 0,
-            "assigned": []
+            "assigned": [
+              {
+                "login": "pdenisae",
+                "note": "East"
+              },
+              {
+                "login": "rmalarik",
+                "note": "West"
+              }
+            ]
           },
           "PT": {
             "required": 0,
@@ -1751,16 +1933,78 @@
               {
                 "login": "lkysilve",
                 "note": ""
+              },
+              {
+                "login": "adeyadem",
+                "note": ""
+              },
+              {
+                "login": "alpshibu",
+                "note": ""
+              },
+              {
+                "login": "dilesale",
+                "note": ""
+              },
+              {
+                "login": "rebbarre",
+                "note": ""
+              },
+              {
+                "login": "antonyjn",
+                "note": ""
               }
             ]
           },
           "Team Lead": {
             "required": 0,
-            "assigned": []
+            "assigned": [
+              {
+                "login": "cojamesc",
+                "note": "West"
+              },
+              {
+                "login": "rebelr",
+                "note": "East"
+              },
+              {
+                "login": "risenj",
+                "note": "East support"
+              }
+            ]
           },
           "WS": {
             "required": 0,
-            "assigned": []
+            "assigned": [
+              {
+                "login": "apstefan",
+                "note": ""
+              },
+              {
+                "login": "cioinesa",
+                "note": ""
+              },
+              {
+                "login": "patelcro",
+                "note": ""
+              },
+              {
+                "login": "saliquea",
+                "note": ""
+              },
+              {
+                "login": "bmdabsub",
+                "note": ""
+              },
+              {
+                "login": "jibereke",
+                "note": ""
+              },
+              {
+                "login": "shpshubh",
+                "note": ""
+              }
+            ]
           }
         }
       },
@@ -52154,5 +52398,5 @@
     ]
   },
   "source": "github",
-  "updatedAt": "2026-05-23T23:41:33.804Z"
+  "updatedAt": "2026-05-24T00:04:35.369Z"
 }
