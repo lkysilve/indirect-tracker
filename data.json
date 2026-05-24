@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-24T00:05:28.015Z",
+  "exportedAt": "2026-05-24T00:08:27.952Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1675,7 +1675,7 @@
         ]
       },
       "PS": {
-        "required": 0,
+        "required": 2,
         "assigned": [
           {
             "login": "pdenisae",
@@ -1692,7 +1692,7 @@
         "assigned": []
       },
       "SLAM": {
-        "required": 1,
+        "required": 6,
         "assigned": [
           {
             "login": "lkysilve",
@@ -1721,7 +1721,7 @@
         ]
       },
       "Team Lead": {
-        "required": 0,
+        "required": 3,
         "assigned": [
           {
             "login": "cojamesc",
@@ -1738,7 +1738,7 @@
         ]
       },
       "WS": {
-        "required": 0,
+        "required": 7,
         "assigned": [
           {
             "login": "apstefan",
@@ -1911,7 +1911,7 @@
             ]
           },
           "PS": {
-            "required": 0,
+            "required": 2,
             "assigned": [
               {
                 "login": "pdenisae",
@@ -1928,7 +1928,7 @@
             "assigned": []
           },
           "SLAM": {
-            "required": 1,
+            "required": 6,
             "assigned": [
               {
                 "login": "lkysilve",
@@ -1957,7 +1957,7 @@
             ]
           },
           "Team Lead": {
-            "required": 0,
+            "required": 3,
             "assigned": [
               {
                 "login": "cojamesc",
@@ -1974,7 +1974,7 @@
             ]
           },
           "WS": {
-            "required": 0,
+            "required": 7,
             "assigned": [
               {
                 "login": "apstefan",
@@ -52398,5 +52398,5 @@
     ]
   },
   "source": "github",
-  "updatedAt": "2026-05-24T00:05:28.015Z"
+  "updatedAt": "2026-05-24T00:08:27.952Z"
 }
