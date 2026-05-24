@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-24T00:08:50.243Z",
+  "exportedAt": "2026-05-24T00:27:19.762Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1661,16 +1661,16 @@
             "note": "SNS1"
           },
           {
-            "login": "shubakuv",
-            "note": ""
+            "login": "wprasapr",
+            "note": "SM West"
           },
           {
             "login": "szjashan",
-            "note": ""
+            "note": "SNS2"
           },
           {
-            "login": "wprasapr",
-            "note": ""
+            "login": "shubakuv",
+            "note": "SPP"
           }
         ]
       },
@@ -1696,27 +1696,27 @@
         "assigned": [
           {
             "login": "lkysilve",
-            "note": ""
-          },
-          {
-            "login": "adeyadem",
-            "note": ""
-          },
-          {
-            "login": "alpshibu",
-            "note": ""
+            "note": "Slam East POC"
           },
           {
             "login": "dilesale",
-            "note": ""
+            "note": "East"
           },
           {
             "login": "rebbarre",
-            "note": ""
+            "note": "East"
+          },
+          {
+            "login": "alpshibu",
+            "note": "Slam West POC"
+          },
+          {
+            "login": "adeyadem",
+            "note": "West"
           },
           {
             "login": "antonyjn",
-            "note": ""
+            "note": "West"
           }
         ]
       },
@@ -1897,16 +1897,16 @@
                 "note": "SNS1"
               },
               {
-                "login": "shubakuv",
-                "note": ""
+                "login": "wprasapr",
+                "note": "SM West"
               },
               {
                 "login": "szjashan",
-                "note": ""
+                "note": "SNS2"
               },
               {
-                "login": "wprasapr",
-                "note": ""
+                "login": "shubakuv",
+                "note": "SPP"
               }
             ]
           },
@@ -1932,27 +1932,27 @@
             "assigned": [
               {
                 "login": "lkysilve",
-                "note": ""
-              },
-              {
-                "login": "adeyadem",
-                "note": ""
-              },
-              {
-                "login": "alpshibu",
-                "note": ""
+                "note": "Slam East POC"
               },
               {
                 "login": "dilesale",
-                "note": ""
+                "note": "East"
               },
               {
                 "login": "rebbarre",
-                "note": ""
+                "note": "East"
+              },
+              {
+                "login": "alpshibu",
+                "note": "Slam West POC"
+              },
+              {
+                "login": "adeyadem",
+                "note": "West"
               },
               {
                 "login": "antonyjn",
-                "note": ""
+                "note": "West"
               }
             ]
           },
@@ -52398,5 +52398,5 @@
     ]
   },
   "source": "github",
-  "updatedAt": "2026-05-24T00:08:50.243Z"
+  "updatedAt": "2026-05-24T00:27:19.762Z"
 }
