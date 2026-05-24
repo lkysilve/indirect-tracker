@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "exportedAt": "2026-05-24T00:08:27.952Z",
+  "exportedAt": "2026-05-24T00:08:50.243Z",
   "roles": [
     "IT WS",
     "Jam Buster",
@@ -1653,6 +1653,10 @@
         "required": 5,
         "assigned": [
           {
+            "login": "vshajiak",
+            "note": "SM East"
+          },
+          {
             "login": "abbabhay",
             "note": "SNS1"
           },
@@ -1663,10 +1667,6 @@
           {
             "login": "szjashan",
             "note": ""
-          },
-          {
-            "login": "vshajiak",
-            "note": "SM East"
           },
           {
             "login": "wprasapr",
@@ -1889,6 +1889,10 @@
             "required": 5,
             "assigned": [
               {
+                "login": "vshajiak",
+                "note": "SM East"
+              },
+              {
                 "login": "abbabhay",
                 "note": "SNS1"
               },
@@ -1899,10 +1903,6 @@
               {
                 "login": "szjashan",
                 "note": ""
-              },
-              {
-                "login": "vshajiak",
-                "note": "SM East"
               },
               {
                 "login": "wprasapr",
@@ -52398,5 +52398,5 @@
     ]
   },
   "source": "github",
-  "updatedAt": "2026-05-24T00:08:27.952Z"
+  "updatedAt": "2026-05-24T00:08:50.243Z"
 }
