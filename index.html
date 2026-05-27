@@ -1090,7 +1090,74 @@ const SHIFT_PATTERNS = {
 };
 
 const SPECIAL_CODES = {
-  NAAB: { type:"Night", label:"Sa-Tu", days:["Saturday","Sunday","Monday","Tuesday"], note:"Site override: NAAB works Saturday to Tuesday." },
+  // LCY2 SSPOT cohort table overrides, captured from the more accurate SSPOT /LCY2/cohorts view.
+  // Full code is checked first, then the base code before the first dash.
+  // OB and IC can differ, so suffix-specific entries are kept where needed.
+
+  // Variable / special local codes
+  NAAB: { type:"Night", label:"NAAB OB local schedule", days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], time:"18:30 start, end varies by day", note:"LCY2 SSPOT override. If this is IC, use NAAB-IC." },
+  "NAAB-OB": { type:"Night", label:"NAAB OB local schedule", days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], time:"18:30 start, end varies by day", note:"LCY2 SSPOT override from cohort table." },
+  "NAAB-IC": { type:"Night", label:"NAAB IC local schedule", days:["Monday","Tuesday","Wednesday","Thursday"], time:"18:30-02:15", note:"LCY2 SSPOT override from IC cohort table." },
+
+  // OB standard night cohorts with explicit times
+  "NH3-150-OB": { type:"Night", label:"Sun/Mon/Fri/Sat", days:["Sunday","Monday","Friday","Saturday"], time:"15:00-01:30", note:"LCY2 SSPOT override." },
+  "NM1-815-OB": { type:"Night", label:"Tue-Sat", days:["Tuesday","Wednesday","Thursday","Friday","Saturday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NA5-1815-OB": { type:"Night", label:"Sun-Wed", days:["Sunday","Monday","Tuesday","Wednesday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NA5-1830-OB": { type:"Night", label:"Sun-Wed", days:["Sunday","Monday","Tuesday","Wednesday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NB1-1815-OB": { type:"Night", label:"Wed-Sat", days:["Wednesday","Thursday","Friday","Saturday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NB1-1830-OB": { type:"Night", label:"Wed-Sat", days:["Wednesday","Thursday","Friday","Saturday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NC4-1830-OB": { type:"Night", label:"Mon/Tue/Thu/Fri", days:["Monday","Tuesday","Thursday","Friday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NF6-1815-OB": { type:"Night", label:"Mon-Thu", days:["Monday","Tuesday","Wednesday","Thursday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NF6-1830-OB": { type:"Night", label:"Mon-Thu", days:["Monday","Tuesday","Wednesday","Thursday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NH3-1815-OB": { type:"Night", label:"Fri-Mon", days:["Friday","Saturday","Sunday","Monday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NH3-1830-OB": { type:"Night", label:"Fri-Mon", days:["Friday","Saturday","Sunday","Monday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NJ6-1815-OB": { type:"Night", label:"Sun/Mon/Tue/Thu", days:["Sunday","Monday","Tuesday","Thursday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NK7-1815-OB": { type:"Night", label:"Tue-Fri", days:["Tuesday","Wednesday","Thursday","Friday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NK7-1830-OB": { type:"Night", label:"Tue-Fri", days:["Tuesday","Wednesday","Thursday","Friday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NL4-1815-OB": { type:"Night", label:"Sat-Tue", days:["Saturday","Sunday","Monday","Tuesday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NL4-1830-OB": { type:"Night", label:"Sat-Tue", days:["Saturday","Sunday","Monday","Tuesday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NN2-1815-OB": { type:"Night", label:"Thu-Sun", days:["Thursday","Friday","Saturday","Sunday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NN2-1830-OB": { type:"Night", label:"Thu-Sun", days:["Thursday","Friday","Saturday","Sunday"], time:"18:30-05:00", note:"LCY2 SSPOT override." },
+  "NS2-1815-OB": { type:"Night", label:"Wed-Sun", days:["Wednesday","Thursday","Friday","Saturday","Sunday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NS5201815-OB": { type:"Night", label:"Wed-Sun", days:["Wednesday","Thursday","Friday","Saturday","Sunday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NS201815-OB": { type:"Night", label:"Wed-Sun", days:["Wednesday","Thursday","Friday","Saturday","Sunday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "N52-1815-OB": { type:"Night", label:"Tue/Thu/Fri/Sat", days:["Tuesday","Thursday","Friday","Saturday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NM101815-OB": { type:"Night", label:"Tue-Sat", days:["Tuesday","Wednesday","Thursday","Friday","Saturday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NE701815-OB": { type:"Night", label:"Mon-Fri", days:["Monday","Tuesday","Wednesday","Thursday","Friday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NG601815-OB": { type:"Night", label:"Sun-Thu", days:["Sunday","Monday","Tuesday","Wednesday","Thursday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NW401815-OB": { type:"Night", label:"Fri-Tue", days:["Friday","Saturday","Sunday","Monday","Tuesday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NQ301815-OB": { type:"Night", label:"Sun/Mon/Thu/Fri/Sat", days:["Sunday","Monday","Thursday","Friday","Saturday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NT501815-OB": { type:"Night", label:"Sun-Wed/Sat", days:["Sunday","Monday","Tuesday","Wednesday","Saturday"], time:"18:15-02:15", note:"LCY2 SSPOT override." },
+  "NT857-OB": { type:"Night", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+
+  // Base-code fallbacks for the local numeric/compact codes above
+  NQ3: { type:"Night", label:"Sun/Mon/Thu/Fri/Sat", days:["Sunday","Monday","Thursday","Friday","Saturday"], time:"18:15-02:15", note:"LCY2 SSPOT local base-code fallback." },
+  NT5: { type:"Night", label:"Sun-Wed/Sat", days:["Sunday","Monday","Tuesday","Wednesday","Saturday"], time:"18:15-02:15", note:"LCY2 SSPOT local base-code fallback." },
+  NS52: { type:"Night", label:"Wed-Sun", days:["Wednesday","Thursday","Friday","Saturday","Sunday"], time:"18:15-02:15", note:"LCY2 SSPOT local base-code fallback." },
+  N52: { type:"Night", label:"Tue/Thu/Fri/Sat", days:["Tuesday","Thursday","Friday","Saturday"], time:"18:15-04:45", note:"LCY2 SSPOT local base-code fallback." },
+
+  // OB PT / compact local cohorts
+  "NPT128-OB": { type:"Night PT", label:"Sun/Sat", days:["Sunday","Saturday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NPT105-OB": { type:"Night PT", label:"Fri/Sat", days:["Friday","Saturday"], time:"19:00-05:30", note:"LCY2 SSPOT override." },
+  "NPT856-OB": { type:"Night PT", label:"Fri/Sat", days:["Friday","Saturday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NPT858-OB": { type:"Night PT", label:"Sun/Sat", days:["Sunday","Saturday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+  "NPT126-OB": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:15-04:45", note:"LCY2 SSPOT override." },
+
+  // IC overrides from SSPOT
+  "NPT106-IC": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"19:00-05:30", note:"LCY2 SSPOT IC override." },
+  "NA5-1830-IC": { type:"Night", label:"Sun-Wed", days:["Sunday","Monday","Tuesday","Wednesday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NB1-1830-IC": { type:"Night", label:"Wed-Sat", days:["Wednesday","Thursday","Friday","Saturday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NC4-1830-IC": { type:"Night", label:"Mon/Tue/Thu/Fri", days:["Monday","Tuesday","Thursday","Friday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NC4-190-IC": { type:"Night", label:"Mon/Tue/Thu/Fri", days:["Monday","Tuesday","Thursday","Friday"], time:"19:00-05:30", note:"LCY2 SSPOT IC override." },
+  "NC4-1900-IC": { type:"Night", label:"Mon/Tue/Thu/Fri", days:["Monday","Tuesday","Thursday","Friday"], time:"19:00-05:30", note:"LCY2 SSPOT IC override." },
+  "NF6-1830-IC": { type:"Night", label:"Mon-Thu", days:["Monday","Tuesday","Wednesday","Thursday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NH3-1830-IC": { type:"Night", label:"Fri-Mon", days:["Friday","Saturday","Sunday","Monday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NK7-1830-IC": { type:"Night", label:"Tue-Fri", days:["Tuesday","Wednesday","Thursday","Friday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NN2-1830-IC": { type:"Night", label:"Thu-Sun", days:["Thursday","Friday","Saturday","Sunday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+  "NPT105-IC": { type:"Night PT", label:"Fri/Sat", days:["Friday","Saturday"], time:"19:00-05:30", note:"LCY2 SSPOT IC override." },
+  "NPT857-IC": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
+
+  // Legacy examples / generic fallbacks
   PT101: { type:"Part Time", label:"Sa/Su PT - Days", days:["Saturday","Sunday"], note:"From network shift-code reference." },
   AAAA: { type:"Variable", label:"Variable schedule", days:[], note:"Variable schedule, confirm actual days." },
   AAAAT: { type:"CA Variable", label:"CA variable schedule", days:[], note:"Variable schedule, confirm actual days." }
@@ -2773,11 +2840,25 @@ function decodeShift(codeRaw){
   if(!code) return { code:"", valid:false, type:"", pattern:"", flex:"", start:"", days:[], label:"", summary:"Enter a shift code." };
 
   const noDash = code.split("-")[0];
-  const start = (code.match(/-(\d{4})/) || [])[1] || "";
+  const start = (code.match(/-(\d{3,4})/) || [])[1] || "";
+  const specialKey = SPECIAL_CODES[code] ? code : noDash;
 
-  if(SPECIAL_CODES[noDash]){
-    const s = SPECIAL_CODES[noDash];
-    return { code:original, valid:true, special:true, type:s.type, pattern:original, flex:"", start, days:s.days, label:s.label, summary:`${original}: ${s.type} — ${s.label}`, note:s.note || "" };
+  if(SPECIAL_CODES[specialKey]){
+    const s = SPECIAL_CODES[specialKey];
+    const timeText = s.time ? `, ${s.time}` : "";
+    return {
+      code:original,
+      valid:true,
+      special:true,
+      type:s.type,
+      pattern:original,
+      flex:"",
+      start,
+      days:s.days,
+      label:s.label,
+      summary:`${original}: ${s.type} — ${s.label}${timeText}`,
+      note:s.note || (s.time ? `Time: ${s.time}` : "")
+    };
   }
 
   if(/^PT\d{3}/.test(noDash)) return { code:original, valid:true, special:true, type:"Part Time", pattern:noDash.slice(2), flex:"", start, days:[], label:"Part Time code", summary:`${original}: Part Time code. Days depend on local mapping.`, note:"Known PT example: PT101 = Sa/Su PT - Days." };
@@ -4343,7 +4424,14 @@ function renderShiftReference(){
     rows.push([key, "Shift name / day pattern", `${SHIFT_PATTERNS[key].label} (${daysShort(SHIFT_PATTERNS[key].days)})`]);
   }
 
-  rows.push(["PT101", "Part-time known example", "Sa/Su PT - Days"]);
+  Object.keys(SPECIAL_CODES).sort((a,b) => a.localeCompare(b)).forEach(key => {
+    const item = SPECIAL_CODES[key];
+    rows.push([
+      key,
+      `${item.type || "Local"} local override`,
+      `${item.label || "Local mapping"} (${daysShort(item.days)})${item.time ? ` · ${item.time}` : ""}`
+    ]);
+  });
 
   tbody.innerHTML = rows.map(r => `<tr><td><b>${escapeHtml(r[0])}</b></td><td>${escapeHtml(r[1])}</td><td>${escapeHtml(r[2])}</td></tr>`).join("");
 }
