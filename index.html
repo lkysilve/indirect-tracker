@@ -1181,6 +1181,15 @@ const SPECIAL_CODES = {
   "NPT857-OB": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:15-04:45", note:"LCY2 SSPOT OB override." },
   "NPT857": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:15-04:45", note:"LCY2 SSPOT OB alias." },
 
+  // Employee CSV sometimes stores these PT cohorts with an extra 8 after NPT.
+  // They are the same SSPOT cohorts: NPT8856 = NPT856, NPT8857 = NPT857, NPT8858 = NPT858.
+  "NPT8856-OB": { type:"Night PT", label:"Fri/Sat", days:["Friday","Saturday"], time:"18:15-04:45", note:"LCY2 employee CSV alias for NPT856-OB." },
+  "NPT8856": { type:"Night PT", label:"Fri/Sat", days:["Friday","Saturday"], time:"18:15-04:45", note:"LCY2 employee CSV alias for NPT856." },
+  "NPT8857-OB": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:15-04:45", note:"LCY2 employee CSV alias for NPT857-OB." },
+  "NPT8857": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"18:15-04:45", note:"LCY2 employee CSV alias for NPT857." },
+  "NPT8858-OB": { type:"Night PT", label:"Sun/Sat", days:["Sunday","Saturday"], time:"18:15-04:45", note:"LCY2 employee CSV alias for NPT858-OB." },
+  "NPT8858": { type:"Night PT", label:"Sun/Sat", days:["Sunday","Saturday"], time:"18:15-04:45", note:"LCY2 employee CSV alias for NPT858." },
+
   // IC overrides from SSPOT
   "NPT106-IC": { type:"Night PT", label:"Sun/Mon", days:["Sunday","Monday"], time:"19:00-05:30", note:"LCY2 SSPOT IC override." },
   "NA5-1830-IC": { type:"Night", label:"Sun-Wed", days:["Sunday","Monday","Tuesday","Wednesday"], time:"18:30-05:00", note:"LCY2 SSPOT IC override." },
